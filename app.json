@@ -1,0 +1,8 @@
+{
+  "name": "distancer",
+  "displayName": "distancer",
+  "android": {
+    "package": "com.tikhon.distancer",
+    "versionCode": 1
+  }
+}
