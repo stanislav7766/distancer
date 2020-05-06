@@ -2,6 +2,7 @@ import RNFS from 'react-native-fs';
 
 const SETTINGS_PATH = RNFS.DocumentDirectoryPath + '/settings.json';
 const ROUTES_PATH = RNFS.DocumentDirectoryPath + '/routes.json';
+const ENCODING = 'utf8';
 
 const _deleteFile = async filePath =>
   new Promise((resolve, reject) => {
@@ -9,22 +10,22 @@ const _deleteFile = async filePath =>
       .then(res => {
         res &&
           RNFS.unlink(filePath)
-            .then(() => resolve(true))
-            .catch(err => reject(false));
+            .then(_ => resolve(true))
+            .catch(_ => reject(false));
       })
-      .catch(err => reject(false));
+      .catch(_ => reject(false));
   });
 
 const _writeFile = async (filePath, data) =>
   new Promise((resolve, reject) => {
-    RNFS.writeFile(filePath, data, 'utf8')
+    RNFS.writeFile(filePath, data, ENCODING)
       .then(_ => resolve(true))
-      .catch(err => reject(false));
+      .catch(_ => reject(false));
   });
 
 const _readFile = async filePath =>
   new Promise((resolve, reject) => {
-    RNFS.readFile(filePath, 'utf8')
+    RNFS.readFile(filePath, ENCODING)
       .then(res => resolve(res))
       .catch(err => reject(err));
   });
@@ -51,16 +52,24 @@ export const readSettings = async () =>
 
 export const writeSettings = async obj =>
   new Promise(async (resolve, reject) => {
-    const deleted = await _deleteFile(SETTINGS_PATH);
-    const written = deleted && (await _writeFile(SETTINGS_PATH, JSON.stringify(obj)));
-    written ? resolve(written) : reject(written);
+    try {
+      const deleted = await _deleteFile(SETTINGS_PATH);
+      const written = deleted && (await _writeFile(SETTINGS_PATH, JSON.stringify(obj)));
+      written ? resolve(written) : reject(written);
+    } catch (err) {
+      reject(err);
+    }
   });
 
 export const writeRoutes = async arrRoutes =>
   new Promise(async (resolve, reject) => {
-    const deleted = await _deleteFile(ROUTES_PATH);
-    const written = deleted && (await _writeFile(ROUTES_PATH, JSON.stringify(arrRoutes)));
-    written ? resolve(written) : reject(written);
+    try {
+      const deleted = await _deleteFile(ROUTES_PATH);
+      const written = deleted && (await _writeFile(ROUTES_PATH, JSON.stringify(arrRoutes)));
+      written ? resolve(written) : reject(written);
+    } catch (err) {
+      reject(err);
+    }
   });
 
 export const initialLoad = async () =>
