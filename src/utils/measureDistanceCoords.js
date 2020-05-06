@@ -18,9 +18,7 @@ export const measureDistance = points => {
     return 0;
   }
   const distance = points.reduce((accum, point, i) => {
-    if (i < points.length - 1) {
-      accum += calcCrow(point[0], point[1], points[i + 1][0], points[i + 1][1]);
-    }
+    i < points.length - 1 && (accum += calcCrow(point[0], point[1], points[i + 1][0], points[i + 1][1]));
     return accum;
   }, 0);
   return distance.toFixed(2);

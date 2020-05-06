@@ -10,15 +10,9 @@ export const Fetch = text =>
     )}.json?limit=4&types=place&access_token=${MAP_TOKEN}`;
     fetch(url)
       .then(response => response.json())
-      .then(data => {
-        const {features} = data;
-        if (!Array.isArray(features) || features.length === 0) {
-          resolve([null, 'City Not Found']);
-        }
+      .then(({features}) => {
+        (!Array.isArray(features) || features.length === 0) && resolve([null, 'City Not Found']);
         resolve([filterResponse(features), '']);
       })
-      .catch(err => {
-        console.log(err);
-        reject(err);
-      });
+      .catch(err => reject(err));
   });
