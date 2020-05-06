@@ -9,7 +9,7 @@ import IconDot from '../../componets/svg-icons/icon-dot/IconDot';
 import IconCancel from '../../componets/svg-icons/icon-cancel/IconCancel';
 import IconMenu from '../../componets/svg-icons/icon-menu/IconMenu';
 import {readRoutes} from '../../utils/fs';
-import {isEmptyArr} from '../../utils/isEmptyArr';
+import {isFilledArr} from '../../utils/isFilledArr';
 import {Container, WrapRoutes, Row, Styles} from './styles';
 import {APP_MODE} from '../../constants/constants';
 
@@ -32,7 +32,7 @@ const Routes = ({navigator}) => {
     (async () => {
       try {
         const _routes = await readRoutes();
-        isEmptyArr(_routes) ? setRoutes(_routes) : Toast.show('Routes list is empty');
+        isFilledArr(_routes) ? setRoutes(_routes) : Toast.show('Routes list is empty');
       } catch (error) {
         Toast.show('An error occurred');
       }
@@ -61,7 +61,7 @@ const Routes = ({navigator}) => {
   );
 
   const UserRoutes =
-    isEmptyArr(routes) &&
+    isFilledArr(routes) &&
     routes.map((route, i) => (
       <Row key={Math.random()} marginBottom={isLastPoint(i) ? 20 : 0} marginTop={20}>
         <Item

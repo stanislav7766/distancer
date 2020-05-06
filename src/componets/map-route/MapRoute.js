@@ -9,7 +9,7 @@ import {
   CircleLayer,
 } from '@react-native-mapbox-gl/maps';
 import {randomID} from '../../utils/randomID';
-import {isEmptyArr} from '../../utils/isEmptyArr';
+import {isFilledArr} from '../../utils/isFilledArr';
 
 const ANNOTATION_SIZE = 14;
 const ACCENT_GREEN = '#65FF4B';
@@ -90,8 +90,8 @@ const MapRoute = () => {
 
   return (
     <Fragment>
-      {isEmptyArr(points) && Line}
-      {isEmptyArr(points) && Dots}
+      {isFilledArr(points) && Line}
+      {isFilledArr(points) && Dots}
     </Fragment>
   );
 };

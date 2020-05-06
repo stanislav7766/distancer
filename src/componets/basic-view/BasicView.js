@@ -8,7 +8,7 @@ import Btn from '../btn/Btn';
 import IconMarker from '../svg-icons/icon-marker/IconMarker';
 import IconLeftArrow from '../svg-icons/icon-left-arrow/IconLeftArrow';
 import {Fetch} from '../../utils/geolocation';
-import {isEmptyArr} from '../../utils/isEmptyArr';
+import {isFilledArr} from '../../utils/isFilledArr';
 import {Row, Column, Styles} from './styles';
 import {APP_MODE, CITY_NOT_FOUND, CHOOSE_YOUR_LOCATION, TYPE_CITY, DRAW_ROUTE_BTN} from '../../constants/constants';
 
@@ -59,7 +59,7 @@ const BasicView = ({themeStyle, closeModal, openModal}) => {
 
   const InputVariants = (
     <Fragment>
-      {isEmptyArr(places) &&
+      {isFilledArr(places) &&
         places.map((el, i) => (
           <Row key={i} marginTop={20}>
             <Item
