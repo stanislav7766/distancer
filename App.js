@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import {
   mapContext,
   appModeContext,
@@ -10,6 +10,14 @@ import {
 import {MapState, AppModeState, ThemeState, PlacesState, RouteState, ModalState} from './src/contexts/initialStates';
 import Landing from './src/pages/landing';
 import Navbar from './src//componets/navbar/Navbar';
+import Compose from './src/componets/context-compose/Compose';
+
+const Main = (
+  <Fragment>
+    <Landing />
+    <Navbar />
+  </Fragment>
+);
 
 const App = () => {
   const appMode = AppModeState();
@@ -20,20 +28,17 @@ const App = () => {
   const theme = ThemeState();
 
   return (
-    <appModeContext.Provider value={appMode}>
-      <themeContext.Provider value={theme}>
-        <mapContext.Provider value={map}>
-          <routeContext.Provider value={route}>
-            <modalContext.Provider value={modal}>
-              <placesContext.Provider value={places}>
-                <Landing />
-                <Navbar />
-              </placesContext.Provider>
-            </modalContext.Provider>
-          </routeContext.Provider>
-        </mapContext.Provider>
-      </themeContext.Provider>
-    </appModeContext.Provider>
+    <Compose
+      Child={Main}
+      wrappers={[
+        {Context: appModeContext, value: appMode},
+        {Context: themeContext, value: theme},
+        {Context: mapContext, value: map},
+        {Context: routeContext, value: route},
+        {Context: modalContext, value: modal},
+        {Context: placesContext, value: places},
+      ]}
+    />
   );
 };
 
