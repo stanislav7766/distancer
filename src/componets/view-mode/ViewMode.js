@@ -1,24 +1,20 @@
 import React, {Fragment, useContext} from 'react';
-import {mapContext, modalContext, placesContext, appModeContext, routeContext} from '../../contexts/contexts';
+import {mapContext, modalContext, placesContext, routeContext} from '../../contexts/contexts';
 import {Groove} from '../../contexts/Groove';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
 import TextInput from '../text-input/TextInput';
 import Item from '../item/Item';
-import Btn from '../btn/Btn';
 import IconMarker from '../svg-icons/icon-marker/IconMarker';
 import IconLeftArrow from '../svg-icons/icon-left-arrow/IconLeftArrow';
 import {Fetch} from '../../utils/geolocation';
 import {isFilledArr} from '../../utils/isFilledArr';
 import {Row, Column, Styles} from './styles';
-import {APP_MODE, CITY_NOT_FOUND, CHOOSE_YOUR_LOCATION, TYPE_CITY, DRAW_ROUTE_BTN} from '../../constants/constants';
+import {CITY_NOT_FOUND, CHOOSE_YOUR_LOCATION, TYPE_CITY} from '../../constants/constants';
 
-const {DRAW_ROUTE} = APP_MODE;
-
-const BasicView = ({themeStyle, closeModal, openModal}) => {
+const ViewMode = ({themeStyle, closeModal, openModal}) => {
   const {cameraRef, zoomLevel} = useContext(mapContext);
   const {moveToCurrPosition, moveCamera} = Groove(cameraRef);
   const {currentRoute, setCurrentRoute} = useContext(routeContext);
-  const {setAppMode} = useContext(appModeContext);
   const {expanded} = useContext(modalContext);
   const {places, setPlaces} = useContext(placesContext);
 
@@ -45,7 +41,6 @@ const BasicView = ({themeStyle, closeModal, openModal}) => {
     closeModal();
     moveToCurrPosition(zoomLevel);
   };
-  const onPressDrawRoute = () => setAppMode(DRAW_ROUTE);
   const onChangeText = text => setCurrentRoute({...currentRoute, city: {...city, name: text}});
 
   const onSubmitEditing = async () => {
@@ -81,18 +76,6 @@ const BasicView = ({themeStyle, closeModal, openModal}) => {
     </Fragment>
   );
 
-  const NotExpandedModal = (
-    <Row>
-      <Column top={10}>
-        <Btn
-          onPress={onPressDrawRoute}
-          width={'160px'}
-          title={DRAW_ROUTE_BTN}
-          backgroundColor={themeStyle.accentColor}
-        />
-      </Column>
-    </Row>
-  );
   const ExpandedModal = (
     <Row>
       <Column alignItems={'flex-start'}>
@@ -103,7 +86,7 @@ const BasicView = ({themeStyle, closeModal, openModal}) => {
 
   return (
     <Fragment>
-      {expanded ? ExpandedModal : NotExpandedModal}
+      {expanded && ExpandedModal}
       <Row>
         <TextInput
           style={inputStyle}
@@ -120,4 +103,4 @@ const BasicView = ({themeStyle, closeModal, openModal}) => {
   );
 };
 
-export default BasicView;
+export default ViewMode;

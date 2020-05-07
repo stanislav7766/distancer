@@ -4,10 +4,11 @@ export const Styles = themeStyle => {
   const styleItem = {
     backgroundColor: themeStyle.backgroundColorSecondary,
     textColor: themeStyle.textColorSecondary,
+    height: 55,
   };
   const arrowIconDims = {
-    top: '10px',
-    left: '0px',
+    top: 10,
+    left: 0,
     position: 'relative',
     backgroundColor: themeStyle.backgroundColorSecondary,
   };

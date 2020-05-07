@@ -6,7 +6,7 @@ export const Container = styled.TouchableOpacity`
   border-radius: 15px;
   justify-content: center;
   background-color: ${props => props.backgroundColor || '#fff'};
-  elevation: 12;
+  elevation: 7;
 `;
 
 export const Column = styled.View`

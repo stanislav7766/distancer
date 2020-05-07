@@ -1,16 +1,14 @@
-import styled from 'styled-components';
-
-export const Wrapper = styled.TouchableOpacity`
-  top: ${props => props.top || 'auto'};
-  bottom: ${props => props.bottom || 'auto'};
-  right: ${props => props.right || 'auto'};
-  left: ${props => props.left || 'auto'};
-  position: ${props => props.position || 'absolute'};
-  justify-content: center;
-  align-items: center;
-  width: ${props => props.width || '51px'};
-  height: ${props => props.height || '51px'};
-  border-radius: 15px;
-  elevation: 25;
-  background-color: ${props => props.backgroundColor || '#fff'};
-`;
+export const styleWrap = {
+  top: 'auto',
+  bottom: 'auto',
+  right: 'auto',
+  left: 'auto',
+  position: 'absolute',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: 46,
+  height: 46,
+  borderRadius: 15,
+  elevation: 7,
+  backgroundColor: '#fff',
+};

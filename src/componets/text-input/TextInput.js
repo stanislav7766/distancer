@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {TextInputStyled, Container, Underline} from './styles';
+import {View, TextInput} from 'react-native';
+import {styleTextInput, styleContainer, styleUnderline} from './styles';
 
 const Input = ({value, onChangeText, style, onSubmitEditing, placeholder, openModal}) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -13,9 +14,9 @@ const Input = ({value, onChangeText, style, onSubmitEditing, placeholder, openMo
   };
 
   return (
-    <Container>
-      <TextInputStyled
-        textColor={style.textColor}
+    <View style={styleContainer}>
+      <TextInput
+        style={(styleTextInput, {color: style.textColor})}
         placeholder={placeholder}
         placeholderTextColor={style.placeholderColor}
         onSubmitEditing={onSubmitEditing}
@@ -25,10 +26,11 @@ const Input = ({value, onChangeText, style, onSubmitEditing, placeholder, openMo
         onChangeText={onChangeText}
         onBlur={handleBlur}
       />
-      <Underline
-        borderBottomColor={`${isFocused || value ? style.underlineFocusedColor : style.underlineBluredColor}`}
+      <View
+        style={styleUnderline}
+        borderBottomColor={`${isFocused || value ? style.underlineFocusedColor : '#d3d3d3'}`}
       />
-    </Container>
+    </View>
   );
 };
 

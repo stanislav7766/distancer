@@ -1,5 +1,13 @@
 import {createContext} from 'react';
-import {THEMES, DEFAULT_MAP, APP_MODE, DEFAULT_ROUTE, DEFAULT_PLACES, DEFAULT_ROUTES} from '../constants/constants';
+import {
+  THEMES,
+  DEFAULT_MAP,
+  APP_MODE,
+  DEFAULT_ROUTE,
+  DEFAULT_PLACES,
+  DEFAULT_ROUTES,
+  WINDOW_HEIGHT,
+} from '../constants/constants';
 
 export const mapContext = createContext({
   zoomLevel: DEFAULT_MAP.ZOOM,
@@ -11,6 +19,7 @@ export const modalContext = createContext({
   shownMenu: false,
   dragMode: false,
   expanded: false,
+  modalY: WINDOW_HEIGHT - 150,
   setShownMenu: () => {},
   setExpanded: () => {},
   setDragMode: () => {},
@@ -38,6 +47,7 @@ export const themeContext = createContext({
 });
 
 export const appModeContext = createContext({
-  appMode: APP_MODE.BASIC_VIEW,
+  appMode: APP_MODE.VIEW_MODE,
+  prevAppMode: APP_MODE.VIEW_MODE,
   setAppMode: () => {},
 });

@@ -1,6 +1,5 @@
 import {AsyncStorage} from 'react-native';
-
-const HAS_LAUNCHED = 'hasLaunched';
+import {HAS_LAUNCHED} from '../../constants/constants';
 
 export default async function IsFirstLaunch() {
   try {

@@ -4,18 +4,17 @@ import {themeContext} from '../../contexts/contexts';
 import Toast from 'react-native-simple-toast';
 import Map from '../../componets/map/Map';
 import Modal from '../../componets/modal/Modal';
-import MenuModal from '../../componets/menu-modal/MenuModal';
 import IsFirstLaunch from '../../componets/is-first-launch/IsFirstLaunch';
 import {initialLoad, readSettings, writeSettings} from '../../utils/fs';
 
 const isGoOut = appState => appState === 'background' || appState === 'inactive';
 
-const Landing = ({navigator}) => {
+const Landing = () => {
   const {theme, setTheme} = useContext(themeContext);
   const [appState, setAppState] = useState(AppState.currentState);
 
   useEffect(() => {
-    (async function() {
+    (async () => {
       if (isGoOut(appState)) {
         try {
           const settings = await readSettings();
@@ -55,7 +54,6 @@ const Landing = ({navigator}) => {
     <Fragment>
       <Map />
       <Modal />
-      <MenuModal navigator={navigator} />
     </Fragment>
   );
 };

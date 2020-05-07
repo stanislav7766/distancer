@@ -1,24 +1,21 @@
 import React, {Fragment, useEffect, useContext, useMemo} from 'react';
+import {Text} from 'react-native';
 import Btn from '../btn/Btn';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
-import {routeContext, modalContext, appModeContext} from '../../contexts/contexts';
+import {routeContext, modalContext} from '../../contexts/contexts';
 import IconLeftArrow from '../svg-icons/icon-left-arrow/IconLeftArrow';
 import IconDrag from '../svg-icons/icon-drag/IconDrag';
 import Toast from 'react-native-simple-toast';
 import {readRoutes, writeRoutes} from '../../utils/fs';
 import {randomID} from '../../utils/randomID';
 import {measureDistance} from '../../utils/measureDistanceCoords';
-import {Row, Column, TextKM, Styles} from './styles';
-import {APP_MODE} from '../../constants/constants';
+import {Row, Column, stylesTextKM, Styles} from './styles';
 
-const {BASIC_VIEW} = APP_MODE;
-
-const DrawRoute = ({themeStyle}) => {
-  const {setDefaultRoute, setCurrentRoute, currentRoute} = useContext(routeContext);
-  const {setAppMode} = useContext(appModeContext);
+const DrawMode = ({themeStyle}) => {
+  const {setCurrentRoute, setDefaultRoute, currentRoute} = useContext(routeContext);
   const {dragMode, setDragMode} = useContext(modalContext);
 
-  const {arrowIconDims, dragIconDims} = Styles(themeStyle);
+  const {arrowIconDims, dragIconDims, btnDims} = Styles(themeStyle);
 
   const IconLeftArrowWrap = <IconLeftArrow width={30} height={33} fill={themeStyle.accentColor} />;
   const IconDragWrap = <IconDrag width={29} height={38} fill={themeStyle.accentColor} />;
@@ -36,7 +33,6 @@ const DrawRoute = ({themeStyle}) => {
   const onPressCancel = () => {
     setDragMode(false);
     setDefaultRoute();
-    setAppMode(BASIC_VIEW);
   };
 
   const onPressBackStep = () => setPoints(points.slice(0, -1));
@@ -58,8 +54,13 @@ const DrawRoute = ({themeStyle}) => {
   return useMemo(
     () => (
       <Fragment>
-        <Row justifyContent={'flex-start'} marginBottom={10} marginTop={10}>
-          <TextKM textColor={themeStyle.textColor}>{distance} km</TextKM>
+        <Row marginTop={10}>
+          <Column alignItems={'flex-start'}>
+            <Text style={[stylesTextKM, {color: themeStyle.textColor}]}>{distance} km</Text>
+          </Column>
+          <Column alignItems={'flex-end'}>
+            <Btn style={btnDims} title={'Save Route'} onPress={onPressSave} />
+          </Column>
         </Row>
         <Row>
           <Column alignItems={'flex-start'}>
@@ -69,7 +70,7 @@ const DrawRoute = ({themeStyle}) => {
             <RoundedIcon style={dragIconDims} IconComponent={IconDragWrap} onPress={onPressDragMode} />
           </Column>
           <Column alignItems={'flex-end'} marginTop={10}>
-            <Btn width={'160px'} title={'Save Route'} onPress={onPressSave} backgroundColor={themeStyle.accentColor} />
+            <Btn style={btnDims} title={'Save Route'} onPress={onPressSave} />
           </Column>
         </Row>
       </Fragment>
@@ -79,4 +80,4 @@ const DrawRoute = ({themeStyle}) => {
   );
 };
 
-export default DrawRoute;
+export default DrawMode;

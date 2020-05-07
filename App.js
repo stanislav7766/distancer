@@ -8,9 +8,8 @@ import {
   modalContext,
 } from './src/contexts/contexts';
 import {MapState, AppModeState, ThemeState, PlacesState, RouteState, ModalState} from './src/contexts/initialStates';
-import Navigator from 'react-native-easy-router';
 import Landing from './src/pages/landing';
-import Routes from './src/pages/routes';
+import Navbar from './src//componets/navbar/Navbar';
 
 const App = () => {
   const appMode = AppModeState();
@@ -27,7 +26,8 @@ const App = () => {
           <routeContext.Provider value={route}>
             <modalContext.Provider value={modal}>
               <placesContext.Provider value={places}>
-                <Navigator screens={{Landing, Routes}} initialStack="Landing" />
+                <Landing />
+                <Navbar />
               </placesContext.Provider>
             </modalContext.Provider>
           </routeContext.Provider>

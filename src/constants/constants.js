@@ -1,13 +1,23 @@
+import {Dimensions} from 'react-native';
+const {height, width} = Dimensions.get('window');
+
 export const THEMES = {
   DARK: 'dark',
   LIGHT: 'light',
 };
 
+export const WINDOW_HEIGHT = height;
+export const WINDOW_WIDTH = width;
+
 export const APP_MODE = {
-  BASIC_VIEW: 'basicView',
-  DRAW_ROUTE: 'drawRoute',
+  VIEW_MODE: 'View',
+  DRAW_MODE: 'Draw',
+  MENU_MODE: 'Menu',
+  SAVED_MODE: 'Saved',
   VIEW_ROUTE: 'viewRoute',
 };
+
+export const NAVBAR_HEIGHT = height * 0.06;
 
 export const DEFAULT_ROUTE = {
   distance: 0,
@@ -66,3 +76,5 @@ export const chars = {
   i: 'i',
   ґ: 'g',
 };
+
+export const HAS_LAUNCHED = 'hasLaunched';

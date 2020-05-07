@@ -1,17 +1,15 @@
-import styled from 'styled-components';
+export const stylesBtnForm = {
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: 'auto',
+  height: 'auto',
+  borderRadius: 15,
+  elevation: 7,
+  backgroundColor: '#fff',
+};
 
-export const ButtonContainer = styled.TouchableOpacity`
-  justify-content: center;
-  align-items: center;
-  width: ${props => props.width || 'auto'};
-  height: ${props => props.height || 'auto'};
-  border-radius: 15px;
-  elevation: 12;
-  background-color: ${props => props.backgroundColor || 'white'};
-`;
-
-export const ButtonText = styled.Text`
-  font-size: 22px;
-  color: ${props => props.textColor || 'white'};
-  text-align: center;
-`;
+export const stylesBtnText = {
+  fontSize: 22,
+  color: '#fff',
+  textAlign: 'center',
+};

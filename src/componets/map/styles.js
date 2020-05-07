@@ -1,29 +1,30 @@
-import styled from 'styled-components';
-
-export const Container = styled.View`
-  height: ${props => props.height || '300'}px;
-  width: ${props => props.width || '300'}px;
-`;
+export const styleContainer = {
+  height: 300,
+  width: 300,
+};
+export const styleMap = {
+  flex: 1,
+};
 
 export const Styles = (themeStyle, height) => {
   const styleGpsIcon = {
-    right: '10px',
-    bottom: `${height * 0.25}px`,
+    right: 10,
+    bottom: height * 0.35,
     backgroundColor: themeStyle.backgroundColorSecondary,
   };
   const styleInfoIcon = {
-    left: '10px',
-    bottom: `${height * 0.25}px`,
+    left: 10,
+    bottom: height * 0.35,
     backgroundColor: themeStyle.backgroundColorSecondary,
   };
   const styleMenuIcon = {
-    left: '10px',
-    top: '10px',
+    left: 10,
+    top: 10,
     backgroundColor: themeStyle.backgroundColorSecondary,
   };
   const styleCancelIcon = {
-    right: '10px',
-    top: '10px',
+    right: 10,
+    top: 10,
     backgroundColor: themeStyle.backgroundColorSecondary,
   };
   return {styleCancelIcon, styleGpsIcon, styleInfoIcon, styleMenuIcon};
