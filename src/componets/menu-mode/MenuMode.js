@@ -13,7 +13,10 @@ const MenuMode = ({themeStyle}) => {
   const {styleItem} = Styles(themeStyle);
   const [iconThemeX] = useState(new Animated.Value(theme === 'light' ? 0 : 30));
   const [iconThemeXX] = useState(new Animated.Value(theme === 'light' ? 0 : 3.15));
-
+  const RotateData = iconThemeXX.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
   useEffect(() => {
     Animated.timing(iconThemeX, {
       duration: 200,
@@ -22,7 +25,7 @@ const MenuMode = ({themeStyle}) => {
     }).start();
     Animated.timing(iconThemeXX, {
       duration: 200,
-      toValue: theme === 'light' ? 0 : 3.15,
+      toValue: theme === 'light' ? 0 : 0.5,
       useNativeDriver: true,
     }).start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -31,7 +34,7 @@ const MenuMode = ({themeStyle}) => {
   const IconDotWrap = <IconDot width={16} height={16} fill={themeStyle.accentColor} />;
 
   const IconSwitchWrap = (
-    <Animated.View style={{transform: [{translateX: iconThemeX, rotate: iconThemeXX}]}}>
+    <Animated.View style={{transform: [{translateX: iconThemeX, rotate: RotateData}]}}>
       <IconSwitch width={50} height={37} fill1={themeStyle.accentColor} fill2={themeStyle.backgroundColorSecondary} />
     </Animated.View>
   );

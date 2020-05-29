@@ -73,7 +73,7 @@ const Map = () => {
         {(appMode === DRAW_MODE || appMode === VIEW_ROUTE) && <MapRoute />}
         <UserLocation />
       </MapView>
-      {!expanded && Icons}
+      {(!expanded || appMode === DRAW_MODE) && Icons}
     </View>
   );
 };

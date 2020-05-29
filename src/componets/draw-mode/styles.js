@@ -28,5 +28,11 @@ export const Styles = themeStyle => {
     backgroundColor: themeStyle.backgroundColorSecondary,
     position: 'relative',
   };
-  return {arrowIconDims, dragIconDims, btnDims};
+  const styleDoubleBtn = typeSwitched => ({
+    colorL: typeSwitched ? themeStyle.accentColor : '#fff',
+    colorR: typeSwitched ? '#fff' : themeStyle.accentColor,
+    backgroundColor: themeStyle.backgroundColor,
+    accentColor: themeStyle.accentColor,
+  });
+  return {arrowIconDims, dragIconDims, btnDims, styleDoubleBtn};
 };

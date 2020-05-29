@@ -48,7 +48,7 @@ const Modal = () => {
   }, [appMode]);
 
   const doubleModal = () => {
-    setExpanded(false);
+    setExpanded(true);
 
     Animated.timing(modalY, {
       duration: 300,

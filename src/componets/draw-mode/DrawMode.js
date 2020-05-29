@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useContext, useMemo} from 'react';
+import React, {Fragment, useEffect, useState, useContext, useMemo} from 'react';
 import {Text} from 'react-native';
 import Btn from '../btn/Btn';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
@@ -9,13 +9,16 @@ import Toast from 'react-native-simple-toast';
 import {readRoutes, writeRoutes} from '../../utils/fs';
 import {randomID} from '../../utils/randomID';
 import {measureDistance} from '../../utils/measureDistanceCoords';
+import DoubleBtn from '../double-btn/DoubleBtn';
 import {Row, Column, stylesTextKM, Styles} from './styles';
 
 const DrawMode = ({themeStyle}) => {
+  const [typeSwitched, setTypeSwitched] = useState(false);
   const {setCurrentRoute, setDefaultRoute, currentRoute} = useContext(routeContext);
   const {dragMode, setDragMode} = useContext(modalContext);
 
-  const {arrowIconDims, dragIconDims, btnDims} = Styles(themeStyle);
+  const {arrowIconDims, dragIconDims, btnDims, styleDoubleBtn} = Styles(themeStyle);
+  const styledDoubleBtn = styleDoubleBtn(typeSwitched);
 
   const IconLeftArrowWrap = <IconLeftArrow width={30} height={33} fill={themeStyle.accentColor} />;
   const IconDragWrap = <IconDrag width={29} height={38} fill={themeStyle.accentColor} />;
@@ -59,7 +62,13 @@ const DrawMode = ({themeStyle}) => {
             <Text style={[stylesTextKM, {color: themeStyle.textColor}]}>{distance} km</Text>
           </Column>
           <Column alignItems={'flex-end'}>
-            <Btn style={btnDims} title={'Save Route'} onPress={onPressSave} />
+            <DoubleBtn
+              style={styledDoubleBtn}
+              textL={'Dots'}
+              value={typeSwitched}
+              textR={'Lines'}
+              onPress={() => setTypeSwitched(!typeSwitched)}
+            />
           </Column>
         </Row>
         <Row>
@@ -70,13 +79,13 @@ const DrawMode = ({themeStyle}) => {
             <RoundedIcon style={dragIconDims} IconComponent={IconDragWrap} onPress={onPressDragMode} />
           </Column>
           <Column alignItems={'flex-end'} marginTop={10}>
-            <Btn style={btnDims} title={'Save Route'} onPress={onPressSave} />
+            <Btn onPress={onPressSave} style={btnDims} title={'Save Route'} />
           </Column>
         </Row>
       </Fragment>
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [distance, dragMode],
+    [distance, dragMode, typeSwitched],
   );
 };
 
