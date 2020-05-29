@@ -12,7 +12,8 @@ import IconGps from '../svg-icons/icon-gps/IconGps';
 import {styleContainer, styleMap, Styles} from './styles';
 import {APP_MODE} from '../../constants/constants';
 import {MAP_TOKEN} from 'react-native-dotenv';
-
+import {FetchDirections} from '../../utils/directions';
+import {isFilledArr} from '../../utils/isFilledArr';
 const {height, width} = Dimensions.get('window');
 const {VIEW_ROUTE, DRAW_MODE} = APP_MODE;
 
@@ -21,13 +22,24 @@ MapboxGL.setAccessToken(MAP_TOKEN);
 const Map = () => {
   const {theme, getThemeStyle} = useContext(themeContext);
   const {dragMode, expanded} = useContext(modalContext);
-  const {appMode} = useContext(appModeContext);
+  const {appMode, isDirectionsMode} = useContext(appModeContext);
   const {setCameraRef, zoomLevel, coordinates, cameraRef} = useContext(mapContext);
   const {currentRoute, setCurrentRoute} = useContext(routeContext);
   const themeStyle = getThemeStyle(theme);
   const {moveToCurrPosition} = Groove(cameraRef);
   const {points} = currentRoute;
-
+  const setRoute = coords => setCurrentRoute({...currentRoute, points: coords});
+  const fetchDirections = startend =>
+    FetchDirections(startend).then(
+      coords => isFilledArr(coords) && setRoute([...points, ...coords]),
+      error => {
+        Toast.show(
+          error.message === 'Network request failed' ? 'Network request failed' : 'An error occurred. Try later',
+        );
+      },
+    );
+  const isDrawMode = appMode === DRAW_MODE && !dragMode && !isDirectionsMode;
+  const isDrawDirectionsMode = isDirectionsMode && !dragMode;
   const {styleInfoIcon, styleGpsIcon} = Styles(themeStyle, height);
 
   const IconGpsWrap = <IconGps width={32} height={32} fill={themeStyle.accentColor} />;
@@ -49,7 +61,9 @@ const Map = () => {
 
   const onPressMap = info => {
     const {coordinates: coords} = info.geometry;
-    appMode === DRAW_MODE && !dragMode && setCurrentRoute({...currentRoute, points: [...points, coords]});
+    isDrawDirectionsMode &&
+      (isFilledArr(points) ? fetchDirections([points.slice(-1)[0], coords]) : setRoute([...points, coords]));
+    isDrawMode && setRoute([...points, coords]);
   };
 
   const Icons = (

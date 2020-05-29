@@ -2,7 +2,7 @@ import React, {Fragment, useEffect, useState, useContext, useMemo} from 'react';
 import {Text} from 'react-native';
 import Btn from '../btn/Btn';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
-import {routeContext, modalContext} from '../../contexts/contexts';
+import {routeContext, modalContext, appModeContext} from '../../contexts/contexts';
 import IconLeftArrow from '../svg-icons/icon-left-arrow/IconLeftArrow';
 import IconDrag from '../svg-icons/icon-drag/IconDrag';
 import Toast from 'react-native-simple-toast';
@@ -15,6 +15,7 @@ import {Row, Column, stylesTextKM, Styles} from './styles';
 const DrawMode = ({themeStyle}) => {
   const [typeSwitched, setTypeSwitched] = useState(false);
   const {setCurrentRoute, setDefaultRoute, currentRoute} = useContext(routeContext);
+  const {setIsDirectionsMode} = useContext(appModeContext);
   const {dragMode, setDragMode} = useContext(modalContext);
 
   const {arrowIconDims, dragIconDims, btnDims, styleDoubleBtn} = Styles(themeStyle);
@@ -32,6 +33,10 @@ const DrawMode = ({themeStyle}) => {
     setDistance(measureDistance(points));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [points]);
+
+  useEffect(() => {
+    setIsDirectionsMode(typeSwitched);
+  }, [typeSwitched, setIsDirectionsMode]);
 
   const onPressCancel = () => {
     setDragMode(false);

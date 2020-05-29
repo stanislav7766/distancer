@@ -49,5 +49,7 @@ export const themeContext = createContext({
 export const appModeContext = createContext({
   appMode: APP_MODE.VIEW_MODE,
   prevAppMode: APP_MODE.VIEW_MODE,
+  isDirectionsMode: false,
   setAppMode: () => {},
+  setIsDirectionsMode: () => {},
 });

@@ -66,8 +66,12 @@ export const ThemeState = () => {
 export const AppModeState = () => {
   const [appModeState, setState] = useState({
     appMode: APP_MODE.VIEW_MODE,
+    isDirectionsMode: false,
     setAppMode(appMode) {
       setState(prev => ({...prev, appMode}));
+    },
+    setIsDirectionsMode(isDirectionsMode) {
+      setState(prev => ({...prev, isDirectionsMode}));
     },
   });
   return appModeState;
