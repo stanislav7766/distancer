@@ -11,8 +11,6 @@ export const FetchDirections = coords =>
     fetch(url)
       .then(response => response.json())
       .then(res => {
-        console.log(res);
-
         res.code !== 'Ok' && resolve([]);
         resolve(filterResponse(res));
       })
