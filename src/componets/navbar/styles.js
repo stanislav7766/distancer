@@ -2,7 +2,8 @@ export {Row, Column} from '../../constants/styles';
 
 export const styleContainer = {
   width: '100%',
-  height: 0,
+  minHeight: 50,
+  justifyContent: 'center',
   backgroundColor: '#fff',
   borderRadius: 0,
   position: 'absolute',
