@@ -8,7 +8,7 @@ import IconDot from '../svg-icons/icon-dot/IconDot';
 import {readRoutes} from '../../utils/fs';
 import {isFilledArr} from '../../utils/isFilledArr';
 import {Row, styleWrap, Styles} from './styles';
-import {APP_MODE, WINDOW_HEIGHT, NAVBAR_HEIGHT} from '../../constants/constants';
+import {APP_MODE, WINDOW_HEIGHT, NAVBAR_HEIGHT, ERROR_OCCURRED, ROUTES_LIST_EMPTY} from '../../constants/constants';
 const {VIEW_ROUTE} = APP_MODE;
 
 const SavedMode = ({themeStyle, closeModal}) => {
@@ -24,9 +24,9 @@ const SavedMode = ({themeStyle, closeModal}) => {
     (async () => {
       try {
         const _routes = await readRoutes();
-        isFilledArr(_routes) ? setRoutes(_routes) : Toast.show('Routes list is empty');
+        isFilledArr(_routes) ? setRoutes(_routes) : Toast.show(ROUTES_LIST_EMPTY);
       } catch (error) {
-        Toast.show('An error occurred');
+        Toast.show(ERROR_OCCURRED);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps

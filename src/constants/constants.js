@@ -82,3 +82,15 @@ export const chars = {
 };
 
 export const HAS_LAUNCHED = 'hasLaunched';
+export const ERROR_GPS_TURNED_OFF = 'No location provider available. Turn on GPS';
+export const ERROR_GPS_TRY_AGAIN = 'Try again';
+export const ERROR_OCCURRED = 'An error occurred';
+export const ERROR_NETWORK_FAILED = 'Network request failed';
+export const GPS_PERMISSIONS_DENIED = 'Location permissions denied';
+export const GPS_PERMISSIONS_GRANTED = 'Location permissions granted';
+export const GPS_ALLOW_PERMISSIONS = 'Allow permissions in settings';
+export const ROUTES_LIST_EMPTY = 'Routes list is empty';
+export const GIVE_GPS_PERMISSIONS = 'Give Location Permission';
+export const GIVE_GPS_PERMISSIONS_DETAILED = 'App needs location permission to find your position';
+export const GPS_PERMS_ACCESS_COARSE = 'android.permission.ACCESS_COARSE_LOCATION';
+export const GPS_PERMS_ACCESS_FINE = 'android.permission.ACCESS_FINE_LOCATION';

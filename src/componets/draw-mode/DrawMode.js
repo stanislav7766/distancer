@@ -11,6 +11,7 @@ import {randomID} from '../../utils/randomID';
 import {measureDistance} from '../../utils/measureDistanceCoords';
 import DoubleBtn from '../double-btn/DoubleBtn';
 import {Row, Column, stylesTextKM, Styles} from './styles';
+import {ERROR_OCCURRED} from '../../constants/constants';
 
 const DrawMode = ({themeStyle}) => {
   const [typeSwitched, setTypeSwitched] = useState(false);
@@ -52,10 +53,10 @@ const DrawMode = ({themeStyle}) => {
         const routes = await readRoutes();
         const res = await writeRoutes(routes.length > 0 ? [...routes, route] : [route]);
         res && onPressCancel();
-        Toast.show(res ? 'Saved' : 'An error occurred');
+        Toast.show(res ? 'Saved' : ERROR_OCCURRED);
       }
     } catch (error) {
-      Toast.show('An error occurred');
+      Toast.show(ERROR_OCCURRED);
     }
   };
 

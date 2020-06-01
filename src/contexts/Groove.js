@@ -1,4 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
+import Toast from 'react-native-simple-toast';
+import {ERROR_OCCURRED, ERROR_GPS_TRY_AGAIN, ERROR_GPS_TURNED_OFF} from '../constants/constants';
 
 export const Groove = cameraRef => {
   const moveCamera = ({zoomLevel, centerCoordinate}) => {
@@ -17,7 +19,14 @@ export const Groove = cameraRef => {
     const onPositionUpdate = ({longitude, latitude}) => {
       moveCamera({centerCoordinate: [longitude, latitude], zoomLevel});
     };
-    Geolocation.getCurrentPosition(({coords}) => onPositionUpdate(coords));
+    Geolocation.getCurrentPosition(
+      ({coords}) => onPositionUpdate(coords),
+      err => {
+        const toast = err.code === 2 ? ERROR_GPS_TURNED_OFF : err.code === 3 ? ERROR_GPS_TRY_AGAIN : ERROR_OCCURRED;
+        Toast.show(toast);
+      },
+      {timeout: 3000},
+    );
   };
 
   return {moveToCurrPosition, moveCamera};

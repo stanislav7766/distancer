@@ -6,6 +6,7 @@ import Map from '../../componets/map/Map';
 import Modal from '../../componets/modal/Modal';
 import IsFirstLaunch from '../../componets/is-first-launch/IsFirstLaunch';
 import {initialLoad, readSettings, writeSettings} from '../../utils/fs';
+import {ERROR_OCCURRED} from '../../constants/constants';
 
 const isGoOut = appState => appState === 'background' || appState === 'inactive';
 
@@ -20,7 +21,7 @@ const Landing = () => {
           const settings = await readSettings();
           settings.theme && settings.theme !== theme && (await writeSettings({...settings, theme}));
         } catch (error) {
-          Toast.show('An error occurred');
+          Toast.show(ERROR_OCCURRED);
         }
       }
     })();
@@ -38,7 +39,7 @@ const Landing = () => {
           _theme && _theme !== theme && setTheme(_theme);
         }
       } catch (error) {
-        Toast.show('An error occurred');
+        Toast.show(ERROR_OCCURRED);
       }
     };
     fetchInitialSettings();

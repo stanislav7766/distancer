@@ -14,6 +14,13 @@ import {APP_MODE} from '../../constants/constants';
 import {MAP_TOKEN} from 'react-native-dotenv';
 import {FetchDirections} from '../../utils/directions';
 import {isFilledArr} from '../../utils/isFilledArr';
+import {
+  ERROR_OCCURRED,
+  ERROR_NETWORK_FAILED,
+  GPS_ALLOW_PERMISSIONS,
+  GPS_PERMISSIONS_DENIED,
+  GPS_PERMISSIONS_GRANTED,
+} from '../../constants/constants';
 const {height, width} = Dimensions.get('window');
 const {VIEW_ROUTE, DRAW_MODE} = APP_MODE;
 
@@ -33,9 +40,7 @@ const Map = () => {
     FetchDirections(startend).then(
       coords => isFilledArr(coords) && setRoute([...points, ...coords]),
       error => {
-        Toast.show(
-          error.message === 'Network request failed' ? 'Network request failed' : 'An error occurred. Try later',
-        );
+        Toast.show(error.message === ERROR_NETWORK_FAILED ? ERROR_NETWORK_FAILED : `${ERROR_OCCURRED}. Try later`);
       },
     );
   const isDrawMode = appMode === DRAW_MODE && !dragMode && !isDirectionsMode;
@@ -49,11 +54,11 @@ const Map = () => {
     (async () => {
       const res = await askPermissions();
       if (res) {
-        Toast.show('Location permissions granted');
+        Toast.show(GPS_PERMISSIONS_GRANTED);
         MapboxGL.setTelemetryEnabled(false);
       } else {
-        Toast.show('Location permissions denied');
-        Toast.show('Allow permissions in settings');
+        Toast.show(GPS_PERMISSIONS_DENIED);
+        Toast.show(GPS_ALLOW_PERMISSIONS);
         BackHandler.exitApp();
       }
     })();

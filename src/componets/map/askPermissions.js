@@ -1,17 +1,22 @@
 import {PermissionsAndroid} from 'react-native';
+import {
+  GIVE_GPS_PERMISSIONS,
+  GIVE_GPS_PERMISSIONS_DETAILED,
+  GPS_PERMS_ACCESS_COARSE,
+  GPS_PERMS_ACCESS_FINE,
+} from '../../constants/constants';
 
 const askPermissions = () =>
   new Promise(resolve => {
     PermissionsAndroid.requestMultiple(
       [PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION],
       {
-        title: 'Give Location Permission',
-        message: 'App needs location permission to find your position.',
+        title: GIVE_GPS_PERMISSIONS,
+        message: GIVE_GPS_PERMISSIONS_DETAILED,
       },
     )
       .then(granted =>
-        granted['android.permission.ACCESS_COARSE_LOCATION'] === 'granted' &&
-        granted['android.permission.ACCESS_FINE_LOCATION'] === 'granted'
+        granted[GPS_PERMS_ACCESS_COARSE] === 'granted' && granted[GPS_PERMS_ACCESS_FINE] === 'granted'
           ? resolve(true)
           : resolve(false),
       )

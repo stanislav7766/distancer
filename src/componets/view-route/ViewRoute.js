@@ -5,7 +5,7 @@ import {routeContext, appModeContext} from '../../contexts/contexts';
 import {writeRoutes} from '../../utils/fs';
 import Toast from 'react-native-simple-toast';
 import {Row, Column, stylesTextKM, Styles} from './styles';
-import {APP_MODE} from '../../constants/constants';
+import {APP_MODE, ERROR_OCCURRED} from '../../constants/constants';
 
 const {VIEW_MODE} = APP_MODE;
 const removeRoute = (arr, id) => arr.filter(route => route.id !== id);
@@ -28,9 +28,9 @@ const ViewRoute = ({themeStyle}) => {
         const _routes = removeRoute(routes, currentRoute.id);
         const written = await writeRoutes(_routes);
         written && onPressCancel();
-        Toast.show(written ? 'Deleted' : 'An error occurred');
+        Toast.show(written ? 'Deleted' : ERROR_OCCURRED);
       } catch (error) {
-        Toast.show('An error occurred');
+        Toast.show(ERROR_OCCURRED);
       }
     })();
   };
