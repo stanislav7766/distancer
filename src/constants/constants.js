@@ -6,6 +6,10 @@ export const THEMES = {
   LIGHT: 'light',
 };
 
+export const ACCENT_GREEN = '#65FF4B';
+export const ACCENT_RED = '#fe5e60';
+export const ACCENT_BLUE = '#75bbfb';
+
 export const WINDOW_HEIGHT = height;
 export const WINDOW_WIDTH = width;
 

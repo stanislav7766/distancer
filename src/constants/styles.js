@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {THEMES} from './constants';
+import {THEMES, ACCENT_GREEN, ACCENT_BLUE, ACCENT_RED} from './constants';
 
 export const Column = styled.View`
   flex: 1;
@@ -15,19 +15,49 @@ export const Row = styled.View`
 
 export const ThemeStyle = {
   [THEMES.DARK]: {
-    accentColor: '#00C2FF',
-    accentColorSecondary: '#FF6868',
+    accentColor: ACCENT_BLUE,
+    accentColorSecondary: ACCENT_RED,
     backgroundColor: '#404040',
     backgroundColorSecondary: '#525252',
     textColor: '#fff',
     textColorSecondary: '#8D8D8D',
   },
   [THEMES.LIGHT]: {
-    accentColor: '#00C2FF',
-    accentColorSecondary: '#FF6868',
+    accentColor: ACCENT_BLUE,
+    accentColorSecondary: ACCENT_RED,
     backgroundColor: '#fff',
     backgroundColorSecondary: '#fff',
     textColor: '#000',
     textColorSecondary: '#8D8D8D',
   },
+};
+
+export const lineStyle = {
+  lineCap: 'round',
+  lineWidth: 6,
+  lineOpacity: 1,
+  lineColor: ACCENT_BLUE,
+};
+
+export const annotationStyle = {
+  width: 20,
+  height: 20,
+  backgroundColor: ACCENT_BLUE,
+  borderRadius: 20 / 2,
+};
+
+export const redPoint = {
+  circleOpacity: 1,
+  circleColor: ACCENT_RED,
+  circleRadius: 20 / 2 - 3,
+};
+export const greenPoint = {
+  circleOpacity: 1,
+  circleColor: ACCENT_GREEN,
+  circleRadius: 20 / 2 - 3,
+};
+export const mainPoint = {
+  circleOpacity: 1,
+  circleColor: ACCENT_BLUE,
+  circleRadius: 20 / 2,
 };

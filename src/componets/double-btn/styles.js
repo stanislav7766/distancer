@@ -1,3 +1,4 @@
+import {ACCENT_BLUE} from '../../constants/constants';
 export const styleIcon = {
   position: 'relative',
   width: 155,
@@ -6,7 +7,7 @@ export const styleIcon = {
 export const styleBtn = {
   position: 'relative',
   width: 155 / 2,
-  color: '#00c2ff',
+  color: ACCENT_BLUE,
   textAlign: 'center',
   fontSize: 22,
   backgroundColor: 'transparent',

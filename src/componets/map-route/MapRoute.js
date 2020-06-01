@@ -1,39 +1,20 @@
-import React, {useContext, Fragment, useMemo} from 'react';
-import {View} from 'react-native';
+import React, {useContext, useMemo, Fragment} from 'react';
 import {modalContext, routeContext} from '../../contexts/contexts';
-import {
-  Animated as AnimatedM,
-  LineLayer,
-  ShapeSource,
-  PointAnnotation,
-  CircleLayer,
-} from '@react-native-mapbox-gl/maps';
-import {randomID} from '../../utils/randomID';
+import DotLine from './DotLine';
 import {isFilledArr} from '../../utils/isFilledArr';
-
-const ANNOTATION_SIZE = 14;
-const ACCENT_GREEN = '#65FF4B';
-const ACCENT_RED = '#FF6868';
-const ACCENT_BLUE = '#00C2FF';
-
-const makeShape = (type, coordinates) =>
-  new AnimatedM.Shape({
-    type,
-    coordinates,
-  });
+import {isEqualArr} from '../../utils/isEqualArr';
 
 const MapRoute = () => {
   const {dragMode} = useContext(modalContext);
   const {setCurrentRoute, currentRoute} = useContext(routeContext);
   const {points} = currentRoute;
-  const isFirstPoint = i => i === 0;
-  const isLastPoint = i => points && i === points.length - 1;
   let index;
+  const chunks = splitted(points, points.length > 25 ? Math.floor(points.length / 10) : 5);
 
   const onDragStart = ({geometry}) => {
     const {coordinates} = geometry;
     for (let i = 0; i < points.length; i++) {
-      if (JSON.stringify(points[i]) === JSON.stringify(coordinates)) {
+      if (isEqualArr(points[i], coordinates)) {
         index = i;
         break;
       }
@@ -47,92 +28,35 @@ const MapRoute = () => {
     setCurrentRoute({...currentRoute, points: nPoints});
   };
 
-  const Dots = useMemo(
+  const MapDotLine = useMemo(
     () => (
       <Fragment>
-        {points.map((point, i) =>
-          dragMode ? (
-            <PointAnnotation
-              key={i}
-              id={`${randomID()}`}
-              onDragStart={onDragStart}
-              onDragEnd={onDragEnd}
-              draggable={true}
-              coordinate={point}
-            >
-              <View style={isFirstPoint(i) || isLastPoint(i) ? annotationStyle : annotationSmallStyle} />
-            </PointAnnotation>
-          ) : (
-            <ShapeSource key={i} id={`${randomID()}`} shape={makeShape('Point', point)}>
-              <CircleLayer
-                id={`${randomID()}`}
-                style={isFirstPoint(i) || isLastPoint(i) ? mainPoint : mainPointSmall}
-              />
-              {isFirstPoint(i) && <CircleLayer id={`${randomID()}`} style={redPoint} />}
-              {isLastPoint(i) && <CircleLayer id={`${randomID()}`} style={greenPoint} />}
-            </ShapeSource>
-          ),
-        )}
+        {chunks.map((chunk, i) => (
+          <DotLine
+            start={points[0]}
+            end={points.slice(-1)[0]}
+            key={i}
+            dragMode={dragMode}
+            chunkCoords={chunk}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+          />
+        ))}
       </Fragment>
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [points, dragMode],
   );
 
-  const Line = useMemo(
-    () => (
-      <ShapeSource id={`${randomID()}`} shape={makeShape('LineString', points)}>
-        <LineLayer id={`${randomID()}`} style={lineStyle} />
-      </ShapeSource>
-    ),
-    [points],
-  );
-
-  return (
-    <Fragment>
-      {isFilledArr(points) && Line}
-      {isFilledArr(points) && Dots}
-    </Fragment>
-  );
+  return <Fragment>{isFilledArr(chunks) && MapDotLine}</Fragment>;
 };
 export default MapRoute;
 
-const lineStyle = {
-  lineCap: 'round',
-  lineWidth: 6,
-  lineOpacity: 1,
-  lineColor: ACCENT_BLUE,
-};
-const mainPoint = {
-  circleOpacity: 1,
-  circleColor: ACCENT_BLUE,
-  circleRadius: 20 / 2,
-};
-const mainPointSmall = {
-  circleOpacity: 1,
-  circleColor: ACCENT_BLUE,
-  circleRadius: ANNOTATION_SIZE / 2,
-};
-const redPoint = {
-  circleOpacity: 1,
-  circleColor: ACCENT_RED,
-  circleRadius: 20 / 2 - 3,
-};
-const greenPoint = {
-  circleOpacity: 1,
-  circleColor: ACCENT_GREEN,
-  circleRadius: 20 / 2 - 3,
-};
-
-const annotationStyle = {
-  width: 20,
-  height: 20,
-  backgroundColor: ACCENT_BLUE,
-  borderRadius: 20 / 2,
-};
-const annotationSmallStyle = {
-  width: ANNOTATION_SIZE,
-  height: ANNOTATION_SIZE,
-  backgroundColor: ACCENT_BLUE,
-  borderRadius: ANNOTATION_SIZE / 2,
+const splitted = (arr, length) => {
+  const result = [];
+  for (let i = 0; i < arr.length; i += length - 1) {
+    const chunk = arr.slice(i, i + length);
+    result.push(chunk);
+  }
+  return result;
 };
