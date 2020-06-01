@@ -3,6 +3,7 @@ import {Animated} from 'react-native';
 import {
   THEMES,
   DEFAULT_MAP,
+  DIRECTIONS_MODE,
   DEFAULT_ROUTES,
   DEFAULT_PLACES,
   DEFAULT_ROUTE,
@@ -66,12 +67,16 @@ export const ThemeState = () => {
 export const AppModeState = () => {
   const [appModeState, setState] = useState({
     appMode: APP_MODE.VIEW_MODE,
+    directionsMode: DIRECTIONS_MODE.WALKING,
     isDirectionsMode: false,
     setAppMode(appMode) {
       setState(prev => ({...prev, appMode}));
     },
     setIsDirectionsMode(isDirectionsMode) {
       setState(prev => ({...prev, isDirectionsMode}));
+    },
+    setDirectionsMode(directionsMode) {
+      setState(prev => ({...prev, directionsMode}));
     },
   });
   return appModeState;

@@ -20,6 +20,11 @@ export const APP_MODE = {
   SAVED_MODE: 'Saved',
   VIEW_ROUTE: 'viewRoute',
 };
+export const DIRECTIONS_MODE = {
+  WALKING: 'walking',
+  CYCLING: 'cycling',
+  DRIVING: 'driving',
+};
 
 export const NAVBAR_HEIGHT = height * 0.06;
 

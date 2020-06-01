@@ -37,6 +37,9 @@ const DrawMode = ({themeStyle}) => {
 
   useEffect(() => {
     setIsDirectionsMode(typeSwitched);
+    return () => {
+      setIsDirectionsMode(false);
+    };
   }, [typeSwitched, setIsDirectionsMode]);
 
   const onPressCancel = () => {

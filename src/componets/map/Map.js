@@ -7,6 +7,7 @@ import MapRoute from '../map-route/MapRoute';
 import askPermissions from './askPermissions';
 import Toast from 'react-native-simple-toast';
 import {Groove} from '../../contexts/Groove';
+import DirectionsBar from '../directions-bar/DirectionsBar';
 import IconInfo from '../svg-icons/icon-info/IconInfo';
 import IconGps from '../svg-icons/icon-gps/IconGps';
 import {styleContainer, styleMap, Styles} from './styles';
@@ -29,7 +30,7 @@ MapboxGL.setAccessToken(MAP_TOKEN);
 const Map = () => {
   const {theme, getThemeStyle} = useContext(themeContext);
   const {dragMode, expanded} = useContext(modalContext);
-  const {appMode, isDirectionsMode} = useContext(appModeContext);
+  const {appMode, isDirectionsMode, directionsMode, setDirectionsMode} = useContext(appModeContext);
   const {setCameraRef, zoomLevel, coordinates, cameraRef} = useContext(mapContext);
   const {currentRoute, setCurrentRoute} = useContext(routeContext);
   const themeStyle = getThemeStyle(theme);
@@ -37,7 +38,7 @@ const Map = () => {
   const {points} = currentRoute;
   const setRoute = coords => setCurrentRoute({...currentRoute, points: coords});
   const fetchDirections = startend =>
-    FetchDirections(startend).then(
+    FetchDirections(startend, directionsMode).then(
       coords => isFilledArr(coords) && setRoute([...points, ...coords]),
       error => {
         Toast.show(error.message === ERROR_NETWORK_FAILED ? ERROR_NETWORK_FAILED : `${ERROR_OCCURRED}. Try later`);
@@ -93,6 +94,7 @@ const Map = () => {
         <UserLocation />
       </MapView>
       {(!expanded || appMode === DRAW_MODE) && Icons}
+      {isDirectionsMode && <DirectionsBar mode={directionsMode} setMode={setDirectionsMode} themeStyle={themeStyle} />}
     </View>
   );
 };
