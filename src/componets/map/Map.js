@@ -82,6 +82,7 @@ const Map = () => {
   return (
     <View style={[styleContainer, {height, width}]}>
       <MapView
+        localizeLabels={true}
         onPress={onPressMap}
         styleURL={MapboxGL.StyleURL.Street}
         style={styleMap}
