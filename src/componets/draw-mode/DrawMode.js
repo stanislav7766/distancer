@@ -11,12 +11,12 @@ import {randomID} from '../../utils/randomID';
 import {measureDistance} from '../../utils/measureDistanceCoords';
 import DoubleBtn from '../double-btn/DoubleBtn';
 import {Row, Column, stylesTextKM, Styles} from './styles';
-import {ERROR_OCCURRED} from '../../constants/constants';
+import {ERROR_OCCURRED, DIRECTIONS_MODE} from '../../constants/constants';
 
 const DrawMode = ({themeStyle}) => {
   const [typeSwitched, setTypeSwitched] = useState(false);
   const {setCurrentRoute, setDefaultRoute, currentRoute} = useContext(routeContext);
-  const {setIsDirectionsMode} = useContext(appModeContext);
+  const {setIsDirectionsMode, directionsMode, setDirectionsMode} = useContext(appModeContext);
   const {dragMode, setDragMode} = useContext(modalContext);
 
   const {arrowIconDims, dragIconDims, btnDims, styleDoubleBtn} = Styles(themeStyle);
@@ -37,10 +37,11 @@ const DrawMode = ({themeStyle}) => {
 
   useEffect(() => {
     setIsDirectionsMode(typeSwitched);
+    setDirectionsMode(typeSwitched ? DIRECTIONS_MODE.WALKING : '');
     return () => {
       setIsDirectionsMode(false);
     };
-  }, [typeSwitched, setIsDirectionsMode]);
+  }, [typeSwitched, setIsDirectionsMode, setDirectionsMode]);
 
   const onPressCancel = () => {
     setDragMode(false);
@@ -52,7 +53,7 @@ const DrawMode = ({themeStyle}) => {
   const onPressSave = async () => {
     try {
       if (currentRoute.distance > 0) {
-        const route = {...currentRoute, id: randomID()};
+        const route = {...currentRoute, directionsMode, id: randomID()};
         const routes = await readRoutes();
         const res = await writeRoutes(routes.length > 0 ? [...routes, route] : [route]);
         res && onPressCancel();

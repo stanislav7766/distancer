@@ -13,7 +13,7 @@ const {VIEW_ROUTE} = APP_MODE;
 
 const SavedMode = ({themeStyle, closeModal}) => {
   const {zoomLevel, cameraRef} = useContext(mapContext);
-  const {setAppMode} = useContext(appModeContext);
+  const {setAppMode, setDirectionsMode} = useContext(appModeContext);
   const {moveCamera} = Groove(cameraRef);
   const {routes, setCurrentRoute, setRoutes} = useContext(routeContext);
 
@@ -33,10 +33,12 @@ const SavedMode = ({themeStyle, closeModal}) => {
   }, []);
 
   const {styleItem} = Styles(themeStyle);
+  const routeWihoutDirections = ({directionsMode, ...route}) => route;
 
   const onPressItem = route => {
     setAppMode(VIEW_ROUTE);
-    setCurrentRoute(route);
+    setDirectionsMode(route.directionsMode);
+    setCurrentRoute(routeWihoutDirections(route));
     moveCamera({zoomLevel, centerCoordinate: route.points[0]});
     closeModal();
   };

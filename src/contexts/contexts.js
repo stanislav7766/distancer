@@ -3,7 +3,6 @@ import {
   THEMES,
   DEFAULT_MAP,
   APP_MODE,
-  DIRECTIONS_MODE,
   DEFAULT_ROUTE,
   DEFAULT_PLACES,
   DEFAULT_ROUTES,
@@ -49,7 +48,7 @@ export const themeContext = createContext({
 
 export const appModeContext = createContext({
   appMode: APP_MODE.VIEW_MODE,
-  directionsMode: DIRECTIONS_MODE.WALKING,
+  directionsMode: '',
   prevAppMode: APP_MODE.VIEW_MODE,
   isDirectionsMode: false,
   setAppMode: () => {},

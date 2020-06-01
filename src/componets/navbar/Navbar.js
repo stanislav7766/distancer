@@ -20,8 +20,8 @@ const Navbar = () => {
     appMode === MENU_MODE ? setShownMenu(true) : setShownMenu(false);
   }, [appMode, setShownMenu]);
 
-  const NavbarItems = Object.keys(navbarItems).map(mode => (
-    <Column>
+  const NavbarItems = Object.keys(navbarItems).map((mode, i) => (
+    <Column key={i}>
       <TouchableOpacity style={styleTouchable} onPress={() => onPressItem(APP_MODE[mode])}>
         {navbarItems[mode](appMode === APP_MODE[mode] ? themeStyle.accentColor : themeStyle.textColorSecondary)}
       </TouchableOpacity>

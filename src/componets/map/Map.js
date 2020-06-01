@@ -95,7 +95,7 @@ const Map = () => {
         <UserLocation />
       </MapView>
       {(!expanded || appMode === DRAW_MODE) && Icons}
-      {isDirectionsMode && <DirectionsBar mode={directionsMode} setMode={setDirectionsMode} themeStyle={themeStyle} />}
+      {isDirectionsMode && <DirectionsBar setMode={setDirectionsMode} themeStyle={themeStyle} />}
     </View>
   );
 };

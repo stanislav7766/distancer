@@ -6,13 +6,14 @@ import {writeRoutes} from '../../utils/fs';
 import Toast from 'react-native-simple-toast';
 import {Row, Column, stylesTextKM, Styles} from './styles';
 import {APP_MODE, ERROR_OCCURRED} from '../../constants/constants';
+import SelectDirection from '../directions-bar/SelectDirection';
 
 const {VIEW_MODE} = APP_MODE;
 const removeRoute = (arr, id) => arr.filter(route => route.id !== id);
 
 const ViewRoute = ({themeStyle}) => {
   const {setDefaultRoute, setDefaultRoutes, routes, currentRoute} = useContext(routeContext);
-  const {setAppMode} = useContext(appModeContext);
+  const {setAppMode, directionsMode} = useContext(appModeContext);
   const {btnDims} = Styles(themeStyle);
   const {distance} = currentRoute;
 
@@ -38,8 +39,17 @@ const ViewRoute = ({themeStyle}) => {
   return (
     <Fragment>
       <Row marginTop={10}>
-        <Column alignItems={'flex-start'}>
-          <Text style={[stylesTextKM, {color: themeStyle.textColor}]}>{distance} km</Text>
+        <Column>
+          <Row>
+            <Column alignItems={'flex-start'}>
+              <Text style={[stylesTextKM, {color: themeStyle.textColor}]}>{distance} km</Text>
+            </Column>
+          </Row>
+          <Row>
+            <Column alignItems={'flex-start'}>
+              <SelectDirection themeStyle={themeStyle} mode={directionsMode ? directionsMode : ''} />
+            </Column>
+          </Row>
         </Column>
         <Column alignItems={'flex-end'}>
           <Btn style={btnDims} title={'Delete Route'} onPress={onPressDelete} />
