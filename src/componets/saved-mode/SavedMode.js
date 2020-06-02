@@ -4,10 +4,10 @@ import {mapContext, appModeContext, routeContext} from '../../contexts/contexts'
 import {Groove} from '../../contexts/Groove';
 import Toast from 'react-native-simple-toast';
 import Item from '../item/Item';
-import IconDot from '../svg-icons/icon-dot/IconDot';
+import Preview from '../preview/Preview';
 import {readRoutes} from '../../utils/fs';
 import {isFilledArr} from '../../utils/isFilledArr';
-import {Row, styleWrap, Styles} from './styles';
+import {Row, Styles} from './styles';
 import {APP_MODE, WINDOW_HEIGHT, NAVBAR_HEIGHT, ERROR_OCCURRED, ROUTES_LIST_EMPTY} from '../../constants/constants';
 const {VIEW_ROUTE} = APP_MODE;
 
@@ -16,8 +16,6 @@ const SavedMode = ({themeStyle, closeModal}) => {
   const {setAppMode, setDirectionsMode} = useContext(appModeContext);
   const {moveCamera} = Groove(cameraRef);
   const {routes, setCurrentRoute, setRoutes} = useContext(routeContext);
-
-  const IconDotWrap = <IconDot width={16} height={16} fill={themeStyle.accentColor} />;
   const maxHeight = WINDOW_HEIGHT - WINDOW_HEIGHT * 0.15 - NAVBAR_HEIGHT - 20;
 
   useEffect(() => {
@@ -34,6 +32,7 @@ const SavedMode = ({themeStyle, closeModal}) => {
 
   const {styleItem} = Styles(themeStyle);
   const routeWihoutDirections = ({directionsMode, ...route}) => route;
+  const IconWrap = coords => <Preview coords={coords} />;
 
   const onPressItem = route => {
     setAppMode(VIEW_ROUTE);
@@ -48,11 +47,11 @@ const SavedMode = ({themeStyle, closeModal}) => {
     <Fragment>
       {isFilledArr(routes) &&
         routes.map((el, i) => (
-          <Row style={styleWrap} key={i} marginBottom={isLastPoint(i) ? 20 : 0} marginTop={20}>
+          <Row key={i} marginBottom={isLastPoint(i) ? 20 : 0} marginTop={20}>
             <Item
               style={styleItem}
               onPress={() => onPressItem(el)}
-              IconComponent={IconDotWrap}
+              IconComponent={IconWrap(el.points)}
               text={`${el.distance} km${el.city.name && ', ' + el.city.name}`}
             />
           </Row>
