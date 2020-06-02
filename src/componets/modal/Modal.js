@@ -1,4 +1,4 @@
-import React, {useEffect, useContext} from 'react';
+import React, {useEffect, useRef, useContext} from 'react';
 import {Keyboard, Animated, View} from 'react-native';
 import {modalContext, routeContext, themeContext, placesContext, appModeContext} from '../../contexts/contexts';
 import DrawMode from '../draw-mode/DrawMode';
@@ -11,10 +11,11 @@ import {APP_MODE, WINDOW_HEIGHT} from '../../constants/constants';
 const {VIEW_ROUTE, VIEW_MODE, DRAW_MODE, MENU_MODE, SAVED_MODE} = APP_MODE;
 
 const Modal = () => {
+  const modalY = useRef(new Animated.Value(WINDOW_HEIGHT - 150)).current;
   const {setDefaultPlaces} = useContext(placesContext);
   const {theme, getThemeStyle} = useContext(themeContext);
   const {appMode} = useContext(appModeContext);
-  const {modalY, setExpanded, setDragMode} = useContext(modalContext);
+  const {setExpanded, setDragMode} = useContext(modalContext);
   const {setDefaultRoutes, setDefaultRoute} = useContext(routeContext);
   const themeStyle = getThemeStyle(theme);
 

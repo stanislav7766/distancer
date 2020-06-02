@@ -1,14 +1,6 @@
 import {useState} from 'react';
 import {Animated} from 'react-native';
-import {
-  THEMES,
-  DEFAULT_MAP,
-  DEFAULT_ROUTES,
-  DEFAULT_PLACES,
-  DEFAULT_ROUTE,
-  APP_MODE,
-  WINDOW_HEIGHT,
-} from '../constants/constants';
+import {THEMES, DEFAULT_MAP, DEFAULT_ROUTES, DEFAULT_PLACES, DEFAULT_ROUTE, APP_MODE} from '../constants/constants';
 import {ThemeStyle} from '../constants/styles';
 
 export const ModalState = () => {
@@ -16,7 +8,6 @@ export const ModalState = () => {
     dragMode: false,
     expanded: false,
     shownMenu: false,
-    modalY: new Animated.Value(WINDOW_HEIGHT - 150),
     setExpanded: expanded => setState(prev => ({...prev, expanded})),
     setShownMenu: shownMenu => setState(prev => ({...prev, shownMenu})),
     setDragMode: dragMode => setState(prev => ({...prev, dragMode})),

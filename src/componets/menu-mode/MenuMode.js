@@ -1,4 +1,4 @@
-import React, {Fragment, useState, useContext, useEffect} from 'react';
+import React, {Fragment, useRef, useContext, useEffect} from 'react';
 import {View, Animated} from 'react-native';
 import {themeContext} from '../../contexts/contexts';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
@@ -11,8 +11,8 @@ import {THEMES} from '../../constants/constants';
 const MenuMode = ({themeStyle}) => {
   const {theme, setTheme} = useContext(themeContext);
   const {styleItem} = Styles(themeStyle);
-  const [iconThemeX] = useState(new Animated.Value(theme === 'light' ? 0 : 30));
-  const [iconThemeXX] = useState(new Animated.Value(theme === 'light' ? 0 : 3.15));
+  const iconThemeX = useRef(new Animated.Value(theme === 'light' ? 0 : 30)).current;
+  const iconThemeXX = useRef(new Animated.Value(theme === 'light' ? 0 : 3.15)).current;
   const RotateData = iconThemeXX.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],

@@ -1,4 +1,4 @@
-import React, {Fragment, useState, useEffect} from 'react';
+import React, {Fragment, useRef, useEffect} from 'react';
 import {Text, Animated, View} from 'react-native';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
 import {Row, Column} from '../../constants/styles';
@@ -7,8 +7,8 @@ import {styleIcon, styleBtn, styleSwitch, styleTextAlign, styleTextColor} from '
 
 const DoubleBtn = ({style, textL, textR, value, onPress}) => {
   const {accentColor, colorL, colorR, backgroundColor} = style;
-  const [btnX] = useState(new Animated.Value(0));
-  const [btnXX] = useState(new Animated.Value(0));
+  const btnX = useRef(new Animated.Value(0)).current;
+  const btnXX = useRef(new Animated.Value(0)).current;
   const RotateData = btnXX.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
