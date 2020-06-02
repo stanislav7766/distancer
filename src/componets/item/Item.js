@@ -5,8 +5,8 @@ const Item = ({text, style, onPress, IconComponent}) => {
   return (
     <Container backgroundColor={style.backgroundColor} height={style.height} onPress={onPress}>
       <Row>
-        <Column width={'10%'}>{IconComponent && IconComponent}</Column>
-        <Column width={'auto'}>
+        <Column width={'auto'}>{IconComponent && IconComponent}</Column>
+        <Column marginLeft={10} width={'auto'}>
           <TextStyled textColor={style.textColor}> {text}</TextStyled>
         </Column>
       </Row>
