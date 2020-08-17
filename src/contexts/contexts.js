@@ -1,5 +1,15 @@
 import {createContext} from 'react';
-import {THEMES, DEFAULT_MAP, APP_MODE, DEFAULT_ROUTE, DEFAULT_PLACES, DEFAULT_ROUTES} from '../constants/constants';
+import {
+  THEMES,
+  DEFAULT_MAP,
+  APP_MODE,
+  DEFAULT_ROUTE,
+  DEFAULT_PLACES,
+  DEFAULT_ROUTES,
+  DEFAULT_LIVE_ROUTE,
+  DEFAULT_ACTIVITIES,
+  ROUTE_TYPES,
+} from '../constants/constants';
 
 export const mapContext = createContext({
   zoomLevel: DEFAULT_MAP.ZOOM,
@@ -25,6 +35,15 @@ export const routeContext = createContext({
   setDefaultRoutes: () => {},
 });
 
+export const liveRouteContext = createContext({
+  liveRoute: DEFAULT_LIVE_ROUTE,
+  activities: DEFAULT_ACTIVITIES,
+  setActivities: () => {},
+  setLiveRoute: () => {},
+  setDefaultLiveRoute: () => {},
+  setDefaultActivities: () => {},
+});
+
 export const placesContext = createContext({
   places: DEFAULT_PLACES,
   setDefaultPlaces: () => {},
@@ -39,10 +58,12 @@ export const themeContext = createContext({
 
 export const appModeContext = createContext({
   appMode: APP_MODE.VIEW_MODE,
+  viewMode: ROUTE_TYPES.ROUTE,
   directionsMode: '',
   prevAppMode: APP_MODE.VIEW_MODE,
   isDirectionsMode: false,
   setAppMode: () => {},
+  setViewMode: () => {},
   setIsDirectionsMode: () => {},
   setDirectionsMode: () => {},
 });

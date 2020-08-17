@@ -12,14 +12,38 @@ export const ACCENT_BLUE = '#75bbfb';
 
 export const WINDOW_HEIGHT = height;
 export const WINDOW_WIDTH = width;
-
+export const REQUIRE_LOCATION_PERMS = 'App requires location tracking permission';
+export const QUESTION_OPEN_SETTINGS = 'Would you like to open app settings?';
 export const APP_MODE = {
+  LIVE_MODE: 'Live',
   VIEW_MODE: 'View',
   DRAW_MODE: 'Draw',
   MENU_MODE: 'Menu',
   SAVED_MODE: 'Saved',
   VIEW_ROUTE: 'viewRoute',
 };
+export const LIVE_TYPES = {
+  STOP: 'stop',
+  PAUSE: 'pause',
+  GO: 'go',
+};
+export const LIVE_MODDING = [
+  {title: ` km/h`, subTitle: 'Avg. speed', type: 'avgSpeed'},
+  {title: ` km`, subTitle: 'Distance', type: 'distance'},
+  {title: '', subTitle: 'Time', type: 'time'},
+];
+export const LIVE_SPECS_DEFAULT = {
+  avgSpeed: 0.0,
+  distance: 0,
+  time: '00:00:00',
+  currSpeed: 0.0,
+};
+
+export const ROUTE_TYPES = {
+  ACTIVITY: 'activity',
+  ROUTE: 'route',
+};
+
 export const DIRECTIONS_MODE = {
   WALKING: 'walking',
   CYCLING: 'cycling',
@@ -37,6 +61,17 @@ export const DEFAULT_ROUTE = {
     centerCoords: [],
   },
 };
+export const DEFAULT_LIVE_ROUTE = {
+  distance: 0,
+  movingTime: '00:00:00',
+  totalTime: '00:00:00',
+  avgSpeed: 0.0,
+  currentSpeed: 0.0,
+  status: 'stop',
+  id: '',
+  points1: [],
+};
+export const DEFAULT_ACTIVITIES = [];
 export const DEFAULT_ROUTES = [];
 export const DEFAULT_PLACES = [];
 export const DEFAULT_MAP = {
@@ -95,7 +130,9 @@ export const GPS_PERMISSIONS_DENIED = 'Location permissions denied';
 export const GPS_PERMISSIONS_GRANTED = 'Location permissions granted';
 export const GPS_ALLOW_PERMISSIONS = 'Allow permissions in settings';
 export const ROUTES_LIST_EMPTY = 'Routes list is empty';
+export const ACTIVITIES_LIST_EMPTY = 'Activities list is empty';
 export const GIVE_GPS_PERMISSIONS = 'Give Location Permission';
 export const GIVE_GPS_PERMISSIONS_DETAILED = 'App needs location permission to find your position';
 export const GPS_PERMS_ACCESS_COARSE = 'android.permission.ACCESS_COARSE_LOCATION';
 export const GPS_PERMS_ACCESS_FINE = 'android.permission.ACCESS_FINE_LOCATION';
+export const PLEASE_FINISH_ACTIVITY = 'Please finish activity';

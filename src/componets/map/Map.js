@@ -1,9 +1,17 @@
 import React, {useEffect, useContext, Fragment} from 'react';
 import {Dimensions, BackHandler, View} from 'react-native';
 import MapboxGL, {MapView, UserLocation, Camera} from '@react-native-mapbox-gl/maps';
-import {mapContext, routeContext, themeContext, appModeContext, modalContext} from '../../contexts/contexts';
+import {
+  mapContext,
+  routeContext,
+  themeContext,
+  appModeContext,
+  modalContext,
+  liveRouteContext,
+} from '../../contexts/contexts';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
 import MapRoute from '../map-route/MapRoute';
+import LiveRoute from '../map-route/LiveRoute';
 import askPermissions from './askPermissions';
 import Toast from 'react-native-simple-toast';
 import {Groove} from '../../contexts/Groove';
@@ -21,17 +29,24 @@ import {
   GPS_ALLOW_PERMISSIONS,
   GPS_PERMISSIONS_DENIED,
   GPS_PERMISSIONS_GRANTED,
+  LIVE_SPECS_DEFAULT,
+  ROUTE_TYPES,
 } from '../../constants/constants';
-const {height, width} = Dimensions.get('window');
-const {VIEW_ROUTE, DRAW_MODE} = APP_MODE;
+import {measureDistance} from '../../utils/measureDistanceCoords';
+import {timeToSec, kmToM} from '../../utils/timeToSec';
 
+const {height, width} = Dimensions.get('window');
+const {VIEW_ROUTE, DRAW_MODE, LIVE_MODE} = APP_MODE;
+const {ACTIVITY, ROUTE} = ROUTE_TYPES;
 MapboxGL.setAccessToken(MAP_TOKEN);
 
 const Map = () => {
   const {theme, getThemeStyle} = useContext(themeContext);
   const {dragMode, expanded} = useContext(modalContext);
-  const {appMode, isDirectionsMode, directionsMode, setDirectionsMode} = useContext(appModeContext);
+  const {appMode, viewMode, isDirectionsMode, directionsMode, setDirectionsMode} = useContext(appModeContext);
   const {setCameraRef, zoomLevel, coordinates, cameraRef} = useContext(mapContext);
+  const {liveRoute, setLiveRoute} = useContext(liveRouteContext);
+  const {points1, movingTime} = liveRoute;
   const {currentRoute, setCurrentRoute} = useContext(routeContext);
   const themeStyle = getThemeStyle(theme);
   const {moveToCurrPosition} = Groove(cameraRef);
@@ -44,6 +59,7 @@ const Map = () => {
         Toast.show(error.message === ERROR_NETWORK_FAILED ? ERROR_NETWORK_FAILED : `${ERROR_OCCURRED}. Try later`);
       },
     );
+
   const isDrawMode = appMode === DRAW_MODE && !dragMode && !isDirectionsMode;
   const isDrawDirectionsMode = isDirectionsMode && !dragMode;
   const {styleInfoIcon, styleGpsIcon} = Styles(themeStyle, height);
@@ -65,11 +81,25 @@ const Map = () => {
     })();
   }, []);
 
+  useEffect(() => {
+    const distance = measureDistance(points1);
+    const avgSpeed =
+      distance === 0 ? LIVE_SPECS_DEFAULT.avgSpeed : (3.6 * (kmToM(distance) / timeToSec(movingTime))).toFixed(1);
+    setLiveRoute({
+      ...liveRoute,
+      distance,
+      avgSpeed,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [points1]);
+
   const onPressMap = info => {
     const {coordinates: coords} = info.geometry;
     isDrawDirectionsMode &&
       (isFilledArr(points) ? fetchDirections([points.slice(-1)[0], coords]) : setRoute([...points, coords]));
-    isDrawMode && setRoute([...points, coords]);
+    if (isDrawMode) {
+      setRoute([...points, coords]);
+    }
   };
 
   const Icons = (
@@ -78,6 +108,8 @@ const Map = () => {
       <RoundedIcon style={styleInfoIcon} IconComponent={IconInfoWrap} />
     </Fragment>
   );
+  const isViewRoute = appMode === VIEW_ROUTE && viewMode === ROUTE;
+  const isViewActivity = appMode === VIEW_ROUTE && viewMode === ACTIVITY;
 
   return (
     <View style={[styleContainer, {height, width}]}>
@@ -91,7 +123,8 @@ const Map = () => {
         compassEnabled={false}
       >
         <Camera ref={setCameraRef} zoomLevel={zoomLevel} centerCoordinate={coordinates} followZoomLevel={zoomLevel} />
-        {(appMode === DRAW_MODE || appMode === VIEW_ROUTE) && <MapRoute />}
+        {(appMode === DRAW_MODE || isViewRoute) && <MapRoute />}
+        {(appMode === LIVE_MODE || isViewActivity) && <LiveRoute />}
         <UserLocation />
       </MapView>
       {(!expanded || appMode === DRAW_MODE) && Icons}

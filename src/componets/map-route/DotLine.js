@@ -6,7 +6,7 @@ import {isFilledArr} from '../../utils/isFilledArr';
 import {annotationStyle, mainPoint, redPoint, greenPoint, lineStyle} from '../../constants/styles';
 import {isEqualArr} from '../../utils/isEqualArr';
 
-const DotLine = ({chunkCoords, start, end, dragMode, onDragStart, onDragEnd}) => {
+const DotLine = ({chunkCoords, start, end, dragMode, onDragStart, onDragEnd, lineOnly}) => {
   const [cacheCoords, setCacheCoords] = useState([]);
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const DotLine = ({chunkCoords, start, end, dragMode, onDragStart, onDragEnd}) =>
   return (
     <Fragment>
       {isFilledArr(cacheCoords) && Line}
-      {isFilledArr(cacheCoords) && Dots1}
+      {!lineOnly && isFilledArr(cacheCoords) && Dots1}
     </Fragment>
   );
 };

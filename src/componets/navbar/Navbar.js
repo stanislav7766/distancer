@@ -1,21 +1,34 @@
 import React, {useContext, useEffect, Fragment} from 'react';
 import {View, TouchableOpacity, Text} from 'react-native';
-import {themeContext, modalContext, appModeContext} from '../../contexts/contexts';
+import {themeContext, modalContext, appModeContext, liveRouteContext} from '../../contexts/contexts';
 import {styleContainer, styleWrap, styleTouchable, styleText, Row, Column} from './styles';
 import IconView from '../svg-icons/icon-view/IconView';
 import IconSaved from '../svg-icons/icon-saved/IconSaved';
 import IconMenu from '../svg-icons/icon-menu/IconMenu';
 import IconDraw from '../svg-icons/icon-draw/IconDraw';
-import {APP_MODE, NAVBAR_HEIGHT} from '../../constants/constants';
-
-const {VIEW_MODE, DRAW_MODE, SAVED_MODE, MENU_MODE} = APP_MODE;
+import IconMarker from '../svg-icons/icon-marker/IconMarker';
+import {APP_MODE, NAVBAR_HEIGHT, LIVE_TYPES, PLEASE_FINISH_ACTIVITY} from '../../constants/constants';
+import Toast from 'react-native-simple-toast';
+const {STOP} = LIVE_TYPES;
+const {VIEW_MODE, DRAW_MODE, SAVED_MODE, MENU_MODE, LIVE_MODE} = APP_MODE;
 
 const Navbar = () => {
   const {theme, getThemeStyle} = useContext(themeContext);
   const {setShownMenu} = useContext(modalContext);
+  const {liveRoute} = useContext(liveRouteContext);
   const {appMode, setAppMode} = useContext(appModeContext);
   const themeStyle = getThemeStyle(theme);
-  const onPressItem = mode => setAppMode(mode);
+  const {status} = liveRoute;
+  const toastFinishLive = () => {
+    Toast.show(PLEASE_FINISH_ACTIVITY);
+  };
+  const onPressItem = mode => {
+    if (!!(appMode === LIVE_MODE && status !== STOP)) {
+      toastFinishLive();
+      return;
+    }
+    setAppMode(mode);
+  };
   useEffect(() => {
     appMode === MENU_MODE ? setShownMenu(true) : setShownMenu(false);
   }, [appMode, setShownMenu]);
@@ -38,6 +51,12 @@ const Navbar = () => {
 export default Navbar;
 
 const navbarItems = {
+  LIVE_MODE: fill => (
+    <Fragment>
+      <IconMarker width={22} height={20} fill={fill} />
+      <Text style={[styleText, {color: fill}]}>{LIVE_MODE}</Text>
+    </Fragment>
+  ),
   VIEW_MODE: fill => (
     <Fragment>
       <IconView width={22} height={20} fill={fill} />

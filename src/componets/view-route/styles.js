@@ -9,6 +9,15 @@ export const stylesTextKM = {
   lineHeight: 30,
 };
 
+export const stylesActivityProps = {
+  color: '#fff',
+  fontFamily: 'Noto Sans',
+  fontStyle: 'normal',
+  fontWeight: 'normal',
+  fontSize: 20,
+  lineHeight: 25,
+};
+
 export const Styles = themeStyle => {
   const btnDims = {
     width: 155,

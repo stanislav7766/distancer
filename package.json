@@ -5,10 +5,12 @@
   "scripts": {
     "android": "react-native run-android",
     "start": "react-native start",
+    "log": "react-native log-android",
     "test": "jest",
     "lint": "eslint ."
   },
   "dependencies": {
+    "@mauron85/react-native-background-geolocation": "^0.6.3",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-mapbox-gl/maps": "^8.0.0-rc1",
     "react": "16.11.0",

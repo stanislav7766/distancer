@@ -1,14 +1,22 @@
 import React, {useEffect, useRef, useContext} from 'react';
 import {Keyboard, Animated, View} from 'react-native';
-import {modalContext, routeContext, themeContext, placesContext, appModeContext} from '../../contexts/contexts';
+import {
+  modalContext,
+  routeContext,
+  themeContext,
+  placesContext,
+  appModeContext,
+  liveRouteContext,
+} from '../../contexts/contexts';
 import DrawMode from '../draw-mode/DrawMode';
 import ViewRoute from '../view-route/ViewRoute';
 import ViewMode from '../view-mode/ViewMode';
+import LiveMode from '../live-mode/LiveMode';
 import MenuMode from '../menu-mode/MenuMode';
 import SavedMode from '../saved-mode/SavedMode';
 import {styleContainer, styleModal} from './styles';
 import {APP_MODE, WINDOW_HEIGHT} from '../../constants/constants';
-const {VIEW_ROUTE, VIEW_MODE, DRAW_MODE, MENU_MODE, SAVED_MODE} = APP_MODE;
+const {VIEW_ROUTE, VIEW_MODE, DRAW_MODE, MENU_MODE, SAVED_MODE, LIVE_MODE} = APP_MODE;
 
 const Modal = () => {
   const modalY = useRef(new Animated.Value(WINDOW_HEIGHT - 150)).current;
@@ -16,6 +24,7 @@ const Modal = () => {
   const {theme, getThemeStyle} = useContext(themeContext);
   const {appMode} = useContext(appModeContext);
   const {setExpanded, setDragMode} = useContext(modalContext);
+  const {setDefaultActivities, setDefaultLiveRoute} = useContext(liveRouteContext);
   const {setDefaultRoutes, setDefaultRoute} = useContext(routeContext);
   const themeStyle = getThemeStyle(theme);
 
@@ -26,8 +35,15 @@ const Modal = () => {
         setDefaultRoute();
         setDragMode(false);
       },
-      [VIEW_ROUTE]: () => {
+      [VIEW_ROUTE]: () => {},
+      [LIVE_MODE]: () => {
         closeModal();
+
+        setDefaultRoutes();
+        setDefaultRoute();
+        setDefaultActivities();
+        setDefaultLiveRoute();
+        setDragMode(false);
       },
       [VIEW_MODE]: () => {
         closeModal();
@@ -58,6 +74,14 @@ const Modal = () => {
     }).start();
   };
 
+  const double2Modal = () => {
+    Animated.timing(modalY, {
+      duration: 300,
+      toValue: liveHeight,
+      useNativeDriver: true,
+    }).start();
+  };
+
   const openModal = () => {
     setExpanded(true);
     Animated.timing(modalY, {
@@ -78,10 +102,14 @@ const Modal = () => {
     }).start();
   };
   const DrawModeComponent = <DrawMode themeStyle={themeStyle} />;
-  const ViewRouteComponent = <ViewRoute themeStyle={themeStyle} />;
+  const ViewRouteComponent = (
+    <ViewRoute expandActivity={double2Modal} expandRoute={closeModal} themeStyle={themeStyle} />
+  );
   const ViewModeComponent = <ViewMode themeStyle={themeStyle} closeModal={closeModal} openModal={openModal} />;
   const MenuModeComponent = <MenuMode themeStyle={themeStyle} />;
   const SavedModeComponent = <SavedMode closeModal={closeModal} themeStyle={themeStyle} />;
+
+  const LiveModeComponent = <LiveMode closeModal={closeModal} openModal={double2Modal} themeStyle={themeStyle} />;
 
   const appModeCall = mode =>
     ({
@@ -90,6 +118,7 @@ const Modal = () => {
       [VIEW_MODE]: ViewModeComponent,
       [MENU_MODE]: MenuModeComponent,
       [SAVED_MODE]: SavedModeComponent,
+      [LIVE_MODE]: LiveModeComponent,
     }[mode]);
 
   const Body = appModeCall(appMode);
@@ -109,3 +138,4 @@ export default Modal;
 const viewHeight = WINDOW_HEIGHT - 150;
 const drawHeight = WINDOW_HEIGHT - 200;
 const menuHeight = WINDOW_HEIGHT - 250;
+const liveHeight = WINDOW_HEIGHT - 250;

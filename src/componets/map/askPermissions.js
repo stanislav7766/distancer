@@ -9,7 +9,11 @@ import {
 const askPermissions = () =>
   new Promise(resolve => {
     PermissionsAndroid.requestMultiple(
-      [PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION],
+      [
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
+      ],
       {
         title: GIVE_GPS_PERMISSIONS,
         message: GIVE_GPS_PERMISSIONS_DETAILED,

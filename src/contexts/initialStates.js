@@ -1,6 +1,16 @@
 import {useState} from 'react';
 import {Animated} from 'react-native';
-import {THEMES, DEFAULT_MAP, DEFAULT_ROUTES, DEFAULT_PLACES, DEFAULT_ROUTE, APP_MODE} from '../constants/constants';
+import {
+  THEMES,
+  DEFAULT_MAP,
+  DEFAULT_ROUTES,
+  DEFAULT_LIVE_ROUTE,
+  DEFAULT_PLACES,
+  DEFAULT_ROUTE,
+  DEFAULT_ACTIVITIES,
+  APP_MODE,
+  ROUTE_TYPES,
+} from '../constants/constants';
 import {ThemeStyle} from '../constants/styles';
 
 export const ModalState = () => {
@@ -36,6 +46,18 @@ export const RouteState = () => {
   return routeState;
 };
 
+export const LiveRouteState = () => {
+  const [liveRouteState, setState] = useState({
+    liveRoute: DEFAULT_LIVE_ROUTE,
+    activities: DEFAULT_ACTIVITIES,
+    setActivities: activities => setState(prev => ({...prev, activities})),
+    setLiveRoute: liveRoute => setState(prev => ({...prev, liveRoute})),
+    setDefaultLiveRoute: () => setState(prev => ({...prev, liveRoute: DEFAULT_LIVE_ROUTE})),
+    setDefaultActivities: () => setState(prev => ({...prev, activities: DEFAULT_ACTIVITIES})),
+  });
+  return liveRouteState;
+};
+
 export const PlacesState = () => {
   const [placesState, setState] = useState({
     places: DEFAULT_PLACES,
@@ -57,10 +79,14 @@ export const ThemeState = () => {
 export const AppModeState = () => {
   const [appModeState, setState] = useState({
     appMode: APP_MODE.VIEW_MODE,
+    viewMode: ROUTE_TYPES.ROUTE,
     directionsMode: '',
     isDirectionsMode: false,
     setAppMode(appMode) {
       setState(prev => ({...prev, appMode}));
+    },
+    setViewMode(viewMode) {
+      setState(prev => ({...prev, viewMode}));
     },
     setIsDirectionsMode(isDirectionsMode) {
       setState(prev => ({...prev, isDirectionsMode}));

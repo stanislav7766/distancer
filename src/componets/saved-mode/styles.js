@@ -6,5 +6,12 @@ export const Styles = themeStyle => {
     textColor: themeStyle.textColorSecondary,
   };
 
-  return {styleItem};
+  const btnDims = {
+    width: 155,
+    height: 46,
+    color: themeStyle.textColorSecondary,
+    backgroundColor: themeStyle.backgroundColorSecondary,
+  };
+
+  return {styleItem, btnDims};
 };

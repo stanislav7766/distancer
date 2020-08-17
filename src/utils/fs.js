@@ -2,6 +2,7 @@ import RNFS from 'react-native-fs';
 
 const SETTINGS_PATH = RNFS.DocumentDirectoryPath + '/settings.json';
 const ROUTES_PATH = RNFS.DocumentDirectoryPath + '/routes.json';
+const ACTIVITIES_PATH = RNFS.DocumentDirectoryPath + '/activities.json';
 const ENCODING = 'utf8';
 
 const _deleteFile = async filePath =>
@@ -40,6 +41,16 @@ export const readRoutes = async () =>
     }
   });
 
+export const readActivities = async () =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const data = await _readFile(ACTIVITIES_PATH);
+      resolve(JSON.parse(data));
+    } catch (error) {
+      reject(error);
+    }
+  });
+
 export const readSettings = async () =>
   new Promise(async (resolve, reject) => {
     try {
@@ -71,12 +82,24 @@ export const writeRoutes = async arrRoutes =>
       reject(err);
     }
   });
+export const writeActivities = async arrRoutes =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const deleted = await _deleteFile(ACTIVITIES_PATH);
+      const written = deleted && (await _writeFile(ACTIVITIES_PATH, JSON.stringify(arrRoutes)));
+      written ? resolve(written) : reject(written);
+    } catch (err) {
+      reject(err);
+    }
+  });
 
 export const initialLoad = async () =>
   new Promise(async (resolve, reject) => {
     try {
       await _writeFile(SETTINGS_PATH, JSON.stringify({theme: 'light'}));
       await _writeFile(ROUTES_PATH, JSON.stringify([]));
+      await _writeFile(ACTIVITIES_PATH, JSON.stringify([]));
+
       resolve(true);
     } catch (error) {
       reject(false);
