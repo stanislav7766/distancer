@@ -87,7 +87,7 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
   return (
     <Fragment>
       {expanded && ExpandedModal}
-      <Row>
+      <Row marginTop={10}>
         <TextInput
           style={inputStyle}
           placeholder={TYPE_CITY}
