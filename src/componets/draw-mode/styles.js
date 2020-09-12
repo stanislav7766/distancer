@@ -31,7 +31,7 @@ export const Styles = themeStyle => {
   const styleDoubleBtn = typeSwitched => ({
     colorL: typeSwitched ? themeStyle.accentColor : '#fff',
     colorR: typeSwitched ? '#fff' : themeStyle.accentColor,
-    backgroundColor: themeStyle.backgroundColor,
+    backgroundColor: themeStyle.backgroundColorSecondary,
     accentColor: themeStyle.accentColor,
   });
   return {arrowIconDims, dragIconDims, btnDims, styleDoubleBtn};
