@@ -9,12 +9,12 @@ export const styleMap = {
 export const Styles = (themeStyle, height) => {
   const styleGpsIcon = {
     right: 10,
-    bottom: height * 0.3,
+    bottom: height * 0.35,
     backgroundColor: themeStyle.backgroundColorSecondary,
   };
   const styleInfoIcon = {
     left: 10,
-    bottom: height * 0.3,
+    bottom: height * 0.35,
     backgroundColor: themeStyle.backgroundColorSecondary,
   };
   const styleMenuIcon = {
