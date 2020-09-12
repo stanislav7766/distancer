@@ -29,26 +29,5 @@ export const Groove = cameraRef => {
     );
   };
 
-  const watchCurrPosition = (zoomLevel, cb) => {
-    const onPositionUpdate = ({longitude, latitude}) => {
-      moveCamera({centerCoordinate: [longitude, latitude], zoomLevel});
-    };
-    Geolocation.watchPosition(
-      opts => {
-        const {coords} = opts;
-        onPositionUpdate(coords);
-        cb(coords);
-      },
-      err => {
-        const toast = err.code === 2 ? ERROR_GPS_TURNED_OFF : err.code === 3 ? ERROR_GPS_TRY_AGAIN : ERROR_OCCURRED;
-        Toast.show(toast);
-      },
-      {
-        enableHighAccuracy: true,
-        distanceFilter: 30,
-      },
-    );
-  };
-
-  return {moveToCurrPosition, watchCurrPosition, moveCamera};
+  return {moveToCurrPosition, moveCamera};
 };
