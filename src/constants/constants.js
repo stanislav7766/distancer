@@ -28,6 +28,7 @@ export const LIVE_TYPES = {
   GO: 'go',
 };
 export const LIVE_MODDING = [
+  {title: '', subTitle: 'Pace', type: 'pace'},
   {title: ` km/h`, subTitle: 'Avg. speed', type: 'avgSpeed'},
   {title: ` km`, subTitle: 'Distance', type: 'distance'},
   {title: '', subTitle: 'Time', type: 'time'},
@@ -36,6 +37,7 @@ export const LIVE_SPECS_DEFAULT = {
   avgSpeed: 0.0,
   distance: 0,
   time: '00:00:00',
+  pace: `0'0"`,
   currSpeed: 0.0,
 };
 
@@ -63,6 +65,7 @@ export const DEFAULT_ROUTE = {
 };
 export const DEFAULT_LIVE_ROUTE = {
   distance: 0,
+  pace: `0'0"`,
   movingTime: '00:00:00',
   totalTime: '00:00:00',
   avgSpeed: 0.0,

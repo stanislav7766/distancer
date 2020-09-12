@@ -33,7 +33,7 @@ import {
   ROUTE_TYPES,
 } from '../../constants/constants';
 import {measureDistance} from '../../utils/measureDistanceCoords';
-import {timeToSec, kmToM} from '../../utils/timeToSec';
+import {timeToSec, kmToM, calcPace} from '../../utils/timeToSec';
 
 const {height, width} = Dimensions.get('window');
 const {VIEW_ROUTE, DRAW_MODE, LIVE_MODE} = APP_MODE;
@@ -85,10 +85,12 @@ const Map = () => {
     const distance = measureDistance(points1);
     const avgSpeed =
       distance === 0 ? LIVE_SPECS_DEFAULT.avgSpeed : (3.6 * (kmToM(distance) / timeToSec(movingTime))).toFixed(1);
+    const pace = calcPace(distance, movingTime);
     setLiveRoute({
       ...liveRoute,
       distance,
       avgSpeed,
+      pace,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [points1]);
@@ -97,11 +99,9 @@ const Map = () => {
     const {coordinates: coords} = info.geometry;
     isDrawDirectionsMode &&
       (isFilledArr(points) ? fetchDirections([points.slice(-1)[0], coords]) : setRoute([...points, coords]));
-    if (isDrawMode) {
-      setRoute([...points, coords]);
-    }
+    isDrawMode && setRoute([...points, coords]);
   };
-
+  //todo moveToCurrPosition need rewriting
   const Icons = (
     <Fragment>
       <RoundedIcon style={styleGpsIcon} IconComponent={IconGpsWrap} onPress={() => moveToCurrPosition(zoomLevel)} />

@@ -15,7 +15,7 @@ import {
   DIRECTIONS_MODE,
 } from '../../constants/constants';
 import {readActivities, writeActivities} from '../../utils/fs';
-
+import {isGoOut} from '../../utils/isGoOut';
 import {msTohhmmss} from '../../utils/timeToSec';
 import useStopwatch from '../stopwatch/useStopwatch';
 import {makeIterator} from '../../utils/makeIterator';
@@ -23,7 +23,6 @@ import Toast from 'react-native-simple-toast';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 const {WALKING} = DIRECTIONS_MODE;
 const {STOP, GO, PAUSE} = LIVE_TYPES;
-const isGoOut = appState => appState === 'background' || appState === 'inactive';
 const callAlert = showAppSettings =>
   Alert.alert(REQUIRE_LOCATION_PERMS, QUESTION_OPEN_SETTINGS, [
     {text: 'Yes', onPress: () => showAppSettings()},
@@ -96,7 +95,7 @@ const LiveMode = ({themeStyle, closeModal, openModal}) => {
   const {directionsMode, setIsDirectionsMode, setDirectionsMode} = useContext(appModeContext);
 
   const {liveRoute, setLiveRoute, setDefaultLiveRoute} = useContext(liveRouteContext);
-  const {currentSpeed, status, distance, avgSpeed, movingTime} = liveRoute;
+  const {currentSpeed, status, pace, distance, avgSpeed, movingTime} = liveRoute;
 
   const [aIt] = useState(makeIterator(LIVE_MODDING));
   const [A, setA] = useState(aIt.next().value);
@@ -171,6 +170,7 @@ const LiveMode = ({themeStyle, closeModal, openModal}) => {
 
   const routeModeCall = type =>
     ({
+      pace: pace || LIVE_SPECS_DEFAULT[type],
       distance: distance || LIVE_SPECS_DEFAULT[type],
       avgSpeed: aSpeed || LIVE_SPECS_DEFAULT[type],
       time: movingTime,

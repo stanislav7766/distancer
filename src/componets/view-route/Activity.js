@@ -16,7 +16,7 @@ const Activity = ({themeStyle}) => {
 
   const {setAppMode, directionsMode} = useContext(appModeContext);
   const {btnDims} = Styles(themeStyle);
-  const {distance, avgSpeed, totalTime, movingTime} = liveRoute;
+  const {distance, pace, avgSpeed, totalTime, movingTime} = liveRoute;
 
   const onPressCancel = () => {
     setDefaultLiveRoute();
@@ -47,6 +47,14 @@ const Activity = ({themeStyle}) => {
             </Column>
             <Column alignItems={'flex-end'}>
               <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>{distance} km</Text>
+            </Column>
+          </Row>
+          <Row>
+            <Column alignItems={'flex-start'}>
+              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>Pace</Text>
+            </Column>
+            <Column alignItems={'flex-end'}>
+              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>{pace} /km</Text>
             </Column>
           </Row>
           <Row>
