@@ -7,10 +7,19 @@ export const Column = styled.View`
   flex-direction: column;
 `;
 export const Row = styled.View`
-  margin-right: 10px;
-  margin-left: 10px;
+  margin-right: ${props => props.marginRight || '10px'};
+  margin-left: ${props => props.marginLeft || '10px'};
   justify-content: ${props => props.justifyContent || 'center'};
   flex-direction: row;
+`;
+
+export const Form = styled.View`
+  padding: 10px;
+  width: 100%;
+  border-radius: 15px;
+  justify-content: center;
+  background-color: ${props => props.backgroundColor || '#fff'};
+  elevation: 7;
 `;
 
 export const ThemeStyle = {
@@ -20,6 +29,7 @@ export const ThemeStyle = {
     backgroundColor: '#404040',
     backgroundColorSecondary: '#525252',
     textColor: '#fff',
+    textColorThird: '#d3d3d3',
     textColorSecondary: '#8D8D8D',
   },
   [THEMES.LIGHT]: {
@@ -28,6 +38,7 @@ export const ThemeStyle = {
     backgroundColor: '#fff',
     backgroundColorSecondary: '#fff',
     textColor: '#000',
+    textColorThird: '#525252',
     textColorSecondary: '#8D8D8D',
   },
 };

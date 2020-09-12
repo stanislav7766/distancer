@@ -6,11 +6,10 @@ import Map from '../../componets/map/Map';
 import Modal from '../../componets/modal/Modal';
 import IsFirstLaunch from '../../componets/is-first-launch/IsFirstLaunch';
 import {initialLoad, readSettings, writeSettings} from '../../utils/fs';
+import {isGoOut} from '../../utils/isGoOut';
 import {ERROR_OCCURRED} from '../../constants/constants';
 
-const isGoOut = appState => appState === 'background' || appState === 'inactive';
-
-const Landing = () => {
+const Landing = ({navigator}) => {
   const {theme, setTheme} = useContext(themeContext);
   const [appState, setAppState] = useState(AppState.currentState);
 
@@ -54,7 +53,7 @@ const Landing = () => {
   return (
     <Fragment>
       <Map />
-      <Modal />
+      <Modal navigator={navigator} />
     </Fragment>
   );
 };

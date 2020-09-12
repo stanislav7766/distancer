@@ -18,12 +18,14 @@ import {
   LiveRouteState,
 } from './src/contexts/initialStates';
 import Landing from './src/pages/landing';
+import Authorization from './src/pages/authorization';
 import Navbar from './src//componets/navbar/Navbar';
+import Navigator from 'react-native-easy-router';
 import Compose from './src/componets/context-compose/Compose';
 
-const Main = (
+const Main = ({navigator}) => (
   <Fragment>
-    <Landing />
+    <Landing navigator={navigator} />
     <Navbar />
   </Fragment>
 );
@@ -39,7 +41,7 @@ const App = () => {
 
   return (
     <Compose
-      Child={Main}
+      Child={<Navigator screens={{Main, Authorization}} initialStack="Main" />}
       wrappers={[
         {Context: liveRouteContext, value: liveRoute},
         {Context: appModeContext, value: appMode},
