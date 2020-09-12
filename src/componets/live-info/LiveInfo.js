@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, View, Text} from 'react-native';
+import {View, Text} from 'react-native';
 import {stylesLiveInfoForm, stylesLiveInfoText, stylesLiveInfoSubText} from './styles';
 
 const LiveInfo = ({onPress, style, title, subTitle}) => {

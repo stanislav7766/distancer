@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, Fragment} from 'react';
+import React, {useContext, Fragment} from 'react';
 import {View, TouchableOpacity, Text} from 'react-native';
-import {themeContext, modalContext, appModeContext, liveRouteContext} from '../../contexts/contexts';
+import {themeContext, appModeContext, liveRouteContext} from '../../contexts/contexts';
 import {styleContainer, styleWrap, styleTouchable, styleText, Row, Column} from './styles';
 import IconView from '../svg-icons/icon-view/IconView';
 import IconSaved from '../svg-icons/icon-saved/IconSaved';
@@ -14,7 +14,6 @@ const {VIEW_MODE, DRAW_MODE, SAVED_MODE, MENU_MODE, LIVE_MODE} = APP_MODE;
 
 const Navbar = () => {
   const {theme, getThemeStyle} = useContext(themeContext);
-  const {setShownMenu} = useContext(modalContext);
   const {liveRoute} = useContext(liveRouteContext);
   const {appMode, setAppMode} = useContext(appModeContext);
   const themeStyle = getThemeStyle(theme);
@@ -29,9 +28,6 @@ const Navbar = () => {
     }
     setAppMode(mode);
   };
-  useEffect(() => {
-    appMode === MENU_MODE ? setShownMenu(true) : setShownMenu(false);
-  }, [appMode, setShownMenu]);
 
   const NavbarItems = Object.keys(navbarItems).map((mode, i) => (
     <Column key={i}>

@@ -18,10 +18,8 @@ export const mapContext = createContext({
   setCameraRef: () => {},
 });
 export const modalContext = createContext({
-  shownMenu: false,
   dragMode: false,
   expanded: false,
-  setShownMenu: () => {},
   setExpanded: () => {},
   setDragMode: () => {},
 });
@@ -60,7 +58,6 @@ export const appModeContext = createContext({
   appMode: APP_MODE.VIEW_MODE,
   viewMode: ROUTE_TYPES.ROUTE,
   directionsMode: '',
-  prevAppMode: APP_MODE.VIEW_MODE,
   isDirectionsMode: false,
   setAppMode: () => {},
   setViewMode: () => {},

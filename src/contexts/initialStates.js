@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import {Animated} from 'react-native';
 import {
   THEMES,
   DEFAULT_MAP,
@@ -17,9 +16,7 @@ export const ModalState = () => {
   const [modalState, setState] = useState({
     dragMode: false,
     expanded: false,
-    shownMenu: false,
     setExpanded: expanded => setState(prev => ({...prev, expanded})),
-    setShownMenu: shownMenu => setState(prev => ({...prev, shownMenu})),
     setDragMode: dragMode => setState(prev => ({...prev, dragMode})),
   });
   return modalState;

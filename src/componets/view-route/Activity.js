@@ -4,7 +4,7 @@ import Btn from '../btn/Btn';
 import {liveRouteContext, appModeContext} from '../../contexts/contexts';
 import {writeActivities} from '../../utils/fs';
 import Toast from 'react-native-simple-toast';
-import {Row, Column, stylesTextKM, stylesActivityProps, Styles} from './styles';
+import {Row, Column, stylesActivityProps, Styles} from './styles';
 import {APP_MODE, ERROR_OCCURRED} from '../../constants/constants';
 import SelectDirection from '../directions-bar/SelectDirection';
 import {removeRoute} from '../../utils/removeRoute';
