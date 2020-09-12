@@ -18,7 +18,7 @@ import {styleContainer, styleModal} from './styles';
 import {APP_MODE, WINDOW_HEIGHT} from '../../constants/constants';
 const {VIEW_ROUTE, VIEW_MODE, DRAW_MODE, MENU_MODE, SAVED_MODE, LIVE_MODE} = APP_MODE;
 
-const Modal = () => {
+const Modal = ({navigator}) => {
   const modalY = useRef(new Animated.Value(WINDOW_HEIGHT - 150)).current;
   const {setDefaultPlaces} = useContext(placesContext);
   const {theme, getThemeStyle} = useContext(themeContext);
@@ -82,6 +82,14 @@ const Modal = () => {
     }).start();
   };
 
+  const viewActivityModal = () => {
+    Animated.timing(modalY, {
+      duration: 300,
+      toValue: viewActivityHeight,
+      useNativeDriver: true,
+    }).start();
+  };
+
   const openModal = () => {
     setExpanded(true);
     Animated.timing(modalY, {
@@ -103,10 +111,10 @@ const Modal = () => {
   };
   const DrawModeComponent = <DrawMode themeStyle={themeStyle} />;
   const ViewRouteComponent = (
-    <ViewRoute expandActivity={double2Modal} expandRoute={closeModal} themeStyle={themeStyle} />
+    <ViewRoute expandActivity={viewActivityModal} expandRoute={closeModal} themeStyle={themeStyle} />
   );
   const ViewModeComponent = <ViewMode themeStyle={themeStyle} closeModal={closeModal} openModal={openModal} />;
-  const MenuModeComponent = <MenuMode themeStyle={themeStyle} />;
+  const MenuModeComponent = <MenuMode navigator={navigator} themeStyle={themeStyle} />;
   const SavedModeComponent = <SavedMode closeModal={closeModal} themeStyle={themeStyle} />;
 
   const LiveModeComponent = <LiveMode closeModal={closeModal} openModal={double2Modal} themeStyle={themeStyle} />;
@@ -137,5 +145,6 @@ export default Modal;
 
 const viewHeight = WINDOW_HEIGHT - 150;
 const drawHeight = WINDOW_HEIGHT - 200;
-const menuHeight = WINDOW_HEIGHT - 250;
+const menuHeight = WINDOW_HEIGHT - 400;
+const viewActivityHeight = WINDOW_HEIGHT - 300;
 const liveHeight = WINDOW_HEIGHT - 250;

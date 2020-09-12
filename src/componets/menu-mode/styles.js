@@ -1,4 +1,4 @@
-export {Row, Column} from '../../constants/styles';
+export {Row, Column, Form} from '../../constants/styles';
 import {WINDOW_WIDTH} from '../../constants/constants';
 
 export const Styles = themeStyle => {
@@ -6,6 +6,15 @@ export const Styles = themeStyle => {
     backgroundColor: themeStyle.backgroundColorSecondary,
     textColor: themeStyle.textColorSecondary,
     height: 50,
+  };
+  const btnDims = {
+    width: 155,
+    height: 46,
+    color: '#fff',
+    backgroundColor: themeStyle.accentColor,
+  };
+  const bgGreen = {
+    backgroundColor: '#BFE3A5',
   };
   const styleIcon = {
     position: 'relative',
@@ -17,7 +26,12 @@ export const Styles = themeStyle => {
     paddingLeft: 10,
     backgroundColor: themeStyle.backgroundColorSecondary,
   };
-  return {styleItem, styleIcon};
+
+  const appSettingsStyle = {
+    fontSize: 18,
+    color: themeStyle.textColorSecondary,
+  };
+  return {styleItem, btnDims, bgGreen, styleIcon, appSettingsStyle};
 };
 
 export const styleWrap = {
