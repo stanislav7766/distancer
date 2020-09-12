@@ -86,6 +86,7 @@ const LiveMode = ({themeStyle, closeModal, openModal}) => {
     return () => {
       BackgroundGeolocation.deleteAllLocations();
       BackgroundGeolocation.removeAllListeners();
+      BackgroundGeolocation.liveRoute = {};
       AppState.removeEventListener('change', _handleAppStateChange);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,7 +105,6 @@ const LiveMode = ({themeStyle, closeModal, openModal}) => {
     if (_liveRoute.status === GO) {
       const _speed = coords.speed || 0;
       setLiveRoute({
-        ..._liveRoute,
         currentSpeed: (3.6 * _speed).toFixed(1),
         points1: [..._liveRoute.points1, [coords.longitude, coords.latitude]],
       });
@@ -112,13 +112,13 @@ const LiveMode = ({themeStyle, closeModal, openModal}) => {
   };
   const {btnDims, btnContinueDims, btnPauseDims, liveInfoDims} = Styles(themeStyle);
 
-  const setStatus = _status => setLiveRoute({...liveRoute, status: _status});
-  const setMovingTime = _movingTime => setLiveRoute({...liveRoute, movingTime: _movingTime});
+  const setStatus = _status => setLiveRoute({status: _status});
+  const setMovingTime = _movingTime => setLiveRoute({movingTime: _movingTime});
 
   useEffect(() => {
     status === GO && BackgroundGeolocation.start();
     (status === PAUSE || status === STOP) && BackgroundGeolocation.stop();
-    status === PAUSE && setLiveRoute({...liveRoute, currentSpeed: LIVE_SPECS_DEFAULT.currSpeed});
+    status === PAUSE && setLiveRoute({currentSpeed: LIVE_SPECS_DEFAULT.currSpeed});
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
@@ -145,7 +145,7 @@ const LiveMode = ({themeStyle, closeModal, openModal}) => {
     const startMS = new Date().getTime();
     openModal();
     setTimeChanges({...timeChanges, startMS});
-    setLiveRoute({...liveRoute, id: randomID(), status: GO});
+    setLiveRoute({id: randomID(), status: GO});
   };
   const onPressPause = () => {
     stopWatch();

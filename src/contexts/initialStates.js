@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {Animated} from 'react-native';
 import {
   THEMES,
   DEFAULT_MAP,
@@ -36,7 +37,11 @@ export const RouteState = () => {
     currentRoute: DEFAULT_ROUTE,
     routes: DEFAULT_ROUTES,
     setRoutes: routes => setState(prev => ({...prev, routes})),
-    setCurrentRoute: currentRoute => setState(prev => ({...prev, currentRoute})),
+    setCurrentRoute: currentRoute =>
+      setState(prev => {
+        const rest = prev.currentRoute;
+        return {...prev, currentRoute: {...rest, ...currentRoute}};
+      }),
     setDefaultRoute: () => setState(prev => ({...prev, currentRoute: DEFAULT_ROUTE})),
     setDefaultRoutes: () => setState(prev => ({...prev, routes: DEFAULT_ROUTES})),
   });
@@ -48,7 +53,11 @@ export const LiveRouteState = () => {
     liveRoute: DEFAULT_LIVE_ROUTE,
     activities: DEFAULT_ACTIVITIES,
     setActivities: activities => setState(prev => ({...prev, activities})),
-    setLiveRoute: liveRoute => setState(prev => ({...prev, liveRoute})),
+    setLiveRoute: liveRoute =>
+      setState(prev => {
+        const rest = prev.liveRoute;
+        return {...prev, liveRoute: {...rest, ...liveRoute}};
+      }),
     setDefaultLiveRoute: () => setState(prev => ({...prev, liveRoute: DEFAULT_LIVE_ROUTE})),
     setDefaultActivities: () => setState(prev => ({...prev, activities: DEFAULT_ACTIVITIES})),
   });

@@ -25,7 +25,7 @@ const MapRoute = () => {
     const {coordinates} = geometry;
     const nPoints = [...points];
     nPoints[index] = coordinates;
-    setCurrentRoute({...currentRoute, points: nPoints});
+    setCurrentRoute({points: nPoints});
   };
 
   const MapDotLine = useMemo(

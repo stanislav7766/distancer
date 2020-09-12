@@ -51,7 +51,7 @@ const Map = () => {
   const themeStyle = getThemeStyle(theme);
   const {moveToCurrPosition} = Groove(cameraRef);
   const {points} = currentRoute;
-  const setRoute = coords => setCurrentRoute({...currentRoute, points: coords});
+  const setRoute = coords => setCurrentRoute({points: coords});
   const fetchDirections = startend =>
     FetchDirections(startend, directionsMode).then(
       coords => isFilledArr(coords) && setRoute([...points, ...coords]),
@@ -87,7 +87,6 @@ const Map = () => {
       distance === 0 ? LIVE_SPECS_DEFAULT.avgSpeed : (3.6 * (kmToM(distance) / timeToSec(movingTime))).toFixed(1);
     const pace = calcPace(distance, movingTime);
     setLiveRoute({
-      ...liveRoute,
       distance,
       avgSpeed,
       pace,

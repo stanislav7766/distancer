@@ -27,8 +27,8 @@ const DrawMode = ({themeStyle}) => {
 
   const {points, distance} = currentRoute;
 
-  const setDistance = _distance => setCurrentRoute({...currentRoute, distance: _distance});
-  const setPoints = _points => setCurrentRoute({...currentRoute, points: _points});
+  const setDistance = _distance => setCurrentRoute({distance: _distance});
+  const setPoints = _points => setCurrentRoute({points: _points});
 
   useEffect(() => {
     setDistance(measureDistance(points));

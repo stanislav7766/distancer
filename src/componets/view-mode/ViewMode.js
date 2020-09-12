@@ -27,7 +27,6 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
 
   const onPressItem = ({text: name, center: centerCoords}) => {
     setCurrentRoute({
-      ...currentRoute,
       city: {
         name,
         centerCoords,
@@ -41,7 +40,7 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
     closeModal();
     moveToCurrPosition(zoomLevel);
   };
-  const onChangeText = text => setCurrentRoute({...currentRoute, city: {...city, name: text}});
+  const onChangeText = text => setCurrentRoute({city: {...city, name: text}});
 
   const onSubmitEditing = async () => {
     try {
