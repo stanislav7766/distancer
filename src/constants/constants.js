@@ -127,7 +127,7 @@ export const chars = {
 
 export const HAS_LAUNCHED = 'hasLaunched';
 export const ERROR_GPS_TURNED_OFF = 'No location provider available. Turn on GPS';
-export const ERROR_GPS_TRY_AGAIN = 'Try again';
+export const ERROR_TRY_AGAIN = 'Try again';
 export const ERROR_OCCURRED = 'An error occurred';
 export const ERROR_NETWORK_FAILED = 'Network request failed';
 export const GPS_PERMISSIONS_DENIED = 'Location permissions denied';
