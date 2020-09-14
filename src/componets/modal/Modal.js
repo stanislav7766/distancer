@@ -25,7 +25,8 @@ const Modal = ({navigator}) => {
   const {appMode} = useContext(appModeContext);
   const {setExpanded, setDragMode} = useContext(modalContext);
   const {setDefaultActivities, setDefaultLiveRoute} = useContext(liveRouteContext);
-  const {setDefaultRoutes, setDefaultRoute} = useContext(routeContext);
+  const {setDefaultRoutes, setDefaultRoute, currentRoute} = useContext(routeContext);
+  const {inLive} = currentRoute;
   const themeStyle = getThemeStyle(theme);
 
   const modeHelpers = mode =>
@@ -40,7 +41,7 @@ const Modal = ({navigator}) => {
         closeModal();
 
         setDefaultRoutes();
-        setDefaultRoute();
+        !inLive && setDefaultRoute();
         setDefaultActivities();
         setDefaultLiveRoute();
         setDragMode(false);

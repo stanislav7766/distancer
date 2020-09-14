@@ -8,13 +8,16 @@ import {Row, Column, stylesTextKM, Styles} from './styles';
 import {APP_MODE, ERROR_OCCURRED} from '../../constants/constants';
 import SelectDirection from '../directions-bar/SelectDirection';
 import {removeRoute} from '../../utils/removeRoute';
-const {VIEW_MODE} = APP_MODE;
+import IconMarker from '../svg-icons/icon-marker/IconMarker';
+import RoundedIcon from '../rounded-icon/RoundedIcon';
+
+const {VIEW_MODE, LIVE_MODE} = APP_MODE;
 
 const Route = ({themeStyle}) => {
-  const {setDefaultRoute, setDefaultRoutes, routes, currentRoute} = useContext(routeContext);
+  const {setDefaultRoute, setDefaultRoutes, routes, currentRoute, setCurrentRoute} = useContext(routeContext);
 
   const {setAppMode, directionsMode} = useContext(appModeContext);
-  const {btnDims} = Styles(themeStyle);
+  const {btnDims, liveIconDims} = Styles(themeStyle);
   const {distance} = currentRoute;
 
   const onPressCancel = () => {
@@ -35,6 +38,11 @@ const Route = ({themeStyle}) => {
       }
     })();
   };
+  const onStartLiveWithRoute = () => {
+    setDefaultRoutes();
+    setCurrentRoute({inLive: true});
+    setAppMode(LIVE_MODE);
+  };
 
   return (
     <Fragment>
@@ -50,6 +58,13 @@ const Route = ({themeStyle}) => {
               <SelectDirection themeStyle={themeStyle} mode={directionsMode ? directionsMode : ''} />
             </Column>
           </Row>
+        </Column>
+        <Column>
+          <RoundedIcon
+            style={liveIconDims}
+            IconComponent={<IconMarker width={27} height={23} fill={themeStyle.accentColor} />}
+            onPress={onStartLiveWithRoute}
+          />
         </Column>
         <Column alignItems={'flex-end'}>
           <Btn style={btnDims} title={'Delete Route'} onPress={onPressDelete} />

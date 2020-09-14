@@ -50,7 +50,7 @@ const Map = () => {
   const {currentRoute, setCurrentRoute} = useContext(routeContext);
   const themeStyle = getThemeStyle(theme);
   const {moveToCurrPosition} = Groove(cameraRef);
-  const {points} = currentRoute;
+  const {points, inLive} = currentRoute;
   const setRoute = coords => setCurrentRoute({points: coords});
   const fetchDirections = startend =>
     FetchDirections(startend, directionsMode).then(
@@ -122,7 +122,7 @@ const Map = () => {
         compassEnabled={false}
       >
         <Camera ref={setCameraRef} zoomLevel={zoomLevel} centerCoordinate={coordinates} followZoomLevel={zoomLevel} />
-        {(appMode === DRAW_MODE || isViewRoute) && <MapRoute />}
+        {(appMode === DRAW_MODE || isViewRoute || inLive) && <MapRoute />}
         {(appMode === LIVE_MODE || isViewActivity) && <LiveRoute />}
         <UserLocation />
       </MapView>

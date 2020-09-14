@@ -7,7 +7,7 @@ import {isEqualArr} from '../../utils/isEqualArr';
 const MapRoute = () => {
   const {dragMode} = useContext(modalContext);
   const {setCurrentRoute, currentRoute} = useContext(routeContext);
-  const {points} = currentRoute;
+  const {points, inLive} = currentRoute;
   let index;
   const chunks = splitted(points, points.length > 25 ? Math.floor(points.length / 10) : 5);
 
@@ -33,6 +33,7 @@ const MapRoute = () => {
       <Fragment>
         {chunks.map((chunk, i) => (
           <DotLine
+            isInLive={inLive}
             start={points[0]}
             end={points.slice(-1)[0]}
             key={i}
@@ -45,7 +46,7 @@ const MapRoute = () => {
       </Fragment>
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [points, dragMode],
+    [points, dragMode, inLive],
   );
 
   return <Fragment>{isFilledArr(chunks) && MapDotLine}</Fragment>;

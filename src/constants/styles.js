@@ -49,6 +49,13 @@ export const lineStyle = {
   lineOpacity: 1,
   lineColor: ACCENT_BLUE,
 };
+export const dottedLineStyle = {
+  lineCap: 'round',
+  lineWidth: 6,
+  lineOpacity: 1,
+  lineDasharray: [1, 2],
+  lineColor: ACCENT_RED,
+};
 
 export const annotationStyle = {
   width: 20,

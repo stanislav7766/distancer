@@ -3,10 +3,10 @@ import {View} from 'react-native';
 import {Animated, LineLayer, CircleLayer, ShapeSource, PointAnnotation} from '@react-native-mapbox-gl/maps';
 import {randomID} from '../../utils/randomID';
 import {isFilledArr} from '../../utils/isFilledArr';
-import {annotationStyle, mainPoint, redPoint, greenPoint, lineStyle} from '../../constants/styles';
+import {annotationStyle, mainPoint, redPoint, greenPoint, lineStyle, dottedLineStyle} from '../../constants/styles';
 import {isEqualArr} from '../../utils/isEqualArr';
 
-const DotLine = ({chunkCoords, start, end, dragMode, onDragStart, onDragEnd, lineOnly}) => {
+const DotLine = ({isInLive, chunkCoords, start, end, dragMode, onDragStart, onDragEnd, lineOnly}) => {
   const [cacheCoords, setCacheCoords] = useState([]);
 
   useEffect(() => {
@@ -54,16 +54,16 @@ const DotLine = ({chunkCoords, start, end, dragMode, onDragStart, onDragEnd, lin
   const Line = useMemo(
     () => (
       <ShapeSource id={`${randomID()}`} shape={makeShape('LineString', cacheCoords)}>
-        <LineLayer id={`${randomID()}`} style={lineStyle} />
+        <LineLayer id={`${randomID()}`} style={isInLive ? dottedLineStyle : lineStyle} />
       </ShapeSource>
     ),
-    [cacheCoords],
+    [cacheCoords, isInLive],
   );
 
   return (
     <Fragment>
       {isFilledArr(cacheCoords) && Line}
-      {!lineOnly && isFilledArr(cacheCoords) && Dots1}
+      {!isInLive && !lineOnly && isFilledArr(cacheCoords) && Dots1}
     </Fragment>
   );
 };

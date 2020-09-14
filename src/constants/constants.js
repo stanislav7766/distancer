@@ -55,6 +55,7 @@ export const DIRECTIONS_MODE = {
 export const NAVBAR_HEIGHT = height * 0.06;
 
 export const DEFAULT_ROUTE = {
+  inLive: false,
   distance: 0,
   id: '',
   points: [],

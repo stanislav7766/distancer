@@ -25,6 +25,12 @@ export const Styles = themeStyle => {
     color: '#fff',
     backgroundColor: themeStyle.accentColorSecondary,
   };
+  const liveIconDims = {
+    top: 0,
+    left: 0,
+    backgroundColor: themeStyle.backgroundColorSecondary,
+    position: 'relative',
+  };
 
-  return {btnDims};
+  return {btnDims, liveIconDims};
 };
