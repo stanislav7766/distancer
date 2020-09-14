@@ -2,18 +2,17 @@ import React, {Fragment, useContext} from 'react';
 import {Text} from 'react-native';
 import Btn from '../btn/Btn';
 import {routeContext, appModeContext} from '../../contexts/contexts';
-import {writeRoutes} from '../../utils/fs';
 import Toast from 'react-native-simple-toast';
 import {Row, Column, stylesTextKM, Styles} from './styles';
 import {APP_MODE, ERROR_OCCURRED} from '../../constants/constants';
 import SelectDirection from '../directions-bar/SelectDirection';
-import {removeRoute} from '../../utils/removeRoute';
 import IconMarker from '../svg-icons/icon-marker/IconMarker';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
-
+import WithActions from '../with-actions/WithActions';
+import {deleteRoute as _deleteRoute} from '../../actions';
 const {VIEW_MODE, LIVE_MODE} = APP_MODE;
 
-const Route = ({themeStyle}) => {
+const Route = ({themeStyle, deleteRoute}) => {
   const {setDefaultRoute, setDefaultRoutes, routes, currentRoute, setCurrentRoute} = useContext(routeContext);
 
   const {setAppMode, directionsMode} = useContext(appModeContext);
@@ -27,16 +26,16 @@ const Route = ({themeStyle}) => {
   };
 
   const onPressDelete = () => {
-    (async () => {
-      try {
-        const _routes = removeRoute(routes, currentRoute.id);
-        const written = await writeRoutes(_routes);
-        written && onPressCancel();
-        Toast.show(written ? 'Deleted' : ERROR_OCCURRED);
-      } catch (error) {
+    const payload = {routeId: currentRoute.id, routes};
+    deleteRoute({payload})
+      .then(res => {
+        const {success, reason} = res;
+        success && onPressCancel();
+        Toast.show(success ? 'Deleted' : reason);
+      })
+      .catch(_ => {
         Toast.show(ERROR_OCCURRED);
-      }
-    })();
+      });
   };
   const onStartLiveWithRoute = () => {
     setDefaultRoutes();
@@ -74,4 +73,5 @@ const Route = ({themeStyle}) => {
   );
 };
 
-export default Route;
+const mapDispatchToProps = {deleteRoute: _deleteRoute};
+export default WithActions(mapDispatchToProps)(Route);

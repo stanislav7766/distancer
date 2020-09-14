@@ -5,22 +5,16 @@ import {Groove} from '../../contexts/Groove';
 import Toast from 'react-native-simple-toast';
 import Item from '../item/Item';
 import Preview from '../preview/Preview';
-import {readActivities} from '../../utils/fs';
 import {isFilledArr} from '../../utils/isFilledArr';
 import {Row, Styles} from './styles';
-import {
-  APP_MODE,
-  WINDOW_HEIGHT,
-  NAVBAR_HEIGHT,
-  ERROR_OCCURRED,
-  ROUTE_TYPES,
-  ACTIVITIES_LIST_EMPTY,
-} from '../../constants/constants';
+import {APP_MODE, WINDOW_HEIGHT, NAVBAR_HEIGHT, ERROR_OCCURRED, ROUTE_TYPES} from '../../constants/constants';
+import WithActions from '../with-actions/WithActions';
+import {getActivities as _getActivities} from '../../actions';
 
 const {VIEW_ROUTE} = APP_MODE;
 const {ACTIVITY} = ROUTE_TYPES;
 
-const SavedMode = ({themeStyle, closeModal}) => {
+const SavedActivities = ({themeStyle, closeModal, getActivities}) => {
   const {zoomLevel, cameraRef} = useContext(mapContext);
   const {setAppMode, setViewMode, setDirectionsMode} = useContext(appModeContext);
   const {moveCamera} = Groove(cameraRef);
@@ -28,14 +22,15 @@ const SavedMode = ({themeStyle, closeModal}) => {
   const maxHeight = WINDOW_HEIGHT - WINDOW_HEIGHT * 0.15 - NAVBAR_HEIGHT - 100;
 
   useEffect(() => {
-    (async () => {
-      try {
-        const _activities = await readActivities();
-        isFilledArr(_activities) ? setActivities(_activities) : Toast.show(ACTIVITIES_LIST_EMPTY);
-      } catch (error) {
+    getActivities()
+      .then(res => {
+        const {success, reason, data} = res;
+        success ? setActivities(data.activities) : Toast.show(reason);
+      })
+      .catch(_ => {
+        //todo handle storage denied perms
         Toast.show(ERROR_OCCURRED);
-      }
-    })();
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -72,4 +67,7 @@ const SavedMode = ({themeStyle, closeModal}) => {
   return <ScrollView style={{maxHeight}}>{UserActivities}</ScrollView>;
 };
 
-export default SavedMode;
+const mapDispatchToProps = {
+  getActivities: _getActivities,
+};
+export default WithActions(mapDispatchToProps)(SavedActivities);

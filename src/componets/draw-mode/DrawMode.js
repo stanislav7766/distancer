@@ -6,14 +6,15 @@ import {routeContext, modalContext, appModeContext} from '../../contexts/context
 import IconLeftArrow from '../svg-icons/icon-left-arrow/IconLeftArrow';
 import IconDrag from '../svg-icons/icon-drag/IconDrag';
 import Toast from 'react-native-simple-toast';
-import {readRoutes, writeRoutes} from '../../utils/fs';
 import {randomID} from '../../utils/randomID';
 import {measureDistance} from '../../utils/measureDistanceCoords';
 import DoubleBtn from '../double-btn/DoubleBtn';
 import {Row, Column, stylesTextKM, Styles} from './styles';
 import {ERROR_OCCURRED, DIRECTIONS_MODE} from '../../constants/constants';
+import {saveRoute as _saveRoute} from '../../actions';
+import WithActions from '../with-actions/WithActions';
 
-const DrawMode = ({themeStyle}) => {
+const DrawMode = ({themeStyle, saveRoute}) => {
   const [typeSwitched, setTypeSwitched] = useState(false);
   const {setCurrentRoute, setDefaultRoute, currentRoute} = useContext(routeContext);
   const {setIsDirectionsMode, directionsMode, setDirectionsMode} = useContext(appModeContext);
@@ -50,18 +51,17 @@ const DrawMode = ({themeStyle}) => {
 
   const onPressBackStep = () => setPoints(points.slice(0, -1));
   const onPressDragMode = () => setDragMode(!dragMode);
-  const onPressSave = async () => {
-    try {
-      if (currentRoute.distance > 0) {
-        const route = {...currentRoute, directionsMode, id: randomID()};
-        const routes = await readRoutes();
-        const res = await writeRoutes(routes.length > 0 ? [...routes, route] : [route]);
-        res && onPressCancel();
-        Toast.show(res ? 'Saved' : ERROR_OCCURRED);
-      }
-    } catch (error) {
-      Toast.show(ERROR_OCCURRED);
-    }
+  const onPressSave = () => {
+    distance > 0 &&
+      saveRoute({payload: {route: {...currentRoute, directionsMode, id: randomID()}}})
+        .then(res => {
+          const {success, reason} = res;
+          success && onPressCancel();
+          Toast.show(success ? 'Saved' : reason);
+        })
+        .catch(_ => {
+          Toast.show(ERROR_OCCURRED);
+        });
   };
 
   return useMemo(
@@ -99,4 +99,7 @@ const DrawMode = ({themeStyle}) => {
   );
 };
 
-export default DrawMode;
+const mapDispatchToProps = {
+  saveRoute: _saveRoute,
+};
+export default WithActions(mapDispatchToProps)(DrawMode);

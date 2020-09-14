@@ -14,13 +14,14 @@ import {
   QUESTION_OPEN_SETTINGS,
   DIRECTIONS_MODE,
 } from '../../constants/constants';
-import {readActivities, writeActivities} from '../../utils/fs';
 import {isGoOut} from '../../utils/isGoOut';
 import {msTohhmmss} from '../../utils/timeToSec';
 import useStopwatch from '../stopwatch/useStopwatch';
 import {makeIterator} from '../../utils/makeIterator';
 import Toast from 'react-native-simple-toast';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+import {saveActivity as _saveActivity} from '../../actions';
+import WithActions from '../with-actions/WithActions';
 const {WALKING} = DIRECTIONS_MODE;
 const {STOP, GO, PAUSE} = LIVE_TYPES;
 const callAlert = showAppSettings =>
@@ -29,7 +30,7 @@ const callAlert = showAppSettings =>
     {text: 'No', onPress: () => {}, style: 'cancel'},
   ]);
 
-const LiveMode = ({themeStyle, closeModal, openModal}) => {
+const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   const {time, startWatch, resetWatch, stopWatch} = useStopwatch();
 
   const [timeChanges, setTimeChanges] = useState({
@@ -156,16 +157,29 @@ const LiveMode = ({themeStyle, closeModal, openModal}) => {
     setStatus(GO);
   };
   const calcTotalTime = start => msTohhmmss(new Date().getTime() - start);
-  const onPressStop = async () => {
-    const totalTime = calcTotalTime(timeChanges.startMS);
+
+  const onPressCancel = () => {
     closeModal();
     resetWatch();
     setStatus(STOP);
     setDefaultLiveRoute();
+    setIsDirectionsMode(false);
+  };
+
+  const onPressStop = async () => {
+    const totalTime = calcTotalTime(timeChanges.startMS);
+
     const {currentSpeed, status, ...rest} = liveRoute;
     const activity = {...rest, totalTime, directionsMode};
-    setIsDirectionsMode(false);
-    onSave(activity);
+    saveActivity({payload: {activity}})
+      .then(res => {
+        const {success, reason} = res;
+        onPressCancel();
+        Toast.show(success ? 'Saved' : reason);
+      })
+      .catch(_ => {
+        Toast.show(ERROR_OCCURRED);
+      });
   };
 
   const routeModeCall = type =>
@@ -228,7 +242,10 @@ const LiveMode = ({themeStyle, closeModal, openModal}) => {
   );
 };
 
-export default LiveMode;
+const mapDispatchToProps = {
+  saveActivity: _saveActivity,
+};
+export default WithActions(mapDispatchToProps)(LiveMode);
 
 const bgConfig = {
   desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
@@ -243,14 +260,4 @@ const bgConfig = {
   fastestInterval: 5000,
   activitiesInterval: 10000,
   stopOnStillActivity: false,
-};
-
-const onSave = async activity => {
-  try {
-    const routes = await readActivities();
-    const res = await writeActivities(routes.length > 0 ? [...routes, activity] : [activity]);
-    Toast.show(res ? 'Saved' : ERROR_OCCURRED);
-  } catch (error) {
-    Toast.show(ERROR_OCCURRED);
-  }
 };

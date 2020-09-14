@@ -5,22 +5,15 @@ import {Groove} from '../../contexts/Groove';
 import Toast from 'react-native-simple-toast';
 import Item from '../item/Item';
 import Preview from '../preview/Preview';
-import {readRoutes} from '../../utils/fs';
 import {isFilledArr} from '../../utils/isFilledArr';
 import {Row, Styles} from './styles';
-import {
-  APP_MODE,
-  WINDOW_HEIGHT,
-  NAVBAR_HEIGHT,
-  ERROR_OCCURRED,
-  ROUTES_LIST_EMPTY,
-  ROUTE_TYPES,
-} from '../../constants/constants';
-
+import {APP_MODE, WINDOW_HEIGHT, NAVBAR_HEIGHT, ERROR_OCCURRED, ROUTE_TYPES} from '../../constants/constants';
+import WithActions from '../with-actions/WithActions';
+import {getRoutes as _getRoutes} from '../../actions';
 const {VIEW_ROUTE} = APP_MODE;
 const {ROUTE} = ROUTE_TYPES;
 
-const SavedRoutes = ({themeStyle, closeModal}) => {
+const SavedRoutes = ({themeStyle, closeModal, getRoutes}) => {
   const {zoomLevel, cameraRef} = useContext(mapContext);
   const {setAppMode, setViewMode, setDirectionsMode} = useContext(appModeContext);
   const {moveCamera} = Groove(cameraRef);
@@ -28,14 +21,15 @@ const SavedRoutes = ({themeStyle, closeModal}) => {
   const maxHeight = WINDOW_HEIGHT - WINDOW_HEIGHT * 0.15 - NAVBAR_HEIGHT - 100;
 
   useEffect(() => {
-    (async () => {
-      try {
-        const _routes = await readRoutes();
-        isFilledArr(_routes) ? setRoutes(_routes) : Toast.show(ROUTES_LIST_EMPTY);
-      } catch (error) {
+    getRoutes()
+      .then(res => {
+        const {success, reason, data} = res;
+        success ? setRoutes(data.routes) : Toast.show(reason);
+      })
+      .catch(_ => {
+        //todo handle storage denied perms
         Toast.show(ERROR_OCCURRED);
-      }
-    })();
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -73,4 +67,7 @@ const SavedRoutes = ({themeStyle, closeModal}) => {
   return <ScrollView style={{maxHeight}}>{UserRoutes}</ScrollView>;
 };
 
-export default SavedRoutes;
+const mapDispatchToProps = {
+  getRoutes: _getRoutes,
+};
+export default WithActions(mapDispatchToProps)(SavedRoutes);

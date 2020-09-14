@@ -2,16 +2,16 @@ import React, {Fragment, useContext} from 'react';
 import {Text} from 'react-native';
 import Btn from '../btn/Btn';
 import {liveRouteContext, appModeContext} from '../../contexts/contexts';
-import {writeActivities} from '../../utils/fs';
 import Toast from 'react-native-simple-toast';
 import {Row, Column, stylesActivityProps, Styles} from './styles';
 import {APP_MODE, ERROR_OCCURRED} from '../../constants/constants';
 import SelectDirection from '../directions-bar/SelectDirection';
-import {removeRoute} from '../../utils/removeRoute';
+import WithActions from '../with-actions/WithActions';
+import {deleteActivity as _deleteActivity} from '../../actions';
 
 const {VIEW_MODE} = APP_MODE;
 
-const Activity = ({themeStyle}) => {
+const Activity = ({themeStyle, deleteActivity}) => {
   const {setDefaultLiveRoute, setDefaultActivities, activities, liveRoute} = useContext(liveRouteContext);
 
   const {setAppMode, directionsMode} = useContext(appModeContext);
@@ -25,16 +25,16 @@ const Activity = ({themeStyle}) => {
   };
 
   const onPressDelete = () => {
-    (async () => {
-      try {
-        const _activities = removeRoute(activities, liveRoute.id);
-        const written = await writeActivities(_activities);
-        written && onPressCancel();
-        Toast.show(written ? 'Deleted' : ERROR_OCCURRED);
-      } catch (error) {
+    const payload = {activityId: liveRoute.id, activities};
+    deleteActivity({payload})
+      .then(res => {
+        const {success, reason} = res;
+        success && onPressCancel();
+        Toast.show(success ? 'Deleted' : reason);
+      })
+      .catch(_ => {
         Toast.show(ERROR_OCCURRED);
-      }
-    })();
+      });
   };
 
   return (
@@ -95,4 +95,5 @@ const Activity = ({themeStyle}) => {
   );
 };
 
-export default Activity;
+const mapDispatchToProps = {deleteActivity: _deleteActivity};
+export default WithActions(mapDispatchToProps)(Activity);
