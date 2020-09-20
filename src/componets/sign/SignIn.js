@@ -1,18 +1,27 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {Text} from 'react-native';
 import Btn from '../btn/Btn';
 import TextInput from '../text-input/TextInput';
 import IconLeftArrow from '../svg-icons/icon-left-arrow/IconLeftArrow';
 import IconLogo from '../svg-icons/icon-logo/IconLogo';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
+import {appModeContext} from '../../contexts/contexts';
 import {Row, Column, Form, Styles} from './styles';
+import WithActions from '../with-actions/WithActions';
+import {loginUser as _loginUser, loginWithGoogle as _loginWithGoogle} from '../../actions';
+import Toast from 'react-native-simple-toast';
+import GoogleSignBtn from '../google-sign-btn/GoogleSignBtn';
+import useSpinner from '../spinner/useSpinner';
 
-const SignIn = ({themeStyle, goToMain}) => {
+const SignIn = ({themeStyle, goToMain, loginUser, loginWithGoogle}) => {
+  const {setLoading, isLoading, SpinnerComponent} = useSpinner({position: 'bottom'});
   const [input, setInput] = useState({email: '', password: ''});
+  const {setAuth} = useContext(appModeContext);
+
   const IconLeftArrowWrap = <IconLeftArrow width={30} height={33} fill={themeStyle.accentColor} />;
   const IconLogoWrap = <IconLogo width={40} height={43} />;
 
-  const {btnDims, arrowIconDims, inputStyle, greetingStyle, subGreetingStyle} = Styles(themeStyle);
+  const {btnDims, btnGoogleDims, arrowIconDims, inputStyle, greetingStyle, subGreetingStyle} = Styles(themeStyle);
 
   const onChangeText = ({text, type}) =>
     setInput(oldInput => ({
@@ -20,8 +29,40 @@ const SignIn = ({themeStyle, goToMain}) => {
       [type]: text,
     }));
 
-  const onSubmitEditing = async () => {};
+  const _resultSignIn = ({success, reason, data}) => {
+    if (!success) {
+      Toast.show(reason);
+      return;
+    }
+    setAuth({authorized: true, ...data.user});
+    goToMain();
+    Toast.show('Authorized');
+  };
 
+  const onPress = cb => {
+    if (isLoading) return;
+    cb();
+  };
+
+  const onPressSignInGoogle = async () => {
+    setLoading(true);
+    loginWithGoogle()
+      .then(_resultSignIn)
+      .catch(err => Toast.show(err))
+      .finally(_ => {
+        setLoading(false);
+      });
+  };
+
+  const onSubmitEditing = async () => {
+    setLoading(true);
+    loginUser({payload: {data: input}})
+      .then(_resultSignIn)
+      .catch(err => Toast.show(err))
+      .finally(_ => {
+        setLoading(false);
+      });
+  };
   const Greeting = (
     <Row marginTop={10}>
       <Column alignItems="flex-start">
@@ -32,14 +73,26 @@ const SignIn = ({themeStyle, goToMain}) => {
       </Column>
     </Row>
   );
+  const SignInGoogle = (
+    <Row marginTop={10}>
+      <Column alignItems={'center'}>
+        <GoogleSignBtn style={btnGoogleDims} title={'Sign In with Google'} onPress={onPressSignInGoogle} />
+      </Column>
+    </Row>
+  );
+  const Or = (
+    <Row marginTop={20}>
+      <Text style={subGreetingStyle}>Or</Text>
+    </Row>
+  );
   const Inputs = (
     <>
-      <Row marginTop={10}>
+      <Row>
         <TextInput
           style={inputStyle}
           placeholder={'Email'}
           value={input.email}
-          onSubmitEditing={onSubmitEditing}
+          onSubmitEditing={() => onPress(onSubmitEditing)}
           onChangeText={text => onChangeText({text, type: 'email'})}
         />
       </Row>
@@ -50,7 +103,7 @@ const SignIn = ({themeStyle, goToMain}) => {
           style={inputStyle}
           placeholder={'Password'}
           value={input.password}
-          onSubmitEditing={onSubmitEditing}
+          onSubmitEditing={() => onPress(onSubmitEditing)}
           onChangeText={text => onChangeText({text, type: 'password'})}
         />
       </Row>
@@ -59,6 +112,7 @@ const SignIn = ({themeStyle, goToMain}) => {
 
   return (
     <Form backgroundColor={themeStyle.backgroundColorSecondary}>
+      {SpinnerComponent}
       <Row marginTop={10}>
         <Column alignItems={'flex-start'}>
           <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrowWrap} onPress={goToMain} />
@@ -66,6 +120,8 @@ const SignIn = ({themeStyle, goToMain}) => {
         <Column alignItems={'flex-end'}>{IconLogoWrap}</Column>
       </Row>
       {Greeting}
+      {SignInGoogle}
+      {Or}
       {Inputs}
       <Row marginTop={20}>
         <Column alignItems={'flex-start'}>
@@ -75,4 +131,9 @@ const SignIn = ({themeStyle, goToMain}) => {
     </Form>
   );
 };
-export default SignIn;
+
+const mapDispatchToProps = {
+  loginUser: _loginUser,
+  loginWithGoogle: _loginWithGoogle,
+};
+export default WithActions(mapDispatchToProps)(SignIn);

@@ -7,6 +7,7 @@ export const Styles = themeStyle => {
     color: '#fff',
     backgroundColor: themeStyle.accentColor,
   };
+  const btnGoogleDims = {height: 46};
   const inputStyle = {
     textColor: themeStyle.textColor,
     underlineFocusedColor: themeStyle.accentColor,
@@ -28,5 +29,5 @@ export const Styles = themeStyle => {
     color: themeStyle.textColorSecondary,
   };
 
-  return {btnDims, inputStyle, arrowIconDims, greetingStyle, subGreetingStyle};
+  return {btnDims, btnGoogleDims, inputStyle, arrowIconDims, greetingStyle, subGreetingStyle};
 };
