@@ -16,6 +16,9 @@ export const Styles = themeStyle => {
   const bgGreen = {
     backgroundColor: '#BFE3A5',
   };
+  const bgRed = {
+    backgroundColor: '#FE5E60',
+  };
   const styleIcon = {
     position: 'relative',
     left: 10,
@@ -31,7 +34,7 @@ export const Styles = themeStyle => {
     fontSize: 18,
     color: themeStyle.textColorSecondary,
   };
-  return {styleItem, btnDims, bgGreen, styleIcon, appSettingsStyle};
+  return {styleItem, btnDims, bgGreen, bgRed, styleIcon, appSettingsStyle};
 };
 
 export const styleWrap = {
