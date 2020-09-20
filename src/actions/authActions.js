@@ -201,3 +201,24 @@ export const loginUser = ({payload}) =>
       reject(mes);
     }
   });
+
+export const logoutUser = ({payload}) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const isConnected = await isNetworkAvailable();
+      if (!isConnected) {
+        return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      }
+
+      const {userId} = payload;
+      const isSignedIn = await isSignedGoogle();
+      isSignedIn && (await _signOutGoogle());
+      await Promise.all([auth().signOut(), removeItem(userId)]);
+      resolve({success: true, reason: ''});
+    } catch (err) {
+      console.log('logoutUser', err);
+      const {code} = err;
+      const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
+      reject(mes);
+    }
+  });
