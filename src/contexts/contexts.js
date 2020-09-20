@@ -8,6 +8,7 @@ import {
   DEFAULT_ROUTES,
   DEFAULT_LIVE_ROUTE,
   DEFAULT_ACTIVITIES,
+  DEFAULT_AUTH,
   ROUTE_TYPES,
 } from '../constants/constants';
 
@@ -55,11 +56,14 @@ export const themeContext = createContext({
 });
 
 export const appModeContext = createContext({
+  auth: DEFAULT_AUTH,
   appMode: APP_MODE.VIEW_MODE,
   viewMode: ROUTE_TYPES.ROUTE,
   directionsMode: '',
   isDirectionsMode: false,
   setAppMode: () => {},
+  setAuth: () => {},
+  setDefaultAuth: () => {},
   setViewMode: () => {},
   setIsDirectionsMode: () => {},
   setDirectionsMode: () => {},

@@ -75,6 +75,12 @@ export const DEFAULT_LIVE_ROUTE = {
   id: '',
   points1: [],
 };
+export const DEFAULT_AUTH = {
+  userId: '',
+  authorized: false,
+  email: '',
+  username: '',
+};
 export const DEFAULT_ACTIVITIES = [];
 export const DEFAULT_ROUTES = [];
 export const DEFAULT_PLACES = [];
@@ -140,3 +146,10 @@ export const GIVE_GPS_PERMISSIONS_DETAILED = 'App needs location permission to f
 export const GPS_PERMS_ACCESS_COARSE = 'android.permission.ACCESS_COARSE_LOCATION';
 export const GPS_PERMS_ACCESS_FINE = 'android.permission.ACCESS_FINE_LOCATION';
 export const PLEASE_FINISH_ACTIVITY = 'Please finish activity';
+export const EMAIL_ALREADY_USED = 'The email address is already in use by another account';
+export const WEAK_PASSWORD = 'Password should be at least 6 characters';
+export const INVALID_EMAIL = 'The email address is invalid';
+export const USER_NOT_FOUND = 'User not found';
+export const WRONG_PASSWORD = 'Password wrong';
+export const NO_CURRENT_USER = 'You are not signed';
+export const WEB_CLIENT_ID = '904930169800-gdj1tqibo2rd87m8cu0pchdhjcitso6a.apps.googleusercontent.com';

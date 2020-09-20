@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "904930169800",
+    "firebase_url": "https://distancer-b1bc2.firebaseio.com",
+    "project_id": "distancer-b1bc2",
+    "storage_bucket": "distancer-b1bc2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:904930169800:android:fc9abec5649fbb840866fd",
+        "android_client_info": {
+          "package_name": "com.distancer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "904930169800-i1ltdhmcqbbhnk3jieifqidc411i4v4u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.distancer",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "904930169800-i4l5uha418qdvpnlciokhf87oalvgkcc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.distancer",
+            "certificate_hash": "64a9db1e0a080be1f4ec18dcdfe334f5f38711a8"
+          }
+        },
+        {
+          "client_id": "904930169800-gdj1tqibo2rd87m8cu0pchdhjcitso6a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBc4s7LFfSx70q_AR9wfveuaJUokK4lSU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "904930169800-gdj1tqibo2rd87m8cu0pchdhjcitso6a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
