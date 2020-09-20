@@ -11,13 +11,13 @@ export const Styles = themeStyle => {
     width: 155,
     height: 46,
     color: '#fff',
-    backgroundColor: '#BFE3A5',
+    backgroundColor: '#F6A444',
   };
   const btnContinueDims = {
     width: 155,
     height: 46,
     color: '#fff',
-    backgroundColor: '#F6A444',
+    backgroundColor: '#BFE3A5',
   };
   const liveInfoDims = {
     width: 155,
