@@ -10,18 +10,22 @@ import {Row, Styles} from './styles';
 import {APP_MODE, WINDOW_HEIGHT, NAVBAR_HEIGHT, ERROR_OCCURRED, ROUTE_TYPES} from '../../constants/constants';
 import WithActions from '../with-actions/WithActions';
 import {getActivities as _getActivities} from '../../actions';
+import useSpinner from '../spinner/useSpinner';
 
 const {VIEW_ROUTE} = APP_MODE;
 const {ACTIVITY} = ROUTE_TYPES;
 
 const SavedActivities = ({themeStyle, closeModal, getActivities}) => {
+  const {setLoading, isLoading, SpinnerComponent} = useSpinner({position: 'top'});
+
   const {zoomLevel, cameraRef} = useContext(mapContext);
   const {setAppMode, setViewMode, setDirectionsMode} = useContext(appModeContext);
   const {moveCamera} = Groove(cameraRef);
-  const {activities, setActivities, setLiveRoute} = useContext(liveRouteContext);
+  const {activities, setActivities, setDefaultActivities, setLiveRoute} = useContext(liveRouteContext);
   const maxHeight = WINDOW_HEIGHT - WINDOW_HEIGHT * 0.15 - NAVBAR_HEIGHT - 100;
 
   useEffect(() => {
+    setLoading(true);
     getActivities()
       .then(res => {
         const {success, reason, data} = res;
@@ -30,7 +34,13 @@ const SavedActivities = ({themeStyle, closeModal, getActivities}) => {
       .catch(_ => {
         //todo handle storage denied perms
         Toast.show(ERROR_OCCURRED);
+      })
+      .finally(_ => {
+        setLoading(false);
       });
+    return () => {
+      setDefaultActivities();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -64,7 +74,7 @@ const SavedActivities = ({themeStyle, closeModal, getActivities}) => {
     </Fragment>
   );
 
-  return <ScrollView style={{maxHeight}}>{UserActivities}</ScrollView>;
+  return isLoading ? SpinnerComponent : <ScrollView style={{maxHeight}}>{UserActivities}</ScrollView>;
 };
 
 const mapDispatchToProps = {

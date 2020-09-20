@@ -10,17 +10,21 @@ import {Row, Styles} from './styles';
 import {APP_MODE, WINDOW_HEIGHT, NAVBAR_HEIGHT, ERROR_OCCURRED, ROUTE_TYPES} from '../../constants/constants';
 import WithActions from '../with-actions/WithActions';
 import {getRoutes as _getRoutes} from '../../actions';
+import useSpinner from '../spinner/useSpinner';
+
 const {VIEW_ROUTE} = APP_MODE;
 const {ROUTE} = ROUTE_TYPES;
 
 const SavedRoutes = ({themeStyle, closeModal, getRoutes}) => {
+  const {setLoading, isLoading, SpinnerComponent} = useSpinner({position: 'top'});
   const {zoomLevel, cameraRef} = useContext(mapContext);
   const {setAppMode, setViewMode, setDirectionsMode} = useContext(appModeContext);
   const {moveCamera} = Groove(cameraRef);
-  const {routes, setCurrentRoute, setRoutes} = useContext(routeContext);
+  const {routes, setCurrentRoute, setRoutes, setDefaultRoutes} = useContext(routeContext);
   const maxHeight = WINDOW_HEIGHT - WINDOW_HEIGHT * 0.15 - NAVBAR_HEIGHT - 100;
 
   useEffect(() => {
+    setLoading(true);
     getRoutes()
       .then(res => {
         const {success, reason, data} = res;
@@ -29,7 +33,13 @@ const SavedRoutes = ({themeStyle, closeModal, getRoutes}) => {
       .catch(_ => {
         //todo handle storage denied perms
         Toast.show(ERROR_OCCURRED);
+      })
+      .finally(_ => {
+        setLoading(false);
       });
+    return () => {
+      setDefaultRoutes();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -64,7 +74,7 @@ const SavedRoutes = ({themeStyle, closeModal, getRoutes}) => {
     </Fragment>
   );
 
-  return <ScrollView style={{maxHeight}}>{UserRoutes}</ScrollView>;
+  return isLoading ? SpinnerComponent : <ScrollView style={{maxHeight}}>{UserRoutes}</ScrollView>;
 };
 
 const mapDispatchToProps = {
