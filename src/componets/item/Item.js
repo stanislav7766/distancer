@@ -7,7 +7,9 @@ const Item = ({text, style, onPress, IconComponent}) => {
       <Row>
         <Column width={'auto'}>{IconComponent && IconComponent}</Column>
         <Column marginLeft={10} width={'auto'}>
-          <TextStyled textColor={style.textColor}> {text}</TextStyled>
+          <TextStyled fontSize={style.fontSize} textColor={style.textColor}>
+            {text}
+          </TextStyled>
         </Column>
       </Row>
     </Container>

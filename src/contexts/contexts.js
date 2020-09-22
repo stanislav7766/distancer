@@ -10,6 +10,7 @@ import {
   DEFAULT_ACTIVITIES,
   DEFAULT_AUTH,
   ROUTE_TYPES,
+  DIRECTIONS_MODE,
 } from '../constants/constants';
 
 export const mapContext = createContext({
@@ -59,7 +60,7 @@ export const appModeContext = createContext({
   auth: DEFAULT_AUTH,
   appMode: APP_MODE.VIEW_MODE,
   viewMode: ROUTE_TYPES.ROUTE,
-  directionsMode: '',
+  directionsMode: DIRECTIONS_MODE.WALKING,
   isDirectionsMode: false,
   setAppMode: () => {},
   setAuth: () => {},

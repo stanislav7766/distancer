@@ -11,6 +11,7 @@ import {
   APP_MODE,
   ROUTE_TYPES,
   DEFAULT_AUTH,
+  DIRECTIONS_MODE,
 } from '../constants/constants';
 import {ThemeStyle} from '../constants/styles';
 
@@ -88,7 +89,7 @@ export const AppModeState = () => {
     auth: DEFAULT_AUTH,
     appMode: APP_MODE.VIEW_MODE,
     viewMode: ROUTE_TYPES.ROUTE,
-    directionsMode: '',
+    directionsMode: DIRECTIONS_MODE.WALKING,
     isDirectionsMode: false,
     setAuth: auth =>
       setState(prev => {

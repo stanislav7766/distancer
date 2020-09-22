@@ -24,6 +24,6 @@ export const TextStyled = styled.Text`
   font-family: Noto Sans;
   font-style: normal;
   font-weight: normal;
-  font-size: 17px;
+  font-size: ${props => props.fontSize || 17}px;
   line-height: 23px;
 `;
