@@ -3,9 +3,11 @@ import {TouchableOpacity, Text} from 'react-native';
 import {stylesBtnForm, stylesBtnText} from './styles';
 
 const Btn = ({onPress, onLongPress, style, title}) => {
-  const {width, height, backgroundColor, color, borderRadius, elevation} = style;
+  const {width, height, backgroundColor, color, borderRadius, elevation, borderWidth, borderColor} = style;
   const a = {};
   borderRadius && (a.borderRadius = borderRadius);
+  borderWidth && (a.borderWidth = borderWidth);
+  borderColor && (a.borderColor = borderColor);
   elevation && (a.elevation = elevation);
 
   return (
