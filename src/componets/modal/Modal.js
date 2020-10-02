@@ -19,7 +19,7 @@ import {APP_MODE, WINDOW_HEIGHT} from '../../constants/constants';
 const {VIEW_ROUTE, VIEW_MODE, DRAW_MODE, MENU_MODE, SAVED_MODE, LIVE_MODE} = APP_MODE;
 
 const Modal = ({navigator}) => {
-  const modalY = useRef(new Animated.Value(WINDOW_HEIGHT - 150)).current;
+  const modalY = useRef(new Animated.Value(viewHeight)).current;
   const {setDefaultPlaces} = useContext(placesContext);
   const {theme, getThemeStyle} = useContext(themeContext);
   const {appMode} = useContext(appModeContext);
@@ -146,6 +146,6 @@ export default Modal;
 
 const viewHeight = WINDOW_HEIGHT - 150;
 const drawHeight = WINDOW_HEIGHT - 200;
-const menuHeight = WINDOW_HEIGHT - 400;
+const menuHeight = WINDOW_HEIGHT*0.5;
 const viewActivityHeight = WINDOW_HEIGHT - 300;
 const liveHeight = WINDOW_HEIGHT - 250;

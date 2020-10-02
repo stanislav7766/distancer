@@ -10,6 +10,9 @@ export const ACCENT_GREEN = '#65FF4B';
 export const ACCENT_RED = '#fe5e60';
 export const ACCENT_BLUE = '#75bbfb';
 
+export const DEFAULT_GENDER = 'Male';
+export const DEFAULT_HEIGHT = '170';
+export const DEFAULT_WEIGHT = '70';
 export const WINDOW_HEIGHT = height;
 export const WINDOW_WIDTH = width;
 export const REQUIRE_LOCATION_PERMS = 'App requires location tracking permission';
@@ -67,6 +70,7 @@ export const DEFAULT_ROUTE = {
 export const DEFAULT_LIVE_ROUTE = {
   distance: 0,
   pace: `0'0"`,
+  date: '',
   movingTime: '00:00:00',
   totalTime: '00:00:00',
   avgSpeed: 0.0,
@@ -79,7 +83,13 @@ export const DEFAULT_AUTH = {
   userId: '',
   authorized: false,
   email: '',
-  username: '',
+  age: '',
+  height: '',
+  weight: '',
+  gender: '',
+  firstName: '',
+  lastName: '',
+  photoURL: '',
 };
 export const DEFAULT_ACTIVITIES = [];
 export const DEFAULT_ROUTES = [];
@@ -88,6 +98,9 @@ export const DEFAULT_MAP = {
   ZOOM: 14,
   COORDINATES: [30.5238, 50.45466],
 };
+
+export const MAX_HEIGHT = 220;
+export const MAX_WEIGHT = 230;
 
 export const CITY_NOT_FOUND = 'City Not Found';
 export const CHOOSE_YOUR_LOCATION = 'Choose your location';
@@ -153,3 +166,4 @@ export const USER_NOT_FOUND = 'User not found';
 export const WRONG_PASSWORD = 'Password wrong';
 export const NO_CURRENT_USER = 'You are not signed';
 export const WEB_CLIENT_ID = '904930169800-gdj1tqibo2rd87m8cu0pchdhjcitso6a.apps.googleusercontent.com';
+export const WRONG_AGE = 'Type the correct age';

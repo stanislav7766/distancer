@@ -15,7 +15,7 @@ import {
   DIRECTIONS_MODE,
 } from '../../constants/constants';
 import {isGoOut} from '../../utils/isGoOut';
-import {msTohhmmss} from '../../utils/timeToSec';
+import {msTohhmmss, yyyymmddNow} from '../../utils/timeToSec';
 import useStopwatch from '../stopwatch/useStopwatch';
 import {makeIterator} from '../../utils/makeIterator';
 import Toast from 'react-native-simple-toast';
@@ -88,13 +88,14 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
       BackgroundGeolocation.deleteAllLocations();
       BackgroundGeolocation.removeAllListeners();
       BackgroundGeolocation.liveRoute = {};
+      setIsDirectionsMode(false);
       AppState.removeEventListener('change', _handleAppStateChange);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const _handleAppStateChange = async nextAppState => setAppState(nextAppState);
 
-  const {directionsMode, setIsDirectionsMode, setDirectionsMode} = useContext(appModeContext);
+  const {directionsMode, setIsDirectionsMode, setDirectionsMode, auth} = useContext(appModeContext);
 
   const {liveRoute, setLiveRoute, setDefaultLiveRoute} = useContext(liveRouteContext);
   const {currentSpeed, status, pace, distance, avgSpeed, movingTime} = liveRoute;
@@ -144,9 +145,10 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   const onPressStart = () => {
     startWatch();
     const startMS = new Date().getTime();
+    const date = yyyymmddNow();
     openModal();
     setTimeChanges({...timeChanges, startMS});
-    setLiveRoute({id: randomID(), status: GO});
+    setLiveRoute({id: randomID(), status: GO, date});
   };
   const onPressPause = () => {
     stopWatch();
@@ -163,22 +165,23 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
     resetWatch();
     setStatus(STOP);
     setDefaultLiveRoute();
-    setIsDirectionsMode(false);
   };
 
   const onPressStop = async () => {
     const totalTime = calcTotalTime(timeChanges.startMS);
-
-    const {currentSpeed, status, ...rest} = liveRoute;
-    const activity = {...rest, totalTime, directionsMode};
-    saveActivity({payload: {activity}})
+    const {currentSpeed, status, distance, ...rest} = liveRoute;
+    const _distance = Number(distance);
+    const activity = {...rest, distance: _distance, totalTime, directionsMode};
+    saveActivity({payload: {activity, userId: auth.userId}})
       .then(res => {
         const {success, reason} = res;
-        onPressCancel();
         Toast.show(success ? 'Saved' : reason);
       })
       .catch(_ => {
         Toast.show(ERROR_OCCURRED);
+      })
+      .finally(_ => {
+        onPressCancel();
       });
   };
 

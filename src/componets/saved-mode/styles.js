@@ -5,6 +5,14 @@ export const Styles = themeStyle => {
     backgroundColor: themeStyle.backgroundColorSecondary,
     textColor: themeStyle.textColorSecondary,
   };
+  const styleItemRoute = {
+    ...styleItem,
+    height: 50,
+  };
+  const styleItemActivity = {
+    ...styleItem,
+    fontSize: 12,
+  };
 
   const btnDims = {
     width: 155,
@@ -12,6 +20,18 @@ export const Styles = themeStyle => {
     color: themeStyle.textColorSecondary,
     backgroundColor: themeStyle.backgroundColorSecondary,
   };
+  const btnBorder = {
+    borderColor: themeStyle.accentColor,
+    borderWidth: 2,
+  };
+  const styleFormHeaderDate = {
+    color: themeStyle.textColorSecondary,
+    fontSize: 15,
+  };
+  const styleFormHeaderInfo = {
+    color: themeStyle.textColorSecondary,
+    fontSize: 12,
+  };
 
-  return {styleItem, btnDims};
+  return {styleItem, styleItemRoute, styleItemActivity, btnDims, styleFormHeaderDate, styleFormHeaderInfo, btnBorder};
 };

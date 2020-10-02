@@ -43,7 +43,7 @@ const SavedRoutes = ({themeStyle, closeModal, getRoutes}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const {styleItem} = Styles(themeStyle);
+  const {styleItemRoute} = Styles(themeStyle);
   const routeWihoutDirections = ({directionsMode, ...route}) => route;
   const IconWrap = coords => <Preview coords={coords} />;
 
@@ -64,7 +64,7 @@ const SavedRoutes = ({themeStyle, closeModal, getRoutes}) => {
         routes.map((el, i) => (
           <Row key={i} marginBottom={isLastRoutesPoint(i) ? 20 : 0} marginTop={20}>
             <Item
-              style={styleItem}
+              style={styleItemRoute}
               onPress={() => onPressItem(el)}
               IconComponent={IconWrap(el.points)}
               text={`${el.distance} km${el.city.name && ', ' + el.city.name}`}

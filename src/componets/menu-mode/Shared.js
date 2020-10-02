@@ -5,7 +5,7 @@ import RoundedIcon from '../rounded-icon/RoundedIcon';
 import Item from '../item/Item';
 import IconSwitch from '../svg-icons/icon-switch/IconSwitch';
 import IconDot from '../svg-icons/icon-dot/IconDot';
-import {Row, Column, styleWrap, Styles} from './styles';
+import {Row, Column, styleWrap, Styles, mx0} from './styles';
 import {THEMES} from '../../constants/constants';
 import {Form} from '../../constants/styles';
 
@@ -64,7 +64,7 @@ const Shared = ({themeStyle, navigator}) => {
       </Row>
       <Row marginTop={10}>
         <Column>
-          <Row marginRight={'0px'} marginLeft={'0px'}>
+          <Row {...mx0}>
             <Column alignItems="flex-start">
               <Text style={appSettingsStyle}>Auto pause activity</Text>
             </Column>
@@ -77,7 +77,7 @@ const Shared = ({themeStyle, navigator}) => {
               />
             </Column>
           </Row>
-          <Row marginRight={'0px'} marginLeft={'0px'}>
+          <Row {...mx0}>
             <Column alignItems="flex-start">
               <Text style={appSettingsStyle}>Auto sync activities</Text>
             </Column>
@@ -90,7 +90,7 @@ const Shared = ({themeStyle, navigator}) => {
               />
             </Column>
           </Row>
-          <Row marginRight={'0px'} marginLeft={'0px'}>
+          <Row {...mx0}>
             <Column alignItems="flex-start">
               <Text style={appSettingsStyle}>Auto sync routes</Text>
             </Column>
@@ -111,7 +111,7 @@ const Shared = ({themeStyle, navigator}) => {
   return (
     <Fragment>
       <Row marginTop={10}>{AppSettingsGroup}</Row>
-      <Row>
+      <Row marginBottom={10}>
         <View style={styleWrap}>
           <Item style={styleItem} IconComponent={IconDotWrap} text={'Offline Maps'} />
         </View>

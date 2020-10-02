@@ -12,3 +12,9 @@ export const setItem = async (key, data) => {
 export const removeItem = async key => {
   await AsyncStorage.removeItem(key);
 };
+
+export const updateItem = async (key, data) => {
+  const string = await AsyncStorage.getItem(key);
+  const oldData = JSON.parse(string) || {};
+  await setItem(key, {...oldData, ...data});
+};

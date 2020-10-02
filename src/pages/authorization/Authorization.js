@@ -11,8 +11,11 @@ const Authorization = ({navigator, type}) => {
   const goToMain = () => {
     navigator.pop({animation: 'left'});
   };
+  const goToProfile = () => {
+    navigator.push('EditProfile', {}, {animation: 'right'});
+  };
   const SignInComponent = <SignIn goToMain={goToMain} themeStyle={themeStyle} />;
-  const SignUpComponent = <SignUp goToMain={goToMain} themeStyle={themeStyle} />;
+  const SignUpComponent = <SignUp goToMain={goToProfile} goBack={goToMain} themeStyle={themeStyle} />;
   const signModeCall = mode =>
     ({
       ['signIn']: SignInComponent,

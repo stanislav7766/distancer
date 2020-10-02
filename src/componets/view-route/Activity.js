@@ -12,9 +12,9 @@ import {deleteActivity as _deleteActivity} from '../../actions';
 const {VIEW_MODE} = APP_MODE;
 
 const Activity = ({themeStyle, deleteActivity}) => {
-  const {setDefaultLiveRoute, setDefaultActivities, activities, liveRoute} = useContext(liveRouteContext);
+  const {setDefaultLiveRoute, setDefaultActivities, liveRoute} = useContext(liveRouteContext);
 
-  const {setAppMode, directionsMode} = useContext(appModeContext);
+  const {setAppMode, directionsMode, auth} = useContext(appModeContext);
   const {btnDims} = Styles(themeStyle);
   const {distance, pace, avgSpeed, totalTime, movingTime} = liveRoute;
 
@@ -25,7 +25,7 @@ const Activity = ({themeStyle, deleteActivity}) => {
   };
 
   const onPressDelete = () => {
-    const payload = {activityId: liveRoute.id, activities};
+    const payload = {activityId: liveRoute.id, userId: auth.userId, directionsMode};
     deleteActivity({payload})
       .then(res => {
         const {success, reason} = res;

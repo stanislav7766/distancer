@@ -1,5 +1,5 @@
 export {Row, Column, Form} from '../../constants/styles';
-import {WINDOW_WIDTH} from '../../constants/constants';
+import {WINDOW_WIDTH, NAVBAR_HEIGHT, WINDOW_HEIGHT} from '../../constants/constants';
 
 export const Styles = themeStyle => {
   const styleItem = {
@@ -9,15 +9,22 @@ export const Styles = themeStyle => {
   };
   const btnDims = {
     width: 155,
-    height: 46,
+    height: 45,
     color: '#fff',
     backgroundColor: themeStyle.accentColor,
   };
+
   const bgGreen = {
     backgroundColor: '#BFE3A5',
   };
   const bgRed = {
     backgroundColor: '#FE5E60',
+  };
+
+  const btnDeleteAccount = {
+    ...btnDims,
+    ...bgRed,
+    width: 200,
   };
   const styleIcon = {
     position: 'relative',
@@ -34,7 +41,12 @@ export const Styles = themeStyle => {
     fontSize: 18,
     color: themeStyle.textColorSecondary,
   };
-  return {styleItem, btnDims, bgGreen, bgRed, styleIcon, appSettingsStyle};
+  const avatarTitleStyle = {
+    fontSize: 20,
+    color: themeStyle.textColorSecondary,
+    textAlign: 'center',
+  };
+  return {styleItem, btnDims, bgGreen, bgRed, styleIcon, appSettingsStyle, avatarTitleStyle, btnDeleteAccount};
 };
 
 export const styleWrap = {
@@ -44,3 +56,10 @@ export const styleWrap = {
   justifyContent: 'center',
   flexDirection: 'row',
 };
+
+export const mx0 = {
+  marginRight: '0px',
+  marginLeft: '0px',
+};
+
+export const scrollViewStyle = {maxHeight: WINDOW_HEIGHT * 0.5 - NAVBAR_HEIGHT - 50, top: 10};

@@ -15,7 +15,8 @@ const {VIEW_MODE, DRAW_MODE, SAVED_MODE, MENU_MODE, LIVE_MODE} = APP_MODE;
 const Navbar = () => {
   const {theme, getThemeStyle} = useContext(themeContext);
   const {liveRoute} = useContext(liveRouteContext);
-  const {appMode, setAppMode} = useContext(appModeContext);
+  const {appMode, setAppMode, auth} = useContext(appModeContext);
+  const {authorized} = auth;
   const themeStyle = getThemeStyle(theme);
   const {status} = liveRoute;
   const toastFinishLive = () => {
@@ -29,13 +30,15 @@ const Navbar = () => {
     setAppMode(mode);
   };
 
-  const NavbarItems = Object.keys(navbarItems).map((mode, i) => (
-    <Column key={i}>
-      <TouchableOpacity style={styleTouchable} onPress={() => onPressItem(APP_MODE[mode])}>
-        {navbarItems[mode](appMode === APP_MODE[mode] ? themeStyle.accentColor : themeStyle.textColorSecondary)}
-      </TouchableOpacity>
-    </Column>
-  ));
+  const NavbarItems = Object.keys(navbarItems).map((mode, i) =>
+    APP_MODE[mode] === LIVE_MODE && !authorized ? null : (
+      <Column key={i}>
+        <TouchableOpacity style={styleTouchable} onPress={() => onPressItem(APP_MODE[mode])}>
+          {navbarItems[mode](appMode === APP_MODE[mode] ? themeStyle.accentColor : themeStyle.textColorSecondary)}
+        </TouchableOpacity>
+      </Column>
+    ),
+  );
   return (
     <View style={[styleContainer, {backgroundColor: themeStyle.backgroundColor, height: NAVBAR_HEIGHT}]}>
       <View style={styleWrap}>

@@ -19,6 +19,7 @@ import {
 } from './src/contexts/initialStates';
 import Landing from './src/pages/landing';
 import Authorization from './src/pages/authorization';
+import EditProfile from './src/pages/edit-profile';
 import Navbar from './src//componets/navbar/Navbar';
 import Navigator from 'react-native-easy-router';
 import Compose from './src/componets/context-compose/Compose';
@@ -41,7 +42,7 @@ const App = () => {
 
   return (
     <Compose
-      Child={<Navigator screens={{Main, Authorization}} initialStack="Main" />}
+      Child={<Navigator screens={{Main, Authorization, EditProfile}} initialStack="Main" />}
       wrappers={[
         {Context: liveRouteContext, value: liveRoute},
         {Context: appModeContext, value: appMode},

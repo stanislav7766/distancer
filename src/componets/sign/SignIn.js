@@ -92,7 +92,6 @@ const SignIn = ({themeStyle, goToMain, loginUser, loginWithGoogle}) => {
           style={inputStyle}
           placeholder={'Email'}
           value={input.email}
-          onSubmitEditing={() => onPress(onSubmitEditing)}
           onChangeText={text => onChangeText({text, type: 'email'})}
         />
       </Row>
@@ -103,7 +102,6 @@ const SignIn = ({themeStyle, goToMain, loginUser, loginWithGoogle}) => {
           style={inputStyle}
           placeholder={'Password'}
           value={input.password}
-          onSubmitEditing={() => onPress(onSubmitEditing)}
           onChangeText={text => onChangeText({text, type: 'password'})}
         />
       </Row>

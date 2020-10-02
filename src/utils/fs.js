@@ -1,20 +1,39 @@
 import RNFS from 'react-native-fs';
 
-const SETTINGS_PATH = RNFS.DocumentDirectoryPath + '/settings.json';
-const ROUTES_PATH = RNFS.DocumentDirectoryPath + '/routes.json';
-const ACTIVITIES_PATH = RNFS.DocumentDirectoryPath + '/activities.json';
+const EXT_JSON = '.json';
+const SETTINGS_PATH = RNFS.DocumentDirectoryPath + '/settings' + EXT_JSON;
+const ROUTES_PATH = RNFS.DocumentDirectoryPath + '/routes' + EXT_JSON;
+const ACTIVITIES_WALKING_PATH = RNFS.DocumentDirectoryPath + '/activities/walking';
+const ACTIVITIES_CYCLING_PATH = RNFS.DocumentDirectoryPath + '/activities/cycling';
+const ACTIVITIES_DRIVING_PATH = RNFS.DocumentDirectoryPath + '/activities/driving';
+
 const ENCODING = 'utf8';
+
+const getDirectionPath = mode =>
+  ({
+    walking: ACTIVITIES_WALKING_PATH,
+    cycling: ACTIVITIES_CYCLING_PATH,
+    driving: ACTIVITIES_DRIVING_PATH,
+  }[mode]);
 
 const _deleteFile = async filePath =>
   new Promise((resolve, reject) => {
-    RNFS.exists(filePath)
+    _exists(filePath)
       .then(res => {
-        res &&
-          RNFS.unlink(filePath)
-            .then(_ => resolve(true))
-            .catch(_ => reject(false));
+        res
+          ? RNFS.unlink(filePath)
+              .then(_ => resolve(true))
+              .catch(_ => reject(false))
+          : resolve(true);
       })
       .catch(_ => reject(false));
+  });
+
+const _exists = async path =>
+  new Promise((resolve, reject) => {
+    RNFS.exists(path)
+      .then(res => resolve(res))
+      .catch(err => reject(err));
   });
 
 const _writeFile = async (filePath, data) =>
@@ -24,10 +43,33 @@ const _writeFile = async (filePath, data) =>
       .catch(_ => reject(false));
   });
 
+const _mkdir = async filePath =>
+  new Promise((resolve, reject) => {
+    RNFS.mkdir(filePath)
+      .then(_ => resolve(true))
+      .catch(_ => reject(false));
+  });
+
+const _readDir = async filePath =>
+  new Promise((resolve, reject) => {
+    RNFS.readDir(filePath)
+      .then(async res => {
+        const files = await Promise.all(res.map(file => _readFileParsed(file.path)));
+        resolve(files);
+      })
+      .catch(_ => reject(false));
+  });
+
 const _readFile = async filePath =>
   new Promise((resolve, reject) => {
     RNFS.readFile(filePath, ENCODING)
       .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+const _readFileParsed = async filePath =>
+  new Promise((resolve, reject) => {
+    RNFS.readFile(filePath, ENCODING)
+      .then(res => resolve(JSON.parse(res)))
       .catch(err => reject(err));
   });
 
@@ -41,11 +83,14 @@ export const readRoutes = async () =>
     }
   });
 
-export const readActivities = async () =>
+export const readActivities = async (direction, userId) =>
   new Promise(async (resolve, reject) => {
     try {
-      const data = await _readFile(ACTIVITIES_PATH);
-      resolve(JSON.parse(data));
+      const folderPath = `${getDirectionPath(direction)}/${userId}`;
+      const exist = await _exists(folderPath);
+      !exist && (await _mkdir(folderPath));
+      const data = await _readDir(folderPath);
+      resolve(data);
     } catch (error) {
       reject(error);
     }
@@ -82,12 +127,25 @@ export const writeRoutes = async arrRoutes =>
       reject(err);
     }
   });
-export const writeActivities = async arrRoutes =>
+export const writeActivity = async (direction, userId, id, data) =>
   new Promise(async (resolve, reject) => {
     try {
-      const deleted = await _deleteFile(ACTIVITIES_PATH);
-      const written = deleted && (await _writeFile(ACTIVITIES_PATH, JSON.stringify(arrRoutes)));
+      const folderPath = `${getDirectionPath(direction)}/${userId}`;
+      const filePath = `${folderPath}/${id}${EXT_JSON}`;
+      const exist = await _exists(folderPath);
+      !exist && (await _mkdir(folderPath));
+      const written = await _writeFile(filePath, JSON.stringify(data));
       written ? resolve(written) : reject(written);
+    } catch (err) {
+      reject(err);
+    }
+  });
+export const removeActivity = async (direction, userId, id) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const path = `${getDirectionPath(direction)}/${userId}/${id}${EXT_JSON}`;
+      const removed = await _deleteFile(path);
+      resolve(removed);
     } catch (err) {
       reject(err);
     }
@@ -96,9 +154,13 @@ export const writeActivities = async arrRoutes =>
 export const initialLoad = async () =>
   new Promise(async (resolve, reject) => {
     try {
-      await _writeFile(SETTINGS_PATH, JSON.stringify({theme: 'light'}));
-      await _writeFile(ROUTES_PATH, JSON.stringify([]));
-      await _writeFile(ACTIVITIES_PATH, JSON.stringify([]));
+      await Promise.all([
+        _mkdir(ACTIVITIES_DRIVING_PATH),
+        _mkdir(ACTIVITIES_WALKING_PATH),
+        _mkdir(ACTIVITIES_CYCLING_PATH),
+        _writeFile(SETTINGS_PATH, JSON.stringify({theme: 'light'})),
+        _writeFile(ROUTES_PATH, JSON.stringify([])),
+      ]);
 
       resolve(true);
     } catch (error) {

@@ -109,13 +109,14 @@ const Map = () => {
   );
   const isViewRoute = appMode === VIEW_ROUTE && viewMode === ROUTE;
   const isViewActivity = appMode === VIEW_ROUTE && viewMode === ACTIVITY;
-
+  // mapbox://styles/stanislav7766/ckfmifu9v0b6r19qqkapxjgxc
+  // https://api.mapbox.com/styles/v1/stanislav7766/ckfmifu9v0b6r19qqkapxjgxc.html?fresh=true&title=copy&access_token=pk.eyJ1Ijoic3RhbmlzbGF2Nzc2NiIsImEiOiJja2F5N2poNzIwMTUwMnFwN3JobXk4Z2MwIn0.iJqVFpMt9AXK-N_66gMBwQ
   return (
     <View style={[styleContainer, {height, width}]}>
       <MapView
         localizeLabels={true}
         onPress={onPressMap}
-        styleURL={MapboxGL.StyleURL.Street}
+        styleURL={'mapbox://styles/stanislav7766/ckfmifu9v0b6r19qqkapxjgxc'}
         style={styleMap}
         attributionEnabled={false}
         logoEnabled={false}

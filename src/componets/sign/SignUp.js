@@ -13,7 +13,7 @@ import Toast from 'react-native-simple-toast';
 import GoogleSignBtn from '../google-sign-btn/GoogleSignBtn';
 import useSpinner from '../spinner/useSpinner';
 
-const SignUp = ({themeStyle, goToMain, registerUser, registerWithGoogle}) => {
+const SignUp = ({themeStyle, goToMain,goBack, registerUser, registerWithGoogle}) => {
   const {setLoading, isLoading, SpinnerComponent} = useSpinner({position: 'bottom'});
   const [input, setInput] = useState({username: '', email: '', password: ''});
   const {setAuth} = useContext(appModeContext);
@@ -92,7 +92,6 @@ const SignUp = ({themeStyle, goToMain, registerUser, registerWithGoogle}) => {
           style={inputStyle}
           placeholder={'Email'}
           value={input.email}
-          onSubmitEditing={() => onPress(onSubmitEditing)}
           onChangeText={text => onChangeText({text, type: 'email'})}
         />
       </Row>
@@ -103,7 +102,6 @@ const SignUp = ({themeStyle, goToMain, registerUser, registerWithGoogle}) => {
           style={inputStyle}
           placeholder={'Password'}
           value={input.password}
-          onSubmitEditing={() => onPress(onSubmitEditing)}
           onChangeText={text => onChangeText({text, type: 'password'})}
         />
       </Row>
@@ -115,7 +113,7 @@ const SignUp = ({themeStyle, goToMain, registerUser, registerWithGoogle}) => {
       {SpinnerComponent}
       <Row marginTop={10}>
         <Column alignItems={'flex-start'}>
-          <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrowWrap} onPress={goToMain} />
+          <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrowWrap} onPress={goBack} />
         </Column>
         <Column alignItems={'flex-end'}>{IconLogoWrap}</Column>
       </Row>

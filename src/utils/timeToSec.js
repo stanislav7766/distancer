@@ -20,6 +20,15 @@ export const msTohhmmss = ms => {
   return [pad(hours.toString(), 2), pad(minutes.toString(), 2), pad(seconds.toString(), 2)].join(':');
 };
 
+export const yyyymmddNow = () => {
+  const now = new Date();
+  const todayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+  return todayUTC
+    .toISOString()
+    .slice(0, 10)
+    .replace(/-/g, '/');
+};
+
 export const calcPace = (dist, time) => {
   const splitedTime = time.split(':');
   const distance = parseFloat(dist);
@@ -31,4 +40,9 @@ export const calcPace = (dist, time) => {
   const paceMins = Math.floor(Math.floor(timeElapsed / distance) / 60);
   const paceSecs = Math.floor(timeElapsed / distance) - paceMins * 60;
   return `${paceMins}'${paceSecs}"`;
+};
+export const hhmmssSum = (hhmmss1, hhmmss2) => {
+  const ms1 = timeToSec(hhmmss1) * 1000;
+  const ms2 = timeToSec(hhmmss2) * 1000;
+  return msTohhmmss(ms1 + ms2);
 };

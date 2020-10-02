@@ -10,7 +10,7 @@ import {randomID} from '../../utils/randomID';
 import {measureDistance} from '../../utils/measureDistanceCoords';
 import DoubleBtn from '../double-btn/DoubleBtn';
 import {Row, Column, stylesTextKM, Styles} from './styles';
-import {ERROR_OCCURRED, DIRECTIONS_MODE} from '../../constants/constants';
+import {ERROR_OCCURRED} from '../../constants/constants';
 import {saveRoute as _saveRoute} from '../../actions';
 import WithActions from '../with-actions/WithActions';
 
@@ -38,7 +38,6 @@ const DrawMode = ({themeStyle, saveRoute}) => {
 
   useEffect(() => {
     setIsDirectionsMode(typeSwitched);
-    setDirectionsMode(typeSwitched ? DIRECTIONS_MODE.WALKING : '');
     return () => {
       setIsDirectionsMode(false);
     };
