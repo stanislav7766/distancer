@@ -19,9 +19,10 @@ import {msTohhmmss, yyyymmddNow} from '../../utils/timeToSec';
 import useStopwatch from '../stopwatch/useStopwatch';
 import {makeIterator} from '../../utils/makeIterator';
 import Toast from 'react-native-simple-toast';
-import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+// import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 import {saveActivity as _saveActivity} from '../../actions';
 import WithActions from '../with-actions/WithActions';
+
 const {WALKING} = DIRECTIONS_MODE;
 const {STOP, GO, PAUSE} = LIVE_TYPES;
 const callAlert = showAppSettings =>
@@ -71,23 +72,23 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
     !!(status !== STOP) && openModal();
     setIsDirectionsMode(true);
     setDirectionsMode(WALKING);
-    BackgroundGeolocation.configure(bgConfig);
+    // BackgroundGeolocation.configure(bgConfig);
 
-    BackgroundGeolocation.on('location', location => {
-      BackgroundGeolocation.startTask(taskKey => {
-        watchCB(location, BackgroundGeolocation.liveRoute);
-        BackgroundGeolocation.endTask(taskKey);
-      });
-    });
+    // BackgroundGeolocation.on('location', location => {
+    //   BackgroundGeolocation.startTask(taskKey => {
+    //     watchCB(location, BackgroundGeolocation.liveRoute);
+    //     BackgroundGeolocation.endTask(taskKey);
+    //   });
+    // });
 
-    BackgroundGeolocation.on('authorization', _status => {
-      _status !== BackgroundGeolocation.AUTHORIZED &&
-        setTimeout(() => callAlert(BackgroundGeolocation.showAppSettings), 1000);
-    });
+    // BackgroundGeolocation.on('authorization', _status => {
+    //   _status !== BackgroundGeolocation.AUTHORIZED &&
+    //     setTimeout(() => callAlert(BackgroundGeolocation.showAppSettings), 1000);
+    // });
     return () => {
-      BackgroundGeolocation.deleteAllLocations();
-      BackgroundGeolocation.removeAllListeners();
-      BackgroundGeolocation.liveRoute = {};
+      // BackgroundGeolocation.deleteAllLocations();
+      // BackgroundGeolocation.removeAllListeners();
+      // BackgroundGeolocation.liveRoute = {};
       setIsDirectionsMode(false);
       AppState.removeEventListener('change', _handleAppStateChange);
     };
@@ -118,15 +119,15 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   const setMovingTime = _movingTime => setLiveRoute({movingTime: _movingTime});
 
   useEffect(() => {
-    status === GO && BackgroundGeolocation.start();
-    (status === PAUSE || status === STOP) && BackgroundGeolocation.stop();
-    status === PAUSE && setLiveRoute({currentSpeed: LIVE_SPECS_DEFAULT.currSpeed});
+    // status === GO && BackgroundGeolocation.start();
+    // (status === PAUSE || status === STOP) && BackgroundGeolocation.stop();
+    // status === PAUSE && setLiveRoute({currentSpeed: LIVE_SPECS_DEFAULT.currSpeed});
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   useEffect(() => {
-    BackgroundGeolocation.liveRoute = liveRoute;
+    // BackgroundGeolocation.liveRoute = liveRoute;
   }, [liveRoute]);
 
   useEffect(() => {
@@ -143,7 +144,7 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   }, [hhmmss]);
 
   const onPressStart = () => {
-    startWatch();
+    // startWatch();
     const startMS = new Date().getTime();
     const date = yyyymmddNow();
     openModal();
