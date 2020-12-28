@@ -38,7 +38,7 @@ const Shared = ({themeStyle, navigator}) => {
   const IconDotWrap = <IconDot width={16} height={16} fill={themeStyle.accentColor} />;
 
   const IconSwitchWrap = (
-    <Animated.View style={{transform: [{translateX: iconThemeX, rotate: RotateData}]}}>
+    <Animated.View style={{transform: [{translateX: iconThemeX}, {rotate: RotateData}]}}>
       <IconSwitch width={40} height={27} fill1={themeStyle.accentColor} fill2={themeStyle.backgroundColorSecondary} />
     </Animated.View>
   );

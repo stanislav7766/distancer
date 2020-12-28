@@ -15,7 +15,7 @@ const DoubleBtn = ({style, textL, textR, value, onPress}) => {
   });
 
   const IconSwitchWrap = (
-    <Animated.View style={{transform: [{translateX: btnX, rotate: RotateData}]}}>
+    <Animated.View style={{transform: [{translateX: btnX}, {rotate: RotateData}]}}>
       <IconSwitch1 width={155 / 2} height={46} fill={accentColor} />
     </Animated.View>
   );
