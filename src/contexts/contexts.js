@@ -39,6 +39,7 @@ export const liveRouteContext = createContext({
   liveRoute: DEFAULT_LIVE_ROUTE,
   activities: DEFAULT_ACTIVITIES,
   setActivities: () => {},
+  setLivePoints: () => {},
   setLiveRoute: () => {},
   setDefaultLiveRoute: () => {},
   setDefaultActivities: () => {},

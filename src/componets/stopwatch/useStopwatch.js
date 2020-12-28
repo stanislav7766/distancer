@@ -3,7 +3,7 @@ import {msTohhmmss} from '../../utils/timeToSec';
 
 const useStopwatch = () => {
   const [timerId, setTimerId] = useState();
-  const [time, setTime] = useState({ms: 0, hhmmss: '00:00:00', status: 'stop'});
+  const [time, setTime] = useState({ms: 0, hhmmss: '00:00:00', status: 'reset'});
 
   const _startWatch = (startFromMs = 0, a = true) => {
     const resetFlag = () => (a = false);
@@ -42,7 +42,7 @@ const useStopwatch = () => {
     setTime({
       ms: 0,
       hhmmss: '00:00:00',
-      status: 'stop',
+      status: 'reset',
     });
   };
   return {resetWatch, stopWatch, startWatch, time};

@@ -1,134 +1,70 @@
-import React, {Fragment, useState, useContext, useEffect} from 'react';
+import React, {Fragment, useState, useContext, useEffect, useRef} from 'react';
 import {Row, Column, Styles} from './styles';
-import {AppState, Alert} from 'react-native';
 import Btn from '../btn/Btn';
 import LiveInfo from '../live-info/LiveInfo';
 import {liveRouteContext, appModeContext} from '../../contexts/contexts';
 import {randomID} from '../../utils/randomID';
-import {
-  LIVE_TYPES,
-  LIVE_MODDING,
-  LIVE_SPECS_DEFAULT,
-  ERROR_OCCURRED,
-  REQUIRE_LOCATION_PERMS,
-  QUESTION_OPEN_SETTINGS,
-  DIRECTIONS_MODE,
-} from '../../constants/constants';
-import {isGoOut} from '../../utils/isGoOut';
-import {msTohhmmss, yyyymmddNow} from '../../utils/timeToSec';
-import useStopwatch from '../stopwatch/useStopwatch';
+import {LIVE_TYPES, LIVE_MODDING, LIVE_SPECS_DEFAULT, ERROR_OCCURRED, DIRECTIONS_MODE} from '../../constants/constants';
+import {yyyymmddNow} from '../../utils/timeToSec';
 import {makeIterator} from '../../utils/makeIterator';
 import Toast from 'react-native-simple-toast';
-// import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+import useBackgroundLocation from '../../hooks/use-background-location';
+import useBackgroundStopWatch from '../../hooks/use-background-stopwatch';
 import {saveActivity as _saveActivity} from '../../actions';
 import WithActions from '../with-actions/WithActions';
 
 const {WALKING} = DIRECTIONS_MODE;
 const {STOP, GO, PAUSE} = LIVE_TYPES;
-const callAlert = showAppSettings =>
-  Alert.alert(REQUIRE_LOCATION_PERMS, QUESTION_OPEN_SETTINGS, [
-    {text: 'Yes', onPress: () => showAppSettings()},
-    {text: 'No', onPress: () => {}, style: 'cancel'},
-  ]);
 
 const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
-  const {time, startWatch, resetWatch, stopWatch} = useStopwatch();
-
-  const [timeChanges, setTimeChanges] = useState({
-    startBg: 0,
-    beforeBg: 0,
-    startMS: 0,
-  });
-
-  const {hhmmss, ms, status: timeStatus} = time;
   const [cSpeeds, setCSpeed] = useState(0.0);
   const [aSpeed, setASpeed] = useState(0.0);
 
-  const [appState, setAppState] = useState(AppState.currentState);
+  const {liveRoute, setLiveRoute, setLivePoints, setDefaultLiveRoute} = useContext(liveRouteContext);
+  const allowLocationUpdate = useRef(false);
 
-  const backgroundTime = inGoOut => {
-    if (inGoOut && timeStatus === 'tick') {
-      stopWatch();
-
-      setTimeChanges({
-        ...timeChanges,
-        startBg: new Date().getTime(),
-        beforeBg: ms,
+  const onUpdateLocation = (lnglat, currSpeed = 0) => {
+    if (allowLocationUpdate.current) {
+      setLivePoints(lnglat);
+      setLiveRoute({
+        currentSpeed: +(3.6 * currSpeed).toFixed(1),
       });
-    } else if (!inGoOut && timeStatus === 'stop') {
-      const {startBg, beforeBg} = timeChanges;
-      const dif = new Date().getTime() - startBg;
-      startWatch(dif + beforeBg);
     }
   };
 
-  useEffect(() => {
-    status === GO && backgroundTime(isGoOut(appState));
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [appState]);
-
-  useEffect(() => {
-    AppState.addEventListener('change', _handleAppStateChange);
-    !!(status !== STOP) && openModal();
-    setIsDirectionsMode(true);
-    setDirectionsMode(WALKING);
-    // BackgroundGeolocation.configure(bgConfig);
-
-    // BackgroundGeolocation.on('location', location => {
-    //   BackgroundGeolocation.startTask(taskKey => {
-    //     watchCB(location, BackgroundGeolocation.liveRoute);
-    //     BackgroundGeolocation.endTask(taskKey);
-    //   });
-    // });
-
-    // BackgroundGeolocation.on('authorization', _status => {
-    //   _status !== BackgroundGeolocation.AUTHORIZED &&
-    //     setTimeout(() => callAlert(BackgroundGeolocation.showAppSettings), 1000);
-    // });
-    return () => {
-      // BackgroundGeolocation.deleteAllLocations();
-      // BackgroundGeolocation.removeAllListeners();
-      // BackgroundGeolocation.liveRoute = {};
-      setIsDirectionsMode(false);
-      AppState.removeEventListener('change', _handleAppStateChange);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const _handleAppStateChange = async nextAppState => setAppState(nextAppState);
+  const {start, stop} = useBackgroundLocation(onUpdateLocation);
 
   const {directionsMode, setIsDirectionsMode, setDirectionsMode, auth} = useContext(appModeContext);
 
-  const {liveRoute, setLiveRoute, setDefaultLiveRoute} = useContext(liveRouteContext);
   const {currentSpeed, status, pace, distance, avgSpeed, movingTime} = liveRoute;
+  const isGo = status === GO;
+  const isStop = status === STOP;
+  const {onStartWatch, onContinueWatch, onTimeWatch, onResetWatch, onStopWatch, hhmmss} = useBackgroundStopWatch(isGo);
 
+  useEffect(() => {
+    isStop && openModal();
+    setIsDirectionsMode(true);
+    setDirectionsMode(WALKING);
+    return () => {
+      setIsDirectionsMode(false);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [aIt] = useState(makeIterator(LIVE_MODDING));
   const [A, setA] = useState(aIt.next().value);
 
-  const watchCB = (coords, _liveRoute) => {
-    if (_liveRoute.status === GO) {
-      const _speed = coords.speed || 0;
-      setLiveRoute({
-        currentSpeed: (3.6 * _speed).toFixed(1),
-        points1: [..._liveRoute.points1, [coords.longitude, coords.latitude]],
-      });
-    }
-  };
   const {btnDims, btnContinueDims, btnPauseDims, liveInfoDims} = Styles(themeStyle);
 
   const setStatus = _status => setLiveRoute({status: _status});
   const setMovingTime = _movingTime => setLiveRoute({movingTime: _movingTime});
 
   useEffect(() => {
-    // status === GO && BackgroundGeolocation.start();
-    // (status === PAUSE || status === STOP) && BackgroundGeolocation.stop();
-    // status === PAUSE && setLiveRoute({currentSpeed: LIVE_SPECS_DEFAULT.currSpeed});
-
+    status === GO && start();
+    (status === PAUSE || status === STOP) && stop();
+    status === PAUSE && setLiveRoute({currentSpeed: LIVE_SPECS_DEFAULT.currSpeed});
+    allowLocationUpdate.current = status === GO ? true : false;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
-
-  useEffect(() => {
-    // BackgroundGeolocation.liveRoute = liveRoute;
-  }, [liveRoute]);
 
   useEffect(() => {
     setCSpeed(currentSpeed);
@@ -144,32 +80,29 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   }, [hhmmss]);
 
   const onPressStart = () => {
-    // startWatch();
-    const startMS = new Date().getTime();
+    onStartWatch();
     const date = yyyymmddNow();
     openModal();
-    setTimeChanges({...timeChanges, startMS});
     setLiveRoute({id: randomID(), status: GO, date});
   };
   const onPressPause = () => {
-    stopWatch();
+    onStopWatch();
     setStatus(PAUSE);
   };
   const onPressContinue = () => {
-    startWatch();
+    onContinueWatch();
     setStatus(GO);
   };
-  const calcTotalTime = start => msTohhmmss(new Date().getTime() - start);
 
   const onPressCancel = () => {
     closeModal();
-    resetWatch();
+    onResetWatch();
     setStatus(STOP);
     setDefaultLiveRoute();
   };
 
   const onPressStop = async () => {
-    const totalTime = calcTotalTime(timeChanges.startMS);
+    const totalTime = onTimeWatch();
     const {currentSpeed, status, distance, ...rest} = liveRoute;
     const _distance = Number(distance);
     const activity = {...rest, distance: _distance, totalTime, directionsMode};
@@ -195,7 +128,7 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
       currSpeed: cSpeeds || LIVE_SPECS_DEFAULT.currSpeed,
     }[type]);
 
-  const StopButton = <Btn style={btnDims} title={`Let's go!`} onPress={onPressStart} />;
+  const StopButton = <Btn style={btnDims} title={"Let's go!"} onPress={onPressStart} />;
   const GoButton = <Btn style={btnPauseDims} title={'Pause'} onLongPress={onPressStop} onPress={onPressPause} />;
   const PauseButton = (
     <Btn style={btnContinueDims} title={'Continue'} onLongPress={onPressStop} onPress={onPressContinue} />
@@ -250,18 +183,3 @@ const mapDispatchToProps = {
   saveActivity: _saveActivity,
 };
 export default WithActions(mapDispatchToProps)(LiveMode);
-
-const bgConfig = {
-  desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
-  stationaryRadius: 5,
-  distanceFilter: 5,
-  notificationsEnabled: false,
-  debug: false,
-  startOnBoot: false,
-  stopOnTerminate: true,
-  locationProvider: BackgroundGeolocation.ACTIVITY_PROVIDER,
-  interval: 10000,
-  fastestInterval: 5000,
-  activitiesInterval: 10000,
-  stopOnStillActivity: false,
-};

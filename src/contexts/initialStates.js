@@ -55,6 +55,11 @@ export const LiveRouteState = () => {
     liveRoute: DEFAULT_LIVE_ROUTE,
     activities: DEFAULT_ACTIVITIES,
     setActivities: activities => setState(prev => ({...prev, activities})),
+    setLivePoints: lnglat =>
+      setState(prev => {
+        const rest = prev.liveRoute;
+        return {...prev, liveRoute: {...rest, points1: [...rest.points1, lnglat]}};
+      }),
     setLiveRoute: liveRoute =>
       setState(prev => {
         const rest = prev.liveRoute;
