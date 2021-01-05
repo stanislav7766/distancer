@@ -1,10 +1,11 @@
 import React, {Fragment, useContext, useEffect, useState} from 'react';
+import {Text} from 'react-native';
 import SavedRoutes from './SavedRoutes';
 import {appModeContext} from '../../contexts/contexts';
 import SavedActivities from './SavedActivities';
-import Btn from '../btn/Btn';
-
-import {Row, Column, Styles} from './styles';
+import Section from '../section/Section';
+import Touchable from '../touchable/Touchable';
+import {Row, Column, Styles, mt20, mt10} from './styles';
 import {ROUTE_TYPES} from '../../constants/constants';
 
 const {ROUTE, ACTIVITY} = ROUTE_TYPES;
@@ -19,18 +20,31 @@ const SavedMode = ({themeStyle, closeModal}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const {btnDims, btnBorder} = Styles(themeStyle);
-  const routeTypeBorder = type => (type === routeType ? btnBorder : {});
+  const {styleSection} = Styles(themeStyle);
+  const routeTypeBorder = type => (type === routeType ? themeStyle.accentColor : themeStyle.sectionColor);
   const changeRouteType = _routeType => setRouteType(_routeType);
 
   const RoutesButton = (
-    <Btn onPress={() => changeRouteType(ROUTE)} style={{...btnDims, ...routeTypeBorder(ROUTE)}} title={'Routes'} />
+    <Touchable
+      onPress={() => changeRouteType(ROUTE)}
+      Child={
+        <>
+          <Text style={styleSection}>Routes</Text>
+          <Section width={130} borderColor={routeTypeBorder(ROUTE)} />
+        </>
+      }
+    />
   );
+
   const ActivitiesButton = (
-    <Btn
+    <Touchable
       onPress={() => changeRouteType(ACTIVITY)}
-      style={{...btnDims, ...routeTypeBorder(ACTIVITY)}}
-      title={'Activities'}
+      Child={
+        <>
+          <Text style={styleSection}>Activities</Text>
+          <Section width={130} borderColor={routeTypeBorder(ACTIVITY)} />
+        </>
+      }
     />
   );
 
@@ -50,8 +64,8 @@ const SavedMode = ({themeStyle, closeModal}) => {
 
   return (
     <Fragment>
-      <Row marginTop={20}>{Buttons}</Row>
-      <Row marginTop={10}>{List}</Row>
+      <Row {...mt20}>{Buttons}</Row>
+      <Row {...mt10}>{List}</Row>
     </Fragment>
   );
 };

@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import {themeContext} from '../../contexts/contexts';
 import SignIn from '../../componets/sign/SignIn';
 import SignUp from '../../componets/sign/SignUp';
-import {CenterXY, Container, Row} from './styles';
+import {CenterXY, Container} from './styles';
 
 const Authorization = ({navigator, type}) => {
   const {theme, getThemeStyle} = useContext(themeContext);
@@ -24,9 +24,7 @@ const Authorization = ({navigator, type}) => {
   const Sign = signModeCall(type);
   return (
     <Container backgroundColor={themeStyle.backgroundColor}>
-      <CenterXY>
-        <Row>{Sign}</Row>
-      </CenterXY>
+      <CenterXY>{Sign}</CenterXY>
     </Container>
   );
 };

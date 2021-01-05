@@ -1,24 +1,16 @@
 import styled from 'styled-components';
+export {Row, Column, mx0} from '../../constants/styles';
 
-export const stylesBtnForm = {
-  justifyContent: 'center',
-  width: 'auto',
-  height: 'auto',
-  borderRadius: 15,
-  elevation: 7,
-  backgroundColor: '#4285F4',
-};
-
-export const stylesBtnText = {
-  fontSize: 15,
-  color: '#fff',
-};
-
-export const Column = styled.View`
-  justify-content: center;
-  align-items: ${props => props.alignItems || 'center'};
+export const Container = styled.TouchableOpacity`
+  justify-content: ${props => props.justifyContent ?? 'center'};
+  width: ${props => (props.width ? props.width + 'px' : '100%')};
+  height: ${props => (props.height ? props.height + 'px' : '100%')};
+  border-radius: ${props => props.borderRadius ?? 15}px;
+  elevation: ${props => props.elevation ?? 7};
+  background-color: ${props => props.backgroundColor ?? '#4285F4'};
 `;
 
-export const Row = styled.View`
-  flex-direction: row;
+export const BtnText = styled.Text`
+  font-size: ${props => props.fontSize ?? 15}px;
+  color: ${props => props.color ?? '#fff'};
 `;

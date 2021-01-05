@@ -6,7 +6,7 @@ import Toast from 'react-native-simple-toast';
 import Item from '../item/Item';
 import Preview from '../preview/Preview';
 import {isFilledArr} from '../../utils/isFilledArr';
-import {Row, Styles} from './styles';
+import {Row, Styles, mt20} from './styles';
 import {APP_MODE, WINDOW_HEIGHT, NAVBAR_HEIGHT, ERROR_OCCURRED, ROUTE_TYPES} from '../../constants/constants';
 import WithActions from '../with-actions/WithActions';
 import {getRoutes as _getRoutes} from '../../actions';
@@ -15,7 +15,7 @@ import useSpinner from '../spinner/useSpinner';
 const {VIEW_ROUTE} = APP_MODE;
 const {ROUTE} = ROUTE_TYPES;
 
-const SavedRoutes = ({themeStyle, closeModal, getRoutes}) => {
+const SavedRoutes = ({themeStyle, getRoutes}) => {
   const {setLoading, isLoading, SpinnerComponent} = useSpinner({position: 'top'});
   const {zoomLevel, cameraRef} = useContext(mapContext);
   const {setAppMode, setViewMode, setDirectionsMode} = useContext(appModeContext);
@@ -53,7 +53,6 @@ const SavedRoutes = ({themeStyle, closeModal, getRoutes}) => {
     setDirectionsMode(route.directionsMode);
     setCurrentRoute(routeWihoutDirections(route));
     moveCamera({zoomLevel, centerCoordinate: route.points[0]});
-    closeModal();
   };
 
   const isLastRoutesPoint = i => i === routes.length - 1;
@@ -62,7 +61,7 @@ const SavedRoutes = ({themeStyle, closeModal, getRoutes}) => {
     <Fragment>
       {isFilledArr(routes) &&
         routes.map((el, i) => (
-          <Row key={i} marginBottom={isLastRoutesPoint(i) ? 20 : 0} marginTop={20}>
+          <Row key={i} marginBottom={isLastRoutesPoint(i) ? 20 : 0} {...mt20}>
             <Item
               style={styleItemRoute}
               onPress={() => onPressItem(el)}

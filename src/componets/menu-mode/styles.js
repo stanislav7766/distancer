@@ -1,42 +1,19 @@
-export {Row, Column, Form} from '../../constants/styles';
-import {WINDOW_WIDTH, NAVBAR_HEIGHT, WINDOW_HEIGHT} from '../../constants/constants';
+import {StatusBar} from 'react-native';
+export {Row, Column, Form, mx0, mt10} from '../../constants/styles';
+import {
+  WINDOW_WIDTH,
+  NAVBAR_HEIGHT,
+  WINDOW_HEIGHT,
+  ACCENT_ORANGE,
+  ACCENT_RED,
+  ACCENT_GREEN,
+} from '../../constants/constants';
+import {btnContainerStyle, btnTextStyle} from '../../constants/styles';
+
+const hasNotch = StatusBar.currentHeight > 24;
+const padding = 10;
 
 export const Styles = themeStyle => {
-  const styleItem = {
-    backgroundColor: themeStyle.backgroundColorSecondary,
-    textColor: themeStyle.textColorSecondary,
-    height: 50,
-  };
-  const btnDims = {
-    width: 155,
-    height: 45,
-    color: '#fff',
-    backgroundColor: themeStyle.accentColor,
-  };
-
-  const bgGreen = {
-    backgroundColor: '#BFE3A5',
-  };
-  const bgRed = {
-    backgroundColor: '#FE5E60',
-  };
-
-  const btnDeleteAccount = {
-    ...btnDims,
-    ...bgRed,
-    width: 200,
-  };
-  const styleIcon = {
-    position: 'relative',
-    left: 10,
-    top: 10,
-    width: 80,
-    height: 40,
-    alignItems: 'flex-start',
-    paddingLeft: 10,
-    backgroundColor: themeStyle.backgroundColorSecondary,
-  };
-
   const appSettingsStyle = {
     fontSize: 18,
     color: themeStyle.textColorSecondary,
@@ -46,7 +23,7 @@ export const Styles = themeStyle => {
     color: themeStyle.textColorSecondary,
     textAlign: 'center',
   };
-  return {styleItem, btnDims, bgGreen, bgRed, styleIcon, appSettingsStyle, avatarTitleStyle, btnDeleteAccount};
+  return {appSettingsStyle, avatarTitleStyle};
 };
 
 export const styleWrap = {
@@ -57,9 +34,66 @@ export const styleWrap = {
   flexDirection: 'row',
 };
 
-export const mx0 = {
-  marginRight: '0px',
-  marginLeft: '0px',
+export const mrNeg = {
+  marginRight: -padding,
+};
+export const mb30 = {
+  marginBottom: 30,
 };
 
-export const scrollViewStyle = {maxHeight: WINDOW_HEIGHT * 0.5 - NAVBAR_HEIGHT - 50, top: 10};
+export const scrollViewStyle = {
+  maxHeight: WINDOW_HEIGHT - NAVBAR_HEIGHT - padding * 2,
+  top: NAVBAR_HEIGHT + (hasNotch ? 0 : StatusBar.currentHeight),
+  marginTop: padding,
+};
+
+export const pickerSizes = {
+  width: 100,
+  height: 200,
+  itemHeight: 40,
+};
+export const pickerTextStyle = {
+  color: ACCENT_ORANGE,
+};
+export const orangeColor = {
+  color: ACCENT_ORANGE,
+};
+
+export const greenBg = {
+  backgroundColor: ACCENT_GREEN,
+};
+export const redBg = {
+  backgroundColor: ACCENT_RED,
+};
+
+export const btnLogoutStyles = {
+  containerStyle: {
+    ...btnContainerStyle,
+    ...redBg,
+    height: 40,
+  },
+  textStyle: btnTextStyle,
+};
+export const btnProfileStyles = {
+  containerStyle: {
+    ...btnContainerStyle,
+    height: 40,
+  },
+  textStyle: btnTextStyle,
+};
+
+export const btnSignUpStyles = {
+  containerStyle: {
+    ...btnContainerStyle,
+    ...greenBg,
+    height: 40,
+  },
+  textStyle: btnTextStyle,
+};
+export const btnSignInStyles = {
+  containerStyle: {
+    ...btnContainerStyle,
+    height: 40,
+  },
+  textStyle: btnTextStyle,
+};

@@ -8,5 +8,5 @@ export {
   registerWithGoogle,
   loginWithGoogle,
   updateProfile,
-  deleteAccount
+  deleteAccount,
 } from './authActions';

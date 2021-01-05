@@ -1,10 +1,23 @@
 import styled from 'styled-components';
-export {Row, Column, Form} from '../../constants/styles';
+import {btnContainerStyle, btnTextStyle} from '../../constants/styles';
+export {Row, Column, Form, mt10} from '../../constants/styles';
 
+export const mt20 = {
+  marginTop: 20,
+};
+export const mt30 = {
+  marginTop: 30,
+};
 export const Container = styled.View`
   width: 100%;
   height: 100%;
   background-color: ${props => props.backgroundColor || '#fff'};
+`;
+
+export const ContainerPickers = styled.View`
+  width: 100%;
+  margin-bottom: 10px;
+  margin-top: 10px;
 `;
 
 export const CenterXY = styled.View`
@@ -14,14 +27,9 @@ export const CenterXY = styled.View`
   justify-content: center;
   align-items: center;
 `;
+const {width: _, ...btnContStyle} = btnContainerStyle;
 
 export const Styles = themeStyle => {
-  const btnDims = {
-    width: 155,
-    height: 46,
-    color: '#fff',
-    backgroundColor: themeStyle.accentColor,
-  };
   const inputStyle = {
     textColor: themeStyle.textColor,
     underlineFocusedColor: themeStyle.accentColor,
@@ -29,7 +37,7 @@ export const Styles = themeStyle => {
     placeholderColor: themeStyle.textColorSecondary,
   };
   const arrowIconDims = {
-    top: 0,
+    top: -10,
     left: 0,
     backgroundColor: themeStyle.backgroundColorSecondary,
     position: 'absolute',
@@ -46,16 +54,15 @@ export const Styles = themeStyle => {
     color: themeStyle.textColorSecondary,
   };
 
-  const pickerTextStyle = {
-    color: '#fff',
-    fontFamily: 'Noto Sans',
-    fontStyle: 'normal',
-    fontWeight: 'normal',
-    fontSize: 18,
-    lineHeight: 25,
-  };
+  return {inputStyle, arrowIconDims, headerStyle, orangeColor, grayColor};
+};
 
-  return {btnDims, inputStyle, arrowIconDims, headerStyle, orangeColor, grayColor, pickerTextStyle};
+export const btnSaveStyles = {
+  containerStyle: {
+    ...btnContStyle,
+    height: 40,
+  },
+  textStyle: btnTextStyle,
 };
 
 export const pickerSizes = {
@@ -64,5 +71,10 @@ export const pickerSizes = {
   itemHeight: 40,
 };
 export const pickerTextStyle = {
-  color: '#F6A444',
+  color: '#fff',
+  fontFamily: 'Noto Sans',
+  fontStyle: 'normal',
+  fontWeight: 'normal',
+  fontSize: 18,
+  lineHeight: 25,
 };

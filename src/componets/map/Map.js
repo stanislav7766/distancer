@@ -1,5 +1,5 @@
-import React, {useEffect, useContext, Fragment} from 'react';
-import {Dimensions, BackHandler, View} from 'react-native';
+import React, {useEffect, useContext} from 'react';
+import {Dimensions, View} from 'react-native';
 import MapboxGL, {MapView, UserLocation, Camera} from '@react-native-mapbox-gl/maps';
 import {
   mapContext,
@@ -12,33 +12,27 @@ import {
 import RoundedIcon from '../rounded-icon/RoundedIcon';
 import MapRoute from '../map-route/MapRoute';
 import LiveRoute from '../map-route/LiveRoute';
-import askPermissions from './askPermissions';
 import Toast from 'react-native-simple-toast';
 import {Groove} from '../../contexts/Groove';
 import DirectionsBar from '../directions-bar/DirectionsBar';
-import IconInfo from '../svg-icons/icon-info/IconInfo';
-import IconGps from '../svg-icons/icon-gps/IconGps';
+import useSvgFactory from '../../hooks/use-svg-factory';
+import {getInfo} from '../../assets/svg-icons/info';
+import {getGps} from '../../assets/svg-icons/gps';
 import {styleContainer, styleMap, Styles} from './styles';
 import {APP_MODE} from '../../constants/constants';
 import {MAP_TOKEN} from 'react-native-dotenv';
 import {FetchDirections} from '../../utils/directions';
 import {isFilledArr} from '../../utils/isFilledArr';
-import {
-  ERROR_OCCURRED,
-  ERROR_NETWORK_FAILED,
-  GPS_ALLOW_PERMISSIONS,
-  GPS_PERMISSIONS_DENIED,
-  GPS_PERMISSIONS_GRANTED,
-  LIVE_SPECS_DEFAULT,
-  ROUTE_TYPES,
-} from '../../constants/constants';
+import {ERROR_OCCURRED, ERROR_NETWORK_FAILED, LIVE_SPECS_DEFAULT, ROUTE_TYPES} from '../../constants/constants';
 import {measureDistance} from '../../utils/measureDistanceCoords';
 import {timeToSec, kmToM, calcPace} from '../../utils/timeToSec';
 
 const {height, width} = Dimensions.get('window');
-const {VIEW_ROUTE, DRAW_MODE, LIVE_MODE} = APP_MODE;
+const {VIEW_ROUTE, DRAW_MODE, LIVE_MODE, VIEW_MODE} = APP_MODE;
 const {ACTIVITY, ROUTE} = ROUTE_TYPES;
 MapboxGL.setAccessToken(MAP_TOKEN);
+
+const iconParams = {width: 32, height: 32};
 
 const Map = () => {
   const {theme, getThemeStyle} = useContext(themeContext);
@@ -64,21 +58,11 @@ const Map = () => {
   const isDrawDirectionsMode = isDirectionsMode && !dragMode;
   const {styleInfoIcon, styleGpsIcon} = Styles(themeStyle, height);
 
-  const IconGpsWrap = <IconGps width={32} height={32} fill={themeStyle.accentColor} />;
-  const IconInfoWrap = <IconInfo width={32} height={32} fill={themeStyle.accentColor} />;
+  const IconGps = useSvgFactory(getGps, {...iconParams, fillAccent: themeStyle.accentColor});
+  const IconInfo = useSvgFactory(getInfo, {...iconParams, fillAccent: themeStyle.accentColor});
 
   useEffect(() => {
-    (async () => {
-      const res = await askPermissions();
-      if (res) {
-        Toast.show(GPS_PERMISSIONS_GRANTED);
-        MapboxGL.setTelemetryEnabled(false);
-      } else {
-        Toast.show(GPS_PERMISSIONS_DENIED);
-        Toast.show(GPS_ALLOW_PERMISSIONS);
-        BackHandler.exitApp();
-      }
-    })();
+    MapboxGL.setTelemetryEnabled(false);
   }, []);
 
   useEffect(() => {
@@ -102,10 +86,10 @@ const Map = () => {
   };
   //todo moveToCurrPosition need rewriting
   const Icons = (
-    <Fragment>
-      <RoundedIcon style={styleGpsIcon} IconComponent={IconGpsWrap} onPress={() => moveToCurrPosition(zoomLevel)} />
-      <RoundedIcon style={styleInfoIcon} IconComponent={IconInfoWrap} />
-    </Fragment>
+    <>
+      <RoundedIcon style={styleGpsIcon} IconComponent={IconGps} onPress={() => moveToCurrPosition(zoomLevel)} />
+      <RoundedIcon style={styleInfoIcon} IconComponent={IconInfo} />
+    </>
   );
   const isViewRoute = appMode === VIEW_ROUTE && viewMode === ROUTE;
   const isViewActivity = appMode === VIEW_ROUTE && viewMode === ACTIVITY;
@@ -127,7 +111,7 @@ const Map = () => {
         {(appMode === LIVE_MODE || isViewActivity) && <LiveRoute />}
         <UserLocation />
       </MapView>
-      {(!expanded || appMode === DRAW_MODE) && Icons}
+      {!expanded && [LIVE_MODE, VIEW_MODE, DRAW_MODE].includes(appMode) && Icons}
       {isDirectionsMode && <DirectionsBar setMode={setDirectionsMode} themeStyle={themeStyle} />}
     </View>
   );

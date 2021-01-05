@@ -1,4 +1,7 @@
-export {Row, Column} from '../../constants/styles';
+import {ACCENT_RED} from '../../constants/constants';
+import {btnContainerStyle, btnTextStyle} from '../../constants/styles';
+
+export {Row, Column, mt10} from '../../constants/styles';
 
 export const stylesTextKM = {
   color: '#fff',
@@ -19,12 +22,6 @@ export const stylesActivityProps = {
 };
 
 export const Styles = themeStyle => {
-  const btnDims = {
-    width: 155,
-    height: 46,
-    color: '#fff',
-    backgroundColor: themeStyle.accentColorSecondary,
-  };
   const liveIconDims = {
     top: 0,
     left: 0,
@@ -32,5 +29,13 @@ export const Styles = themeStyle => {
     position: 'relative',
   };
 
-  return {btnDims, liveIconDims};
+  return {liveIconDims};
+};
+
+export const btnDeleteStyles = {
+  containerStyle: {
+    ...btnContainerStyle,
+    backgroundColor: ACCENT_RED,
+  },
+  textStyle: btnTextStyle,
 };

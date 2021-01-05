@@ -1,11 +1,10 @@
 import React from 'react';
-import {TouchableOpacity} from 'react-native';
-import {styleWrap} from './styles';
+import {Container} from './styles';
 
 const RoundedIcon = ({IconComponent, style, onPress}) => (
-  <TouchableOpacity style={[styleWrap, style]} onPress={onPress}>
+  <Container {...style} onPress={onPress}>
     {IconComponent}
-  </TouchableOpacity>
+  </Container>
 );
 
 export default RoundedIcon;

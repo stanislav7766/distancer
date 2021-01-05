@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import PropTypes from 'prop-types';
 import {View, Text, ScrollView} from 'react-native';
-import {Styles, Container, SelectedItem} from './styles';
+import {Styles, Container, SelectedItem, textStyleDefault} from './styles';
 
 const findIndex = (arr, val) => arr.findIndex(obj => obj.value === val);
 
@@ -14,17 +14,17 @@ const WheelPicker = ({items, selectedValue, onValueChange, textStyle, highlightS
   useEffect(() => {
     selectedValue && scrollToValue(selectedValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedValue]);
 
   const scrollToValue = val => {
     const ind = findIndex(items, val);
     const y = itemHeight * ind;
     setTimeout(() => {
-      scrollViewRef && scrollViewRef.current.scrollTo({y, animated: false});
+      scrollViewRef?.current?.scrollTo({y, animated: false});
     }, 1);
   };
 
-  const {highlightStyleDefault, textStyleDefault, offsetStyle} = Styles({itemHeight, offsetTop, offsetHeight});
+  const {highlightStyleDefault, offsetStyle} = Styles({itemHeight, offsetTop, offsetHeight});
   const Offset = <View style={offsetStyle} />;
 
   const onMomentumScrollEnd = e => scrollFix(e);

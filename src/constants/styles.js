@@ -2,14 +2,17 @@ import styled from 'styled-components';
 import {THEMES, ACCENT_GREEN, ACCENT_BLUE, ACCENT_RED} from './constants';
 
 export const Column = styled.View`
-  flex: 1;
-  align-items: ${props => props.alignItems || 'center'};
+  flex: ${props => props.flex ?? 1};
+  align-items: ${props => props.alignItems ?? 'center'};
+  align-self: ${props => props.alignSelf ?? 'center'};
+  justify-content: ${props => props.justifyContent ?? 'center'};
   flex-direction: column;
 `;
 export const Row = styled.View`
-  margin-right: ${props => props.marginRight || '10px'};
-  margin-left: ${props => props.marginLeft || '10px'};
-  justify-content: ${props => props.justifyContent || 'center'};
+  margin-right: ${props => props.marginRight ?? 10}px;
+  margin-left: ${props => props.marginLeft ?? 10}px;
+  align-items: ${props => props.alignItems ?? 'center'};
+  justify-content: ${props => props.justifyContent ?? 'center'};
   flex-direction: row;
 `;
 
@@ -22,6 +25,23 @@ export const Form = styled.View`
   elevation: 7;
 `;
 
+export const mx0 = {
+  marginLeft: 0,
+  marginRight: 0,
+};
+export const mt10 = {
+  marginTop: 10,
+};
+export const mr10 = {
+  marginRight: 10,
+};
+export const ml10 = {
+  marginLeft: 10,
+};
+export const my10 = {
+  marginBottom: 10,
+};
+
 export const ThemeStyle = {
   [THEMES.DARK]: {
     accentColor: ACCENT_BLUE,
@@ -31,6 +51,7 @@ export const ThemeStyle = {
     textColor: '#fff',
     textColorThird: '#d3d3d3',
     textColorSecondary: '#8D8D8D',
+    sectionColor: '#8D8D8D',
   },
   [THEMES.LIGHT]: {
     accentColor: ACCENT_BLUE,
@@ -40,7 +61,18 @@ export const ThemeStyle = {
     textColor: '#000',
     textColorThird: '#525252',
     textColorSecondary: '#8D8D8D',
+    sectionColor: '#D3D3D3',
   },
+};
+
+export const btnContainerStyle = {
+  width: 155,
+  height: 45,
+  color: '#fff',
+  backgroundColor: ACCENT_BLUE,
+};
+export const btnTextStyle = {
+  color: '#fff',
 };
 
 export const lineStyle = {

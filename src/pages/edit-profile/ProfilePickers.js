@@ -1,16 +1,15 @@
 import React from 'react';
 import {TouchableOpacity, Text} from 'react-native';
-import {DEFAULT_GENDER, DEFAULT_HEIGHT, DEFAULT_WEIGHT} from '../../constants/constants';
-import {Styles, Row, Column} from './styles';
+import {Styles, Row, Column, ContainerPickers, pickerTextStyle, mt10} from './styles';
 
 const ProfilePickers = ({themeStyle, profile, selectPicker}) => {
-  const {pickerTextStyle, grayColor, orangeColor} = Styles(themeStyle);
+  const {grayColor, orangeColor} = Styles(themeStyle);
   const {gender, weight, height} = profile;
 
   return (
-    <>
+    <ContainerPickers>
       <TouchableOpacity onPress={() => selectPicker('gender')}>
-        <Row marginTop={10}>
+        <Row {...mt10}>
           <Column alignItems={'flex-start'}>
             <Text style={[pickerTextStyle, grayColor]}>Gender</Text>
           </Column>
@@ -20,7 +19,7 @@ const ProfilePickers = ({themeStyle, profile, selectPicker}) => {
         </Row>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => selectPicker('height')}>
-        <Row marginTop={10}>
+        <Row {...mt10}>
           <Column alignItems={'flex-start'}>
             <Text style={[pickerTextStyle, grayColor]}>Height</Text>
           </Column>
@@ -30,7 +29,7 @@ const ProfilePickers = ({themeStyle, profile, selectPicker}) => {
         </Row>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => selectPicker('weight')}>
-        <Row marginTop={10}>
+        <Row {...mt10}>
           <Column alignItems={'flex-start'}>
             <Text style={[pickerTextStyle, grayColor]}>Weight</Text>
           </Column>
@@ -39,7 +38,7 @@ const ProfilePickers = ({themeStyle, profile, selectPicker}) => {
           </Column>
         </Row>
       </TouchableOpacity>
-    </>
+    </ContainerPickers>
   );
 };
 export default ProfilePickers;

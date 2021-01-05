@@ -10,11 +10,15 @@ export const Styles = (themeStyle, height) => {
   const styleGpsIcon = {
     right: 10,
     bottom: height * 0.35,
+    width: 50,
+    height: 50,
     backgroundColor: themeStyle.backgroundColorSecondary,
   };
   const styleInfoIcon = {
     left: 10,
     bottom: height * 0.35,
+    width: 50,
+    height: 50,
     backgroundColor: themeStyle.backgroundColorSecondary,
   };
   const styleMenuIcon = {

@@ -1,28 +1,47 @@
 import React, {useState, useContext, useEffect} from 'react';
 import {Text} from 'react-native';
 import {themeContext, appModeContext} from '../../contexts/contexts';
-import {CenterXY, Container, Row, Column, Styles, Form} from './styles';
+import {CenterXY, Container, Row, Column, Styles, btnSaveStyles, mt20, mt30} from './styles';
 import RoundedIcon from '../../componets/rounded-icon/RoundedIcon';
 import useSpinner from '../../componets/spinner/useSpinner';
-import IconLeftArrow from '../../componets/svg-icons/icon-left-arrow/IconLeftArrow';
+import {useModalPicker} from '../../hooks/use-window-modal';
+import {MAX_HEIGHT, MAX_WEIGHT, DEFAULT_GENDER, DEFAULT_HEIGHT, DEFAULT_WEIGHT} from '../../constants/constants';
+import useSvgFactory from '../../hooks/use-svg-factory';
+import {getLeftArrow} from '../../assets/svg-icons/left-arrow';
 import Btn from '../../componets/btn/Btn';
 import Avatar from '../../componets/avatar/Avatar';
-import Window from '../../componets/window/Window';
 import Toast from 'react-native-simple-toast';
-import {WINDOW_WIDTH} from '../../constants/constants';
 import WithActions from '../../componets/with-actions/WithActions';
 import {updateProfile as _updateProfile} from '../../actions';
 import ProfileInputs from './ProfileInputs';
 import ProfilePickers from './ProfilePickers';
-import RenderPicker from './RenderPicker';
+
+const heightPicker = () => new Array(MAX_HEIGHT).fill(0).map((_, i) => ({label: `${i + 1} cm`, value: `${i + 1}`}));
+const weightPicker = () => new Array(MAX_WEIGHT).fill(0).map((_, i) => ({label: `${i + 1} kgs`, value: `${i + 1}`}));
+const genderPicker = () => [
+  {label: 'Male', value: 'Male'},
+  {label: 'Female', value: 'Female'},
+];
+
+const itemsPicker = type =>
+  ({
+    height: heightPicker(),
+    weight: weightPicker(),
+    gender: genderPicker(),
+  }[type]);
 
 const EditProfile = ({navigator, updateProfile}) => {
   const {isLoading, setLoading, SpinnerComponent} = useSpinner({position: 'bottom'});
 
-  const [showWindow, setShowWindow] = useState(false);
   const [pickerMode, setPickerMode] = useState('height');
 
+  const onValueChange = ([value]) => {
+    setProfile(old => ({...old, [pickerMode]: value}));
+  };
+
   const [profile, setProfile] = useState({firstName: '', lastName: '', age: '', gender: '', height: '', weight: ''});
+
+  const [selected, setSelected] = useState([]);
 
   const {auth, setAuth} = useContext(appModeContext);
 
@@ -33,11 +52,9 @@ const EditProfile = ({navigator, updateProfile}) => {
 
   const {theme, getThemeStyle} = useContext(themeContext);
   const themeStyle = getThemeStyle(theme);
-  const IconLeftArrowWrap = <IconLeftArrow width={30} height={33} fill={themeStyle.accentColor} />;
+  const IconLeftArrow = useSvgFactory(getLeftArrow, {width: 30, height: 33, fillAccent: themeStyle.accentColor});
 
-  const {btnDims, arrowIconDims, headerStyle} = Styles(themeStyle);
-
-  const closeWindow = () => setShowWindow(false);
+  const {arrowIconDims, headerStyle} = Styles(themeStyle);
 
   const onSubmitEditing = async () => {
     if (isLoading) {
@@ -68,9 +85,17 @@ const EditProfile = ({navigator, updateProfile}) => {
 
   const avatarSource = auth.photoURL ? auth.photoURL : null;
 
+  const [ModalPicker, onShowModalPicker] = useModalPicker({
+    pickerItems: itemsPicker(pickerMode),
+    selectedItems: [profile[pickerMode]],
+    defaultItem: profile[pickerMode],
+    setSelectedItems: onValueChange,
+    mode: 'single',
+  });
+
   const selectPicker = type => {
     setPickerMode(type);
-    setShowWindow(true);
+    onShowModalPicker();
   };
 
   const InputsProps = {
@@ -83,29 +108,21 @@ const EditProfile = ({navigator, updateProfile}) => {
     profile,
     selectPicker,
   };
-  const PickerProps = {
-    pickerMode,
-    profile,
-    setProfile,
-    themeStyle,
-  };
 
   const Inputs = <ProfileInputs {...InputsProps} />;
 
   const Pickers = <ProfilePickers {...PickersProps} />;
 
-  const Picker = <RenderPicker {...PickerProps} />;
-
   const Header = (
-    <Row marginTop={10}>
-      <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrowWrap} onPress={goToMain} />
-      <Column alignItems={'center'}>
-        <Text style={headerStyle}>Profile</Text>
+    <Row>
+      <Column alignItems="center">
+        <Text style={headerStyle}>Profile settings</Text>
       </Column>
+      <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrow} onPress={goToMain} />
     </Row>
   );
   const AvatarView = (
-    <Row marginTop={30}>
+    <Row {...mt30}>
       <Column alignItems={'center'}>
         <Avatar size={80} src={avatarSource} />
       </Column>
@@ -113,9 +130,9 @@ const EditProfile = ({navigator, updateProfile}) => {
   );
 
   const SaveBtn = (
-    <Row marginTop={20}>
+    <Row {...mt20}>
       <Column alignItems={'flex-start'}>
-        <Btn style={btnDims} title={'Save'} onPress={onSubmitEditing} />
+        <Btn {...btnSaveStyles} title={'Save'} onPress={onSubmitEditing} />
       </Column>
     </Row>
   );
@@ -124,23 +141,15 @@ const EditProfile = ({navigator, updateProfile}) => {
     <>
       <Container backgroundColor={themeStyle.backgroundColor}>
         <CenterXY>
-          <Row>
-            <Form backgroundColor={themeStyle.backgroundColorSecondary}>
-              {SpinnerComponent}
-              {Header}
-              {AvatarView}
-              {Inputs}
-              {Pickers}
-              {SaveBtn}
-            </Form>
-          </Row>
+          {SpinnerComponent}
+          {Header}
+          {AvatarView}
+          {Inputs}
+          {Pickers}
+          {SaveBtn}
         </CenterXY>
       </Container>
-      {showWindow && (
-        <Window close={closeWindow} backgroundColor={themeStyle.backgroundColorSecondary} width={WINDOW_WIDTH * 0.8}>
-          {Picker}
-        </Window>
-      )}
+      {ModalPicker}
     </>
   );
 };

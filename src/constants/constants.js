@@ -6,9 +6,10 @@ export const THEMES = {
   LIGHT: 'light',
 };
 
-export const ACCENT_GREEN = '#65FF4B';
-export const ACCENT_RED = '#fe5e60';
+export const ACCENT_GREEN = '#BFE3A5';
+export const ACCENT_RED = '#e76d6f';
 export const ACCENT_BLUE = '#75bbfb';
+export const ACCENT_ORANGE = '#F6A444';
 
 export const DEFAULT_GENDER = 'Male';
 export const DEFAULT_HEIGHT = '170';
@@ -32,15 +33,15 @@ export const LIVE_TYPES = {
 };
 export const LIVE_MODDING = [
   {title: '', subTitle: 'Pace', type: 'pace'},
-  {title: ` km/h`, subTitle: 'Avg. speed', type: 'avgSpeed'},
-  {title: ` km`, subTitle: 'Distance', type: 'distance'},
+  {title: ' km/h', subTitle: 'Avg. speed', type: 'avgSpeed'},
+  {title: ' km', subTitle: 'Distance', type: 'distance'},
   {title: '', subTitle: 'Time', type: 'time'},
 ];
 export const LIVE_SPECS_DEFAULT = {
   avgSpeed: 0.0,
   distance: 0,
   time: '00:00:00',
-  pace: `0'0"`,
+  pace: '0\'0"',
   currSpeed: 0.0,
 };
 
@@ -69,7 +70,7 @@ export const DEFAULT_ROUTE = {
 };
 export const DEFAULT_LIVE_ROUTE = {
   distance: 0,
-  pace: `0'0"`,
+  pace: '0\'0"',
   date: '',
   movingTime: '00:00:00',
   totalTime: '00:00:00',

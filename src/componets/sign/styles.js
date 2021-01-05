@@ -1,13 +1,10 @@
-export {Row, Column, Form} from '../../constants/styles';
+import {btnContainerStyle, btnTextStyle} from '../../constants/styles';
+
+export {Row, Column, Form, mt10} from '../../constants/styles';
+
+const {width: _, ...btnContStyle} = btnContainerStyle;
 
 export const Styles = themeStyle => {
-  const btnDims = {
-    width: 155,
-    height: 46,
-    color: '#fff',
-    backgroundColor: themeStyle.accentColor,
-  };
-  const btnGoogleDims = {height: 46};
   const inputStyle = {
     textColor: themeStyle.textColor,
     underlineFocusedColor: themeStyle.accentColor,
@@ -29,5 +26,25 @@ export const Styles = themeStyle => {
     color: themeStyle.textColorSecondary,
   };
 
-  return {btnDims, btnGoogleDims, inputStyle, arrowIconDims, greetingStyle, subGreetingStyle};
+  return {inputStyle, arrowIconDims, greetingStyle, subGreetingStyle};
+};
+
+export const btnSignInStyles = {
+  containerStyle: {...btnContStyle, height: 40},
+  textStyle: btnTextStyle,
+};
+export const btnSignUpStyles = {
+  containerStyle: {...btnContStyle, height: 40},
+  textStyle: btnTextStyle,
+};
+export const btnGoogleStyles = {
+  containerStyle: {height: 40},
+  textStyle: btnTextStyle,
+};
+
+export const mt30 = {
+  marginTop: 30,
+};
+export const mb30 = {
+  marginBottom: 30,
 };

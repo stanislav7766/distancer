@@ -1,31 +1,29 @@
 import React from 'react';
-import {TouchableOpacity, Text} from 'react-native';
-import {stylesBtnForm, stylesBtnText, Row, Column} from './styles';
-import IconGoogle from '../svg-icons/icon-google/IconGoogle';
+import {Container, BtnText, Row, Column, mx0} from './styles';
+import useSvgFactory from '../../hooks/use-svg-factory';
+import {getGoogle} from '../../assets/svg-icons/google';
 
-const GoogleSignBtn = ({title, style, onPress}) => {
-  const {height} = style;
-  const IconGoogleWrap = <IconGoogle width={28} height={28} />;
+const GoogleSignBtn = ({title, onPress, containerStyle, textStyle}) => {
+  const {height} = containerStyle;
+  const IconGoogle = useSvgFactory(getGoogle, {width: 25, height: 25});
+  const googleProps = {
+    borderBottomLeftRadius: 15,
+    borderTopLeftRadius: 15,
+    backgroundColor: '#fff',
+    height,
+  };
+
   return (
-    <TouchableOpacity style={[stylesBtnForm, style]} onPress={onPress}>
-      <Row>
-        <Column
-          alignItems="center"
-          borderBottomLeftRadius={15}
-          borderTopLeftRadius={15}
-          backgroundColor={'#fff'}
-          height={height}
-          width={'10%'}
-        >
-          {IconGoogleWrap}
+    <Container {...containerStyle} onPress={onPress}>
+      <Row {...mx0}>
+        <Column {...googleProps} flex={0.1}>
+          {IconGoogle}
         </Column>
-        <Column alignItems="center" width={'90%'}>
-          <Text style={stylesBtnText} textColor={'fff'}>
-            {title}
-          </Text>
+        <Column alignItems="center" flex={0.9}>
+          <BtnText {...textStyle}>{title}</BtnText>
         </Column>
       </Row>
-    </TouchableOpacity>
+    </Container>
   );
 };
 export default GoogleSignBtn;

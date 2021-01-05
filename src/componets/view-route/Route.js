@@ -3,10 +3,11 @@ import {Text} from 'react-native';
 import Btn from '../btn/Btn';
 import {routeContext, appModeContext} from '../../contexts/contexts';
 import Toast from 'react-native-simple-toast';
-import {Row, Column, stylesTextKM, Styles} from './styles';
+import {Row, Column, stylesTextKM, Styles, btnDeleteStyles, mt10} from './styles';
 import {APP_MODE, ERROR_OCCURRED} from '../../constants/constants';
 import SelectDirection from '../directions-bar/SelectDirection';
-import IconMarker from '../svg-icons/icon-marker/IconMarker';
+import useSvgFactory from '../../hooks/use-svg-factory';
+import {getMarker} from '../../assets/svg-icons/marker';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
 import WithActions from '../with-actions/WithActions';
 import {deleteRoute as _deleteRoute} from '../../actions';
@@ -16,7 +17,7 @@ const Route = ({themeStyle, deleteRoute}) => {
   const {setDefaultRoute, setDefaultRoutes, routes, currentRoute, setCurrentRoute} = useContext(routeContext);
 
   const {setAppMode, directionsMode} = useContext(appModeContext);
-  const {btnDims, liveIconDims} = Styles(themeStyle);
+  const {liveIconDims} = Styles(themeStyle);
   const {distance} = currentRoute;
 
   const onPressCancel = () => {
@@ -43,30 +44,22 @@ const Route = ({themeStyle, deleteRoute}) => {
     setAppMode(LIVE_MODE);
   };
 
+  const IconMarker = useSvgFactory(getMarker, {width: 27, height: 23, fillAccent: themeStyle.accentColor});
+
   return (
     <Fragment>
-      <Row marginTop={10}>
-        <Column>
-          <Row>
-            <Column alignItems={'flex-start'}>
-              <Text style={[stylesTextKM, {color: themeStyle.textColorSecondary}]}>{distance} km</Text>
-            </Column>
-          </Row>
-          <Row>
-            <Column alignItems={'flex-start'}>
-              <SelectDirection themeStyle={themeStyle} mode={directionsMode ? directionsMode : ''} />
-            </Column>
-          </Row>
+      <Row alignItems="center" {...mt10}>
+        <Column flex={0.7} alignItems={'flex-start'}>
+          <Text style={[stylesTextKM, {color: themeStyle.textColorSecondary}]}>{distance} km</Text>
+        </Column>
+        <Column flex={0.3}>
+          <SelectDirection themeStyle={themeStyle} mode={directionsMode ? directionsMode : ''} />
         </Column>
         <Column>
-          <RoundedIcon
-            style={liveIconDims}
-            IconComponent={<IconMarker width={27} height={23} fill={themeStyle.accentColor} />}
-            onPress={onStartLiveWithRoute}
-          />
+          <RoundedIcon style={liveIconDims} IconComponent={IconMarker} onPress={onStartLiveWithRoute} />
         </Column>
         <Column alignItems={'flex-end'}>
-          <Btn style={btnDims} title={'Delete Route'} onPress={onPressDelete} />
+          <Btn {...btnDeleteStyles} title={'Delete Route'} onPress={onPressDelete} />
         </Column>
       </Row>
     </Fragment>

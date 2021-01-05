@@ -1,24 +1,18 @@
 import React from 'react';
 import {Image, Text, View} from 'react-native';
 import defaultImg from '../../assets/avatar.png';
-import {Row} from '../../constants/styles';
-import {titleDefaultStyle} from './styles';
+import {titleDefaultStyle, getAvatarStyle, Row, mx0} from './styles';
 
 const Avatar = ({src, size, title, titleStyle}) => {
-  const containerStyle = {
-    width: size,
-    height: size,
-    borderRadius: size * 0.5,
-  };
-
+  const avatarStyle = getAvatarStyle(size);
   return (
     <View>
-      <Row marginLeft={'0px'} marginRight={'0px'}>
-        <Image style={containerStyle} source={src ? {uri: src} : defaultImg} />
+      <Row {...mx0}>
+        <Image style={avatarStyle} source={src ? {uri: src} : defaultImg} />
       </Row>
       {title && (
-        <Row marginLeft={'0px'} marginRight={'0px'}>
-          <Text style={titleStyle ? titleStyle : titleDefaultStyle}>{title}</Text>
+        <Row {...mx0}>
+          <Text style={titleStyle ?? titleDefaultStyle}>{title}</Text>
         </Row>
       )}
     </View>

@@ -1,12 +1,12 @@
 import React, {useState, useEffect, useContext, useRef} from 'react';
-import {ScrollView, Text} from 'react-native';
+import {ScrollView, Text, View} from 'react-native';
 import {mapContext, appModeContext, liveRouteContext} from '../../contexts/contexts';
 import {Groove} from '../../contexts/Groove';
 import Toast from 'react-native-simple-toast';
 import Item from '../item/Item';
 import Preview from '../preview/Preview';
 import {isFilledArr} from '../../utils/isFilledArr';
-import {Row, Column, Styles} from './styles';
+import {Row, Column, Styles, mt10} from './styles';
 import {
   APP_MODE,
   WINDOW_HEIGHT,
@@ -21,12 +21,13 @@ import useSpinner from '../spinner/useSpinner';
 import {mapper} from '../../utils/mapper';
 import {calcFromMonth} from '../../utils/calcActivities';
 import {randomID} from '../../utils/randomID';
-import {Form} from '../../constants/styles';
+import Section from '../section/Section';
+
 const {VIEW_ROUTE} = APP_MODE;
 const {ACTIVITY} = ROUTE_TYPES;
 const {WALKING} = DIRECTIONS_MODE;
 
-const SavedActivities = ({themeStyle, closeModal, getActivities}) => {
+const SavedActivities = ({themeStyle, getActivities}) => {
   const [preparedData, setPrepared] = useState([]);
   const {setLoading, isLoading, SpinnerComponent} = useSpinner({position: 'top'});
 
@@ -91,14 +92,13 @@ const SavedActivities = ({themeStyle, closeModal, getActivities}) => {
     setDirectionsMode(activitity.directionsMode);
     setLiveRoute(routeWihoutDirections(activitity));
     moveCamera({zoomLevel, centerCoordinate: activitity.points1[0]});
-    closeModal();
   };
 
   const buildItemString = ({date, distance, pace, movingTime, avgSpeed}, direction) =>
     `${date}\n ${distance} km     ${direction === WALKING ? pace + ' /km' : avgSpeed + 'km/h'}      ${movingTime}`;
 
   const renderItem = (el, direction) => (
-    <Row key={randomID()} marginTop={10}>
+    <Row key={randomID()} {...mt10}>
       <Item
         style={styleItemActivity}
         IconComponent={IconWrap(el.points1)}
@@ -113,25 +113,25 @@ const SavedActivities = ({themeStyle, closeModal, getActivities}) => {
     {month, year, itemComponents, monthAvgSpeed, monthAvgPace, monthDistance, monthCount},
     direction,
   ) => (
-    <Row key={randomID()} marginTop={10}>
-      <Form backgroundColor={themeStyle.backgroundColor}>
-        <Row marginTop={10}>
-          <Column alignItems={'flex-start'}>
-            <Text style={styleFormHeaderDate}>
-              {month.toUpperCase()} {year}
-            </Text>
-          </Column>
-          <Column alignItems={'flex-end'}>
-            {renderFormHeaderInfo(
-              direction === WALKING
-                ? `${monthCount} runs    ${monthDistance} km   ${monthAvgPace} /km`
-                : `${monthCount} activities    ${monthDistance} km   ${monthAvgSpeed} km/h`,
-            )}
-          </Column>
-        </Row>
-        {itemComponents}
-      </Form>
-    </Row>
+    <View key={randomID()}>
+      <Row {...mt10}>
+        <Column alignItems={'flex-start'}>
+          <Text style={styleFormHeaderDate}>
+            {month.toUpperCase()} {year}
+          </Text>
+        </Column>
+        <Column alignItems={'flex-end'}>
+          {renderFormHeaderInfo(
+            direction === WALKING
+              ? `${monthCount} runs    ${monthDistance} km   ${monthAvgPace} /km`
+              : `${monthCount} activities    ${monthDistance} km   ${monthAvgSpeed} km/h`,
+          )}
+        </Column>
+      </Row>
+      <Section borderColor={themeStyle.sectionColor} />
+      {itemComponents}
+      <Row marginBottom={20} />
+    </View>
   );
 
   const UserActivities = () => {

@@ -1,0 +1,8 @@
+  
+# Ignore everything:
+/android
+/ios
+/node_modules
+
+
+# Except

@@ -1,9 +1,9 @@
-import React, {Fragment, useContext} from 'react';
+import React, {useContext} from 'react';
 import {Text} from 'react-native';
 import Btn from '../btn/Btn';
 import {liveRouteContext, appModeContext} from '../../contexts/contexts';
 import Toast from 'react-native-simple-toast';
-import {Row, Column, stylesActivityProps, Styles} from './styles';
+import {Row, Column, stylesActivityProps, btnDeleteStyles, mt10} from './styles';
 import {APP_MODE, ERROR_OCCURRED} from '../../constants/constants';
 import SelectDirection from '../directions-bar/SelectDirection';
 import WithActions from '../with-actions/WithActions';
@@ -15,7 +15,6 @@ const Activity = ({themeStyle, deleteActivity}) => {
   const {setDefaultLiveRoute, setDefaultActivities, liveRoute} = useContext(liveRouteContext);
 
   const {setAppMode, directionsMode, auth} = useContext(appModeContext);
-  const {btnDims} = Styles(themeStyle);
   const {distance, pace, avgSpeed, totalTime, movingTime} = liveRoute;
 
   const onPressCancel = () => {
@@ -38,8 +37,8 @@ const Activity = ({themeStyle, deleteActivity}) => {
   };
 
   return (
-    <Fragment>
-      <Row marginTop={10}>
+    <>
+      <Row {...mt10}>
         <Column>
           <Row>
             <Column alignItems={'flex-start'}>
@@ -83,15 +82,15 @@ const Activity = ({themeStyle, deleteActivity}) => {
           </Row>
         </Column>
       </Row>
-      <Row marginTop={10}>
+      <Row alignItems="center" {...mt10}>
         <Column alignItems={'flex-start'}>
           <SelectDirection themeStyle={themeStyle} mode={directionsMode ? directionsMode : ''} />
         </Column>
         <Column alignItems={'flex-end'}>
-          <Btn style={btnDims} title={'Delete Activity'} onPress={onPressDelete} />
+          <Btn {...btnDeleteStyles} title={'Delete Activity'} onPress={onPressDelete} />
         </Column>
       </Row>
-    </Fragment>
+    </>
   );
 };
 

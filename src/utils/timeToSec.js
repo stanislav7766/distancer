@@ -7,10 +7,7 @@ export const timeToSec = hhmmss =>
   );
 
 export const kmToM = km => km * 1000;
-const pad = n =>
-  String(n)
-    .padStart(2, '0')
-    .substring(0, 2);
+const pad = n => String(n).padStart(2, '0').substring(0, 2);
 
 export const msTohhmmss = ms => {
   const seconds = Math.floor((ms / 1000) % 60);
@@ -23,10 +20,7 @@ export const msTohhmmss = ms => {
 export const yyyymmddNow = () => {
   const now = new Date();
   const todayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
-  return todayUTC
-    .toISOString()
-    .slice(0, 10)
-    .replace(/-/g, '/');
+  return todayUTC.toISOString().slice(0, 10).replace(/-/g, '/');
 };
 
 export const calcPace = (dist, time) => {

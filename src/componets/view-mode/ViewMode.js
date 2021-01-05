@@ -4,11 +4,12 @@ import {Groove} from '../../contexts/Groove';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
 import TextInput from '../text-input/TextInput';
 import Item from '../item/Item';
-import IconMarker from '../svg-icons/icon-marker/IconMarker';
-import IconLeftArrow from '../svg-icons/icon-left-arrow/IconLeftArrow';
+import useSvgFactory from '../../hooks/use-svg-factory';
+import {getMarker} from '../../assets/svg-icons/marker';
+import {getLeftArrow} from '../../assets/svg-icons/left-arrow';
 import {Fetch} from '../../utils/geolocation';
 import {isFilledArr} from '../../utils/isFilledArr';
-import {Row, Column, Styles} from './styles';
+import {Row, Column, Styles, mt20, mt10} from './styles';
 import {CITY_NOT_FOUND, CHOOSE_YOUR_LOCATION, TYPE_CITY} from '../../constants/constants';
 
 const ViewMode = ({themeStyle, closeModal, openModal}) => {
@@ -20,9 +21,8 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
 
   const {styleItem, arrowIconDims, inputStyle} = Styles(themeStyle);
 
-  const IconMarkerWrap = <IconMarker width={24} height={32} fill={themeStyle.accentColor} />;
-  const IconLeftArrowWrap = <IconLeftArrow width={30} height={33} fill={themeStyle.accentColor} />;
-
+  const IconMarker = useSvgFactory(getMarker, {width: 24, height: 32, fillAccent: themeStyle.accentColor});
+  const IconLeftArrow = useSvgFactory(getLeftArrow, {width: 30, height: 33, fillAccent: themeStyle.accentColor});
   const {city} = currentRoute;
 
   const onPressItem = ({text: name, center: centerCoords}) => {
@@ -55,22 +55,17 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
     <Fragment>
       {isFilledArr(places) &&
         places.map((el, i) => (
-          <Row key={i} marginTop={20}>
+          <Row key={i} {...mt20}>
             <Item
               style={styleItem}
               onPress={() => el.text !== CITY_NOT_FOUND && onPressItem(el)}
-              IconComponent={IconMarkerWrap}
+              IconComponent={IconMarker}
               text={el.text}
             />
           </Row>
         ))}
-      <Row marginTop={20}>
-        <Item
-          style={styleItem}
-          onPress={onCurrentLocation}
-          IconComponent={IconMarkerWrap}
-          text={CHOOSE_YOUR_LOCATION}
-        />
+      <Row {...mt20}>
+        <Item style={styleItem} onPress={onCurrentLocation} IconComponent={IconMarker} text={CHOOSE_YOUR_LOCATION} />
       </Row>
     </Fragment>
   );
@@ -78,7 +73,7 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
   const ExpandedModal = (
     <Row>
       <Column alignItems={'flex-start'}>
-        <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrowWrap} onPress={closeModal} />
+        <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrow} onPress={closeModal} />
       </Column>
     </Row>
   );
@@ -86,7 +81,7 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
   return (
     <Fragment>
       {expanded && ExpandedModal}
-      <Row marginTop={10}>
+      <Row {...mt10}>
         <TextInput
           style={inputStyle}
           placeholder={TYPE_CITY}

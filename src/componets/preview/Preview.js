@@ -2,6 +2,7 @@ import React, {useRef} from 'react';
 import {Animated, View} from 'react-native';
 import CanvasNative from 'react-native-canvas';
 import {fromLatLngToPoint, getPointsDimenssions} from '../../utils/fromLatLngToPoint';
+import {getAnimation, runAnimation} from '../../utils/animations';
 import {stylePreview} from './styles';
 
 const Preview = ({coords}) => {
@@ -11,11 +12,7 @@ const Preview = ({coords}) => {
   };
 
   const handleAnim = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 2000,
-      useNativeDriver: true,
-    }).start();
+    runAnimation(getAnimation(fadeAnim, {toValue: 2, duration: 2000, useNativeDriver: true}));
   };
   const handleCanvas = canvas => {
     if (canvas) {

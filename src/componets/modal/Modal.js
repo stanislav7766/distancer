@@ -14,15 +14,15 @@ import ViewMode from '../view-mode/ViewMode';
 import LiveMode from '../live-mode/LiveMode';
 import MenuMode from '../menu-mode/MenuMode';
 import SavedMode from '../saved-mode/SavedMode';
-import {styleContainer, styleModal} from './styles';
-import {APP_MODE, WINDOW_HEIGHT} from '../../constants/constants';
+import {styleContainer, styleModal, noModalRadius} from './styles';
+import {APP_MODE, ROUTE_TYPES, WINDOW_HEIGHT} from '../../constants/constants';
 const {VIEW_ROUTE, VIEW_MODE, DRAW_MODE, MENU_MODE, SAVED_MODE, LIVE_MODE} = APP_MODE;
 
 const Modal = ({navigator}) => {
   const modalY = useRef(new Animated.Value(viewHeight)).current;
   const {setDefaultPlaces} = useContext(placesContext);
   const {theme, getThemeStyle} = useContext(themeContext);
-  const {appMode} = useContext(appModeContext);
+  const {appMode, viewMode} = useContext(appModeContext);
   const {setExpanded, setDragMode} = useContext(modalContext);
   const {setDefaultActivities, setDefaultLiveRoute} = useContext(liveRouteContext);
   const {setDefaultRoutes, setDefaultRoute, currentRoute} = useContext(routeContext);
@@ -32,14 +32,15 @@ const Modal = ({navigator}) => {
   const modeHelpers = mode =>
     ({
       [DRAW_MODE]: () => {
-        doubleModal();
+        drawModal();
         setDefaultRoute();
         setDragMode(false);
       },
-      [VIEW_ROUTE]: () => {},
+      [VIEW_ROUTE]: () => {
+        viewMode === ROUTE_TYPES.ROUTE ? viewRouteModal() : viewActivityModal();
+      },
       [LIVE_MODE]: () => {
-        closeModal();
-
+        liveModal();
         setDefaultRoutes();
         !inLive && setDefaultRoute();
         setDefaultActivities();
@@ -47,16 +48,16 @@ const Modal = ({navigator}) => {
         setDragMode(false);
       },
       [VIEW_MODE]: () => {
-        closeModal();
+        viewModal();
         setDefaultRoutes();
         setDefaultRoute();
         setDragMode(false);
       },
       [MENU_MODE]: () => {
-        doubleModal();
+        menuModal();
       },
       [SAVED_MODE]: () => {
-        openModal();
+        savedModal();
       },
     }[mode]());
 
@@ -65,60 +66,64 @@ const Modal = ({navigator}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appMode]);
 
-  const doubleModal = () => {
-    setExpanded(true);
-
+  const animateModal = toValue => {
     Animated.timing(modalY, {
       duration: 300,
-      toValue: appMode === DRAW_MODE ? drawHeight : appMode === MENU_MODE ? menuHeight : 0,
-      useNativeDriver: true,
+      toValue,
+      useNativeDriver: false,
     }).start();
   };
 
-  const double2Modal = () => {
-    Animated.timing(modalY, {
-      duration: 300,
-      toValue: liveHeight,
-      useNativeDriver: true,
-    }).start();
+  const drawModal = () => {
+    setExpanded(false);
+    animateModal(drawHeight);
+  };
+
+  const liveModal = () => {
+    setExpanded(false);
+    animateModal(liveHeight);
+  };
+
+  const liveExpandedModal = () => {
+    setExpanded(false);
+    animateModal(liveExpandedHeight);
   };
 
   const viewActivityModal = () => {
-    Animated.timing(modalY, {
-      duration: 300,
-      toValue: viewActivityHeight,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const openModal = () => {
     setExpanded(true);
-    Animated.timing(modalY, {
-      duration: 300,
-      toValue: WINDOW_HEIGHT * 0.15,
-      useNativeDriver: true,
-    }).start();
+    animateModal(viewActivityHeight);
+  };
+  const viewRouteModal = () => {
+    setExpanded(false);
+    animateModal(viewRouteHeight);
+  };
+  const savedModal = () => {
+    setExpanded(true);
+    animateModal(savedHeight);
+  };
+  const menuModal = () => {
+    setExpanded(true);
+    animateModal(menuHeight);
   };
 
-  const closeModal = () => {
+  const viewExpandedModal = () => {
+    setExpanded(true);
+    animateModal(viewExpandedHeight);
+  };
+
+  const viewModal = () => {
     setDefaultPlaces();
     setExpanded(false);
     Keyboard.dismiss();
-    Animated.timing(modalY, {
-      duration: 300,
-      toValue: appMode === DRAW_MODE ? drawHeight : viewHeight,
-      useNativeDriver: true,
-    }).start();
+    animateModal(viewHeight);
   };
   const DrawModeComponent = <DrawMode themeStyle={themeStyle} />;
-  const ViewRouteComponent = (
-    <ViewRoute expandActivity={viewActivityModal} expandRoute={closeModal} themeStyle={themeStyle} />
-  );
-  const ViewModeComponent = <ViewMode themeStyle={themeStyle} closeModal={closeModal} openModal={openModal} />;
+  const ViewRouteComponent = <ViewRoute themeStyle={themeStyle} />;
+  const ViewModeComponent = <ViewMode themeStyle={themeStyle} closeModal={viewModal} openModal={viewExpandedModal} />;
   const MenuModeComponent = <MenuMode navigator={navigator} themeStyle={themeStyle} />;
-  const SavedModeComponent = <SavedMode closeModal={closeModal} themeStyle={themeStyle} />;
+  const SavedModeComponent = <SavedMode themeStyle={themeStyle} />;
 
-  const LiveModeComponent = <LiveMode closeModal={closeModal} openModal={double2Modal} themeStyle={themeStyle} />;
+  const LiveModeComponent = <LiveMode closeModal={liveModal} openModal={liveExpandedModal} themeStyle={themeStyle} />;
 
   const appModeCall = mode =>
     ({
@@ -134,18 +139,26 @@ const Modal = ({navigator}) => {
 
   return (
     <View style={styleContainer}>
-      <Animated.View style={{transform: [{translateY: modalY}]}}>
-        <View style={[styleModal, {backgroundColor: themeStyle.backgroundColor}]}>
-          <View style={{height: viewHeight}}>{Body}</View>
-        </View>
+      <Animated.View
+        style={[
+          styleModal,
+          {minHeight: modalY, backgroundColor: themeStyle.backgroundColor},
+          appMode === MENU_MODE && noModalRadius,
+        ]}
+      >
+        {Body}
       </Animated.View>
     </View>
   );
 };
 export default Modal;
 
-const viewHeight = WINDOW_HEIGHT - 150;
-const drawHeight = WINDOW_HEIGHT - 200;
-const menuHeight = WINDOW_HEIGHT*0.5;
-const viewActivityHeight = WINDOW_HEIGHT - 300;
-const liveHeight = WINDOW_HEIGHT - 250;
+const liveHeight = 70;
+const liveExpandedHeight = 180;
+const viewHeight = 70;
+const viewExpandedHeight = WINDOW_HEIGHT * 0.75;
+const drawHeight = 120;
+const savedHeight = WINDOW_HEIGHT * 0.8;
+const viewActivityHeight = 210;
+const viewRouteHeight = 70;
+const menuHeight = WINDOW_HEIGHT;

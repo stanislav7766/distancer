@@ -65,13 +65,7 @@ const _signInWithGoogleCredential = async () => {
 };
 
 const _saveProfile = async (uid, profile) =>
-  Promise.all([
-    firestore()
-      .collection('users')
-      .doc(uid)
-      .set(profile),
-    setItem(uid, profile),
-  ]);
+  Promise.all([firestore().collection('users').doc(uid).set(profile), setItem(uid, profile)]);
 
 export const updateProfile = ({payload}) =>
   new Promise(async (resolve, reject) => {
@@ -87,10 +81,7 @@ export const updateProfile = ({payload}) =>
       }
       const {userId, ...restProfile} = profile;
       await Promise.all([
-        firestore()
-          .collection('users')
-          .doc(userId)
-          .update(restProfile),
+        firestore().collection('users').doc(userId).update(restProfile),
         updateItem(userId, restProfile),
       ]);
       resolve({success: true});
@@ -114,10 +105,7 @@ export const loginWithGoogle = () =>
         user: {uid},
       } = data;
 
-      const doc = await firestore()
-        .collection('users')
-        .doc(uid)
-        .get();
+      const doc = await firestore().collection('users').doc(uid).get();
 
       doc.exists
         ? resolve({success: true, reason: '', data: {user: {...doc.data(), userId: uid}}})
@@ -164,10 +152,7 @@ export const getCurrentUser = () =>
           return resolve({success: false, reason: '', data: {user: null}});
         }
         const {uid} = user;
-        const doc = await firestore()
-          .collection('users')
-          .doc(uid)
-          .get();
+        const doc = await firestore().collection('users').doc(uid).get();
         const data = doc.exists ? doc.data() : await getItem(uid);
         resolve({success: true, reason: '', data: {user: data}});
       });
@@ -223,10 +208,7 @@ export const loginUser = ({payload}) =>
       }
       const response = await auth().signInWithEmailAndPassword(email, password);
       const {uid} = response.user;
-      const doc = await firestore()
-        .collection('users')
-        .doc(uid)
-        .get();
+      const doc = await firestore().collection('users').doc(uid).get();
 
       doc.exists
         ? resolve({success: true, reason: '', data: {user: {...doc.data(), userId: uid}}})
@@ -252,10 +234,7 @@ export const deleteAccount = ({payload}) =>
       isSignedIn && (await _signOutGoogle());
       await Promise.all([
         auth().currentUser.delete(),
-        firestore()
-          .collection('users')
-          .doc(userId)
-          .delete(),
+        firestore().collection('users').doc(userId).delete(),
         deleteIfExist({directionsMode: 'walking', userId}),
         deleteIfExist({directionsMode: 'cycling', userId}),
         deleteIfExist({directionsMode: 'driving', userId}),
@@ -290,10 +269,7 @@ export const logoutUser = ({payload}) =>
     }
   });
 const getActivitiesColRef = ({userId, directionsMode}) =>
-  firestore()
-    .collection('activities')
-    .doc(directionsMode)
-    .collection(userId);
+  firestore().collection('activities').doc(directionsMode).collection(userId);
 
 const deleteIfExist = ({directionsMode, userId}) =>
   new Promise(async resolve => {
@@ -302,9 +278,7 @@ const deleteIfExist = ({directionsMode, userId}) =>
     docs.length > 0 &&
       (await docs.forEach(doc => {
         const {id} = doc.data();
-        getActivitiesColRef({userId, directionsMode})
-          .doc(id)
-          .delete();
+        getActivitiesColRef({userId, directionsMode}).doc(id).delete();
       }));
     resolve(true);
   });

@@ -1,9 +1,15 @@
-import React, {useContext} from 'react';
+import {useContext} from 'react';
 import {appModeContext} from '../../contexts/contexts';
-import IconDriving from '../svg-icons/icon-driving/IconDriving';
-import IconWalking from '../svg-icons/icon-walking/IconWalking';
-import IconCycling from '../svg-icons/icon-cycling/IconCycling';
+import useSvgFactory from '../../hooks/use-svg-factory';
+import {getDriving} from '../../assets/svg-icons/driving';
+import {getWalking} from '../../assets/svg-icons/walking';
+import {getCycling} from '../../assets/svg-icons/cycling';
 import {DIRECTIONS_MODE} from '../../constants/constants';
+
+const directionParams = {
+  width: 32,
+  height: 32,
+};
 
 const {WALKING, CYCLING, DRIVING} = DIRECTIONS_MODE;
 const SelectDirection = ({mode, themeStyle}) => {
@@ -12,9 +18,9 @@ const SelectDirection = ({mode, themeStyle}) => {
 
   const ModeCall = type =>
     ({
-      [WALKING]: <IconWalking width={30} height={30} fill={defineTheme(WALKING)} />,
-      [CYCLING]: <IconCycling width={32} height={32} fill={defineTheme(CYCLING)} />,
-      [DRIVING]: <IconDriving width={32} height={32} fill={defineTheme(DRIVING)} />,
+      [WALKING]: useSvgFactory(getWalking, {...directionParams, fillAccent: defineTheme(WALKING)}),
+      [CYCLING]: useSvgFactory(getCycling, {...directionParams, fillAccent: defineTheme(CYCLING)}),
+      [DRIVING]: useSvgFactory(getDriving, {...directionParams, fillAccent: defineTheme(DRIVING)}),
       ['']: null,
     }[type]);
   return ModeCall(mode);

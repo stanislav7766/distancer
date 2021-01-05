@@ -1,6 +1,6 @@
 import React from 'react';
 import TextInput from '../../componets/text-input/TextInput';
-import {Styles, Row} from './styles';
+import {Styles, Row, mt10} from './styles';
 
 const ProfileInputs = ({themeStyle, profile, setProfile}) => {
   const {inputStyle} = Styles(themeStyle);
@@ -23,7 +23,7 @@ const ProfileInputs = ({themeStyle, profile, setProfile}) => {
           onChangeText={text => onChangeText({text, type: 'firstName'})}
         />
       </Row>
-      <Row marginTop={10}>
+      <Row {...mt10}>
         <TextInput
           style={inputStyle}
           placeholder={'Last name'}
@@ -31,7 +31,7 @@ const ProfileInputs = ({themeStyle, profile, setProfile}) => {
           onChangeText={text => onChangeText({text, type: 'lastName'})}
         />
       </Row>
-      <Row marginTop={10}>
+      <Row {...mt10}>
         <TextInput
           style={inputStyle}
           placeholder={'Age'}

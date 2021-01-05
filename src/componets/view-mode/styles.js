@@ -1,10 +1,14 @@
-export {Row, Column} from '../../constants/styles';
+export {Row, Column, mt10} from '../../constants/styles';
+
+export const mt20 = {
+  marginTop: 20,
+};
 
 export const Styles = themeStyle => {
   const styleItem = {
     backgroundColor: themeStyle.backgroundColorSecondary,
     textColor: themeStyle.textColorSecondary,
-    height: 55,
+    height: 50,
   };
   const arrowIconDims = {
     top: 10,

@@ -10,10 +10,10 @@ export const Styles = ({itemHeight, offsetTop, offsetHeight}) => {
     borderTopWidth: 2,
     borderBottomWidth: 2,
   };
-  const textStyleDefault = {fontSize: 20, lineHeight: 26, textAlign: 'center', color: '#000'};
   const offsetStyle = {height: offsetHeight, flex: 1};
-  return {highlightStyleDefault, textStyleDefault, offsetStyle};
+  return {highlightStyleDefault, offsetStyle};
 };
+export const textStyleDefault = {fontSize: 20, lineHeight: 26, textAlign: 'center', color: '#000'};
 
 export const Container = styled.View`
   flex: 1;

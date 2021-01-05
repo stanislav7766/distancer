@@ -1,5 +1,5 @@
 import React, {Fragment, useState, useContext, useEffect, useRef} from 'react';
-import {Row, Column, Styles} from './styles';
+import {Row, Column, Styles, btnStartStyles, btnPauseStyles, btnContinueStyles, mt10} from './styles';
 import Btn from '../btn/Btn';
 import LiveInfo from '../live-info/LiveInfo';
 import {liveRouteContext, appModeContext} from '../../contexts/contexts';
@@ -53,7 +53,7 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   const [aIt] = useState(makeIterator(LIVE_MODDING));
   const [A, setA] = useState(aIt.next().value);
 
-  const {btnDims, btnContinueDims, btnPauseDims, liveInfoDims} = Styles(themeStyle);
+  const {liveInfoContainer, liveInfoText, liveInfoSubText} = Styles(themeStyle);
 
   const setStatus = _status => setLiveRoute({status: _status});
   const setMovingTime = _movingTime => setLiveRoute({movingTime: _movingTime});
@@ -128,10 +128,10 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
       currSpeed: cSpeeds || LIVE_SPECS_DEFAULT.currSpeed,
     }[type]);
 
-  const StopButton = <Btn style={btnDims} title={"Let's go!"} onPress={onPressStart} />;
-  const GoButton = <Btn style={btnPauseDims} title={'Pause'} onLongPress={onPressStop} onPress={onPressPause} />;
+  const StopButton = <Btn {...btnStartStyles} title={"Let's go!"} onPress={onPressStart} />;
+  const GoButton = <Btn {...btnPauseStyles} title={'Pause'} onLongPress={onPressStop} onPress={onPressPause} />;
   const PauseButton = (
-    <Btn style={btnContinueDims} title={'Continue'} onLongPress={onPressStop} onPress={onPressContinue} />
+    <Btn {...btnContinueStyles} title={'Continue'} onLongPress={onPressStop} onPress={onPressContinue} />
   );
 
   const appModeCall = mode =>
@@ -144,7 +144,9 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   const CurrentSpeed = (
     <Column alignItems={'flex-start'}>
       <LiveInfo
-        style={liveInfoDims}
+        containerStyle={liveInfoContainer}
+        textStyle={liveInfoText}
+        subTextStyle={liveInfoSubText}
         title={`${routeModeCall('currSpeed')} km/h`}
         subTitle={'Current speed'}
         onPress={() => {}}
@@ -155,7 +157,9 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   const LiveProps = (
     <Column alignItems={'flex-end'}>
       <LiveInfo
-        style={liveInfoDims}
+        containerStyle={liveInfoContainer}
+        textStyle={liveInfoText}
+        subTextStyle={liveInfoSubText}
         title={`${routeModeCall(A.type)}${A.title}`}
         subTitle={A.subTitle}
         onPress={() => setA(aIt.next().value)}
@@ -166,15 +170,15 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   const Button = appModeCall(status);
   return (
     <Fragment>
-      <Row marginTop={10}>
-        <Column alignItems={'center'}>{Button}</Column>
-      </Row>
       {status !== STOP && (
-        <Row marginTop={10}>
+        <Row {...mt10}>
           {CurrentSpeed}
           {LiveProps}
         </Row>
       )}
+      <Row {...mt10}>
+        <Column alignItems={'center'}>{Button}</Column>
+      </Row>
     </Fragment>
   );
 };

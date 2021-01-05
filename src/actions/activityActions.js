@@ -6,10 +6,7 @@ import firestore from '@react-native-firebase/firestore';
 import {arrsToObjsCoords, objsToArrsCoords} from '../utils/arrToObj';
 
 const getActivitiesColRef = ({userId, directionsMode}) =>
-  firestore()
-    .collection('activities')
-    .doc(directionsMode)
-    .collection(userId);
+  firestore().collection('activities').doc(directionsMode).collection(userId);
 
 export const deleteActivity = ({payload}) =>
   new Promise(async (resolve, reject) => {
@@ -19,15 +16,11 @@ export const deleteActivity = ({payload}) =>
         return resolve({success: false, reason: ERROR_NETWORK_FAILED});
       }
       const {activityId, userId, directionsMode} = payload;
-      await getActivitiesColRef({userId, directionsMode})
-        .doc(activityId)
-        .update({
-          points1: firestore.FieldValue.delete(),
-        });
+      await getActivitiesColRef({userId, directionsMode}).doc(activityId).update({
+        points1: firestore.FieldValue.delete(),
+      });
       await Promise.all([
-        getActivitiesColRef({userId, directionsMode})
-          .doc(activityId)
-          .delete(),
+        getActivitiesColRef({userId, directionsMode}).doc(activityId).delete(),
         removeActivity(directionsMode, userId, activityId),
       ]);
       resolve({success: true});

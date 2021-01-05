@@ -1,30 +1,30 @@
-import React, {Fragment, useEffect, useState, useContext, useMemo} from 'react';
+import React, {Fragment, useEffect, useContext, useMemo} from 'react';
 import {Text} from 'react-native';
 import Btn from '../btn/Btn';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
 import {routeContext, modalContext, appModeContext} from '../../contexts/contexts';
-import IconLeftArrow from '../svg-icons/icon-left-arrow/IconLeftArrow';
-import IconDrag from '../svg-icons/icon-drag/IconDrag';
+import {useSwitchDrawMode} from '../../hooks/use-switch';
+import useSvgFactory from '../../hooks/use-svg-factory';
+import {getLeftArrow} from '../../assets/svg-icons/left-arrow';
+import {getDrag} from '../../assets/svg-icons/drag';
 import Toast from 'react-native-simple-toast';
 import {randomID} from '../../utils/randomID';
 import {measureDistance} from '../../utils/measureDistanceCoords';
-import DoubleBtn from '../double-btn/DoubleBtn';
-import {Row, Column, stylesTextKM, Styles} from './styles';
+import {Row, Column, Styles, btnSaveStyles, mt10} from './styles';
 import {ERROR_OCCURRED} from '../../constants/constants';
 import {saveRoute as _saveRoute} from '../../actions';
 import WithActions from '../with-actions/WithActions';
 
 const DrawMode = ({themeStyle, saveRoute}) => {
-  const [typeSwitched, setTypeSwitched] = useState(false);
+  const [SwitchDrawMode, drawMode] = useSwitchDrawMode();
   const {setCurrentRoute, setDefaultRoute, currentRoute} = useContext(routeContext);
-  const {setIsDirectionsMode, directionsMode, setDirectionsMode} = useContext(appModeContext);
+  const {setIsDirectionsMode, directionsMode} = useContext(appModeContext);
   const {dragMode, setDragMode} = useContext(modalContext);
 
-  const {arrowIconDims, dragIconDims, btnDims, styleDoubleBtn} = Styles(themeStyle);
-  const styledDoubleBtn = styleDoubleBtn(typeSwitched);
+  const {arrowIconDims, dragIconDims, stylesTextKM} = Styles(themeStyle);
 
-  const IconLeftArrowWrap = <IconLeftArrow width={30} height={33} fill={themeStyle.accentColor} />;
-  const IconDragWrap = <IconDrag width={29} height={38} fill={themeStyle.accentColor} />;
+  const IconLeftArrow = useSvgFactory(getLeftArrow, {width: 30, height: 33, fillAccent: themeStyle.accentColor});
+  const IconDrag = useSvgFactory(getDrag, {width: 29, height: 38, fillAccent: themeStyle.accentColor});
 
   const {points, distance} = currentRoute;
 
@@ -37,11 +37,11 @@ const DrawMode = ({themeStyle, saveRoute}) => {
   }, [points]);
 
   useEffect(() => {
-    setIsDirectionsMode(typeSwitched);
+    setIsDirectionsMode(drawMode);
     return () => {
       setIsDirectionsMode(false);
     };
-  }, [typeSwitched, setIsDirectionsMode, setDirectionsMode]);
+  }, [drawMode, setIsDirectionsMode]);
 
   const onPressCancel = () => {
     setDragMode(false);
@@ -65,36 +65,28 @@ const DrawMode = ({themeStyle, saveRoute}) => {
 
   return useMemo(
     () => (
-      <Fragment>
-        <Row marginTop={10}>
+      <>
+        <Row {...mt10}>
           <Column alignItems={'flex-start'}>
-            <Text style={[stylesTextKM, {color: themeStyle.textColor}]}>{distance} km</Text>
+            <Text style={stylesTextKM}>{distance} km</Text>
           </Column>
-          <Column alignItems={'flex-end'}>
-            <DoubleBtn
-              style={styledDoubleBtn}
-              textL={'Dots'}
-              value={typeSwitched}
-              textR={'Lines'}
-              onPress={() => setTypeSwitched(!typeSwitched)}
-            />
-          </Column>
+          <Column alignItems={'flex-end'}>{SwitchDrawMode}</Column>
         </Row>
-        <Row>
+        <Row {...mt10}>
           <Column alignItems={'flex-start'}>
-            <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrowWrap} onPress={onPressBackStep} />
+            <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrow} onPress={onPressBackStep} />
           </Column>
           <Column>
-            <RoundedIcon style={dragIconDims} IconComponent={IconDragWrap} onPress={onPressDragMode} />
+            <RoundedIcon style={dragIconDims} IconComponent={IconDrag} onPress={onPressDragMode} />
           </Column>
-          <Column alignItems={'flex-end'} marginTop={10}>
-            <Btn onPress={onPressSave} style={btnDims} title={'Save Route'} />
+          <Column alignItems={'flex-end'}>
+            <Btn onPress={onPressSave} title={'Save Route'} {...btnSaveStyles} />
           </Column>
         </Row>
-      </Fragment>
+      </>
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [distance, dragMode, typeSwitched],
+    [distance, dragMode, drawMode],
   );
 };
 
