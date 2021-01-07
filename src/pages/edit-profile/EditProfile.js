@@ -1,11 +1,10 @@
 import React, {useState, useContext, useEffect} from 'react';
 import {Text} from 'react-native';
-import {themeContext, appModeContext} from '../../contexts/contexts';
+import {appModeContext} from '../../contexts/contexts';
 import {CenterXY, Container, Row, Column, Styles, btnSaveStyles, mt20, mt30} from './styles';
 import RoundedIcon from '../../componets/rounded-icon/RoundedIcon';
 import useSpinner from '../../componets/spinner/useSpinner';
-import {useModalPicker} from '../../hooks/use-window-modal';
-import {MAX_HEIGHT, MAX_WEIGHT, DEFAULT_GENDER, DEFAULT_HEIGHT, DEFAULT_WEIGHT} from '../../constants/constants';
+import {useModalPicker as usePicker} from '../../stores/modal-picker';
 import useSvgFactory from '../../hooks/use-svg-factory';
 import {getLeftArrow} from '../../assets/svg-icons/left-arrow';
 import Btn from '../../componets/btn/Btn';
@@ -15,33 +14,16 @@ import WithActions from '../../componets/with-actions/WithActions';
 import {updateProfile as _updateProfile} from '../../actions';
 import ProfileInputs from './ProfileInputs';
 import ProfilePickers from './ProfilePickers';
-
-const heightPicker = () => new Array(MAX_HEIGHT).fill(0).map((_, i) => ({label: `${i + 1} cm`, value: `${i + 1}`}));
-const weightPicker = () => new Array(MAX_WEIGHT).fill(0).map((_, i) => ({label: `${i + 1} kgs`, value: `${i + 1}`}));
-const genderPicker = () => [
-  {label: 'Male', value: 'Male'},
-  {label: 'Female', value: 'Female'},
-];
-
-const itemsPicker = type =>
-  ({
-    height: heightPicker(),
-    weight: weightPicker(),
-    gender: genderPicker(),
-  }[type]);
+import {observer} from 'mobx-react-lite';
+import {useTheme} from '../../stores/theme';
+import {useModalPicker} from '../../hooks/use-window-modal';
 
 const EditProfile = ({navigator, updateProfile}) => {
   const {isLoading, setLoading, SpinnerComponent} = useSpinner({position: 'bottom'});
-
-  const [pickerMode, setPickerMode] = useState('height');
-
-  const onValueChange = ([value]) => {
-    setProfile(old => ({...old, [pickerMode]: value}));
-  };
+  const pickerModal = usePicker();
+  const [ModalPicker] = useModalPicker(pickerModal);
 
   const [profile, setProfile] = useState({firstName: '', lastName: '', age: '', gender: '', height: '', weight: ''});
-
-  const [selected, setSelected] = useState([]);
 
   const {auth, setAuth} = useContext(appModeContext);
 
@@ -50,8 +32,7 @@ const EditProfile = ({navigator, updateProfile}) => {
     setProfile(restAuth);
   }, [auth]);
 
-  const {theme, getThemeStyle} = useContext(themeContext);
-  const themeStyle = getThemeStyle(theme);
+  const {themeStyle} = useTheme();
   const IconLeftArrow = useSvgFactory(getLeftArrow, {width: 30, height: 33, fillAccent: themeStyle.accentColor});
 
   const {arrowIconDims, headerStyle} = Styles(themeStyle);
@@ -85,19 +66,6 @@ const EditProfile = ({navigator, updateProfile}) => {
 
   const avatarSource = auth.photoURL ? auth.photoURL : null;
 
-  const [ModalPicker, onShowModalPicker] = useModalPicker({
-    pickerItems: itemsPicker(pickerMode),
-    selectedItems: [profile[pickerMode]],
-    defaultItem: profile[pickerMode],
-    setSelectedItems: onValueChange,
-    mode: 'single',
-  });
-
-  const selectPicker = type => {
-    setPickerMode(type);
-    onShowModalPicker();
-  };
-
   const InputsProps = {
     themeStyle,
     profile,
@@ -106,7 +74,7 @@ const EditProfile = ({navigator, updateProfile}) => {
   const PickersProps = {
     themeStyle,
     profile,
-    selectPicker,
+    setProfile,
   };
 
   const Inputs = <ProfileInputs {...InputsProps} />;
@@ -157,4 +125,4 @@ const EditProfile = ({navigator, updateProfile}) => {
 const mapDispatchToProps = {
   updateProfile: _updateProfile,
 };
-export default WithActions(mapDispatchToProps)(EditProfile);
+export default WithActions(mapDispatchToProps)(observer(EditProfile));

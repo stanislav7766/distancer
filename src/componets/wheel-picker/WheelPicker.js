@@ -1,73 +1,86 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useRef} from 'react';
 import PropTypes from 'prop-types';
-import {View, Text, ScrollView} from 'react-native';
+import {View, Text, VirtualizedList} from 'react-native';
 import {Styles, Container, SelectedItem, textStyleDefault} from './styles';
+import {randomID} from '../../utils/randomID';
 
 const findIndex = (arr, val) => arr.findIndex(obj => obj.value === val);
 
 const WheelPicker = ({items, selectedValue, onValueChange, textStyle, highlightStyle, sizes, backgroundColor}) => {
+  const itemsWithID = items.map(item => ({...item, id: randomID()}));
+  const virtualListRef = useRef(null);
+
   const {width, height, itemHeight} = sizes;
-  const scrollViewRef = useRef(null);
   const offsetTop = (height - itemHeight) / 2;
   const offsetHeight = (height * 0.8 - itemHeight) / 2;
 
-  useEffect(() => {
-    selectedValue && scrollToValue(selectedValue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedValue]);
+  const getItem = (_, index) => itemsWithID[index];
+  const getItemCount = _ => itemsWithID.length;
+  const getItemLayout = (_, index) => ({
+    length: itemHeight,
+    offset: itemHeight * index,
+    index,
+  });
 
-  const scrollToValue = val => {
-    const ind = findIndex(items, val);
-    const y = itemHeight * ind;
-    setTimeout(() => {
-      scrollViewRef?.current?.scrollTo({y, animated: false});
-    }, 1);
-  };
-
-  const {highlightStyleDefault, offsetStyle} = Styles({itemHeight, offsetTop, offsetHeight});
-  const Offset = <View style={offsetStyle} />;
-
-  const onMomentumScrollEnd = e => scrollFix(e);
-
-  const renderItems = () =>
-    items.map(({label}, i) => (
-      <SelectedItem key={i} itemHeight={itemHeight}>
-        <Text style={[textStyleDefault, textStyle]}>{label}</Text>
-      </SelectedItem>
-    ));
-
-  const scrollFix = e => {
-    const verticalY = e.nativeEvent.contentOffset ? e.nativeEvent.contentOffset.y : 0;
-
-    const selectedIndex = Math.round(verticalY / itemHeight);
-    const verticalElem = selectedIndex * itemHeight;
-    verticalElem !== verticalY &&
-      scrollViewRef &&
-      scrollViewRef.current.scrollTo({
-        y: verticalElem,
-        animated: true,
-      });
-    const {value} = items[selectedIndex];
+  const onUpdateValue = index => {
+    const {value} = itemsWithID[index];
     selectedValue !== value && onValueChange(value);
   };
+  const scrollToOffset = offset => {
+    virtualListRef?.current?.scrollToOffset({
+      offset,
+      animated: true,
+    });
+  };
+
+  const onScrollEnd = e => {
+    const verticalY = e?.nativeEvent?.contentOffset?.y ?? 0;
+    const selectedIndex = Math.round(verticalY / itemHeight);
+    const offset = selectedIndex * itemHeight;
+    offset !== verticalY && scrollToOffset(offset);
+    onUpdateValue(selectedIndex);
+  };
+
+  const renderItem = ({item}) => (
+    <SelectedItem itemHeight={itemHeight}>
+      <Text style={[textStyleDefault, textStyle]}>{item.label}</Text>
+    </SelectedItem>
+  );
+
   const ContainerProps = {
     backgroundColor,
     height,
     width,
   };
+  const {highlightStyleDefault, offsetStyle} = Styles({itemHeight, offsetTop, offsetHeight});
+
+  const Offset = <View style={offsetStyle} />;
+
   return (
     <Container {...ContainerProps}>
       <View style={[highlightStyleDefault, highlightStyle]} />
-      <ScrollView
+      <VirtualizedList
         style={{maxHeight: height * 0.8}}
-        ref={_sview => (scrollViewRef.current = _sview)}
+        ref={_sview => (virtualListRef.current = _sview)}
         showsVerticalScrollIndicator={false}
-        onMomentumScrollEnd={onMomentumScrollEnd}
-      >
-        {Offset}
-        {renderItems()}
-        {Offset}
-      </ScrollView>
+        nestedScrollEnabled
+        onMomentumScrollEnd={onScrollEnd}
+        ListHeaderComponent={Offset}
+        ListFooterComponent={Offset}
+        data={[]}
+        initialScrollIndex={findIndex(itemsWithID, selectedValue) ?? 0}
+        initialNumToRender={10}
+        windowSize={5}
+        maxToRenderPerBatch={5}
+        updateCellsBatchingPeriod={30}
+        removeClippedSubviews={false}
+        renderItem={renderItem}
+        getItem={getItem}
+        getItemCount={getItemCount}
+        keyExtractor={item => item.id}
+        getItemLayout={getItemLayout}
+        onEndReachedThreshold={0.1}
+      />
     </Container>
   );
 };

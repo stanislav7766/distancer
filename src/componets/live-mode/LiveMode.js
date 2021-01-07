@@ -1,4 +1,5 @@
 import React, {Fragment, useState, useContext, useEffect, useRef} from 'react';
+import {Vibration} from 'react-native';
 import {Row, Column, Styles, btnStartStyles, btnPauseStyles, btnContinueStyles, mt10} from './styles';
 import Btn from '../btn/Btn';
 import LiveInfo from '../live-info/LiveInfo';
@@ -7,6 +8,7 @@ import {randomID} from '../../utils/randomID';
 import {LIVE_TYPES, LIVE_MODDING, LIVE_SPECS_DEFAULT, ERROR_OCCURRED, DIRECTIONS_MODE} from '../../constants/constants';
 import {yyyymmddNow} from '../../utils/timeToSec';
 import {makeIterator} from '../../utils/makeIterator';
+import {useActivitySettings} from '../../stores/activity-settings';
 import Toast from 'react-native-simple-toast';
 import useBackgroundLocation from '../../hooks/use-background-location';
 import useBackgroundStopWatch from '../../hooks/use-background-stopwatch';
@@ -17,6 +19,8 @@ const {WALKING} = DIRECTIONS_MODE;
 const {STOP, GO, PAUSE} = LIVE_TYPES;
 
 const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
+  const {vibrateOnStart} = useActivitySettings();
+
   const [cSpeeds, setCSpeed] = useState(0.0);
   const [aSpeed, setASpeed] = useState(0.0);
 
@@ -58,6 +62,10 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   const setStatus = _status => setLiveRoute({status: _status});
   const setMovingTime = _movingTime => setLiveRoute({movingTime: _movingTime});
 
+  const onVibro = () => {
+    vibrateOnStart && Vibration.vibrate();
+  };
+
   useEffect(() => {
     status === GO && start();
     (status === PAUSE || status === STOP) && stop();
@@ -80,16 +88,19 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   }, [hhmmss]);
 
   const onPressStart = () => {
+    onVibro();
     onStartWatch();
     const date = yyyymmddNow();
     openModal();
     setLiveRoute({id: randomID(), status: GO, date});
   };
   const onPressPause = () => {
+    onVibro();
     onStopWatch();
     setStatus(PAUSE);
   };
   const onPressContinue = () => {
+    onVibro();
     onContinueWatch();
     setStatus(GO);
   };
@@ -102,6 +113,7 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   };
 
   const onPressStop = async () => {
+    onVibro();
     const totalTime = onTimeWatch();
     const {currentSpeed, status, distance, ...rest} = liveRoute;
     const _distance = Number(distance);

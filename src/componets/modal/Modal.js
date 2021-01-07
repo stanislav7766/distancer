@@ -1,33 +1,27 @@
 import React, {useEffect, useRef, useContext} from 'react';
 import {Keyboard, Animated, View} from 'react-native';
-import {
-  modalContext,
-  routeContext,
-  themeContext,
-  placesContext,
-  appModeContext,
-  liveRouteContext,
-} from '../../contexts/contexts';
+import {modalContext, routeContext, placesContext, appModeContext, liveRouteContext} from '../../contexts/contexts';
 import DrawMode from '../draw-mode/DrawMode';
 import ViewRoute from '../view-route/ViewRoute';
 import ViewMode from '../view-mode/ViewMode';
 import LiveMode from '../live-mode/LiveMode';
 import MenuMode from '../menu-mode/MenuMode';
 import SavedMode from '../saved-mode/SavedMode';
+import {useTheme} from '../../stores/theme';
 import {styleContainer, styleModal, noModalRadius} from './styles';
 import {APP_MODE, ROUTE_TYPES, WINDOW_HEIGHT} from '../../constants/constants';
+import {observer} from 'mobx-react-lite';
 const {VIEW_ROUTE, VIEW_MODE, DRAW_MODE, MENU_MODE, SAVED_MODE, LIVE_MODE} = APP_MODE;
 
 const Modal = ({navigator}) => {
   const modalY = useRef(new Animated.Value(viewHeight)).current;
   const {setDefaultPlaces} = useContext(placesContext);
-  const {theme, getThemeStyle} = useContext(themeContext);
+  const {themeStyle} = useTheme();
   const {appMode, viewMode} = useContext(appModeContext);
   const {setExpanded, setDragMode} = useContext(modalContext);
   const {setDefaultActivities, setDefaultLiveRoute} = useContext(liveRouteContext);
   const {setDefaultRoutes, setDefaultRoute, currentRoute} = useContext(routeContext);
   const {inLive} = currentRoute;
-  const themeStyle = getThemeStyle(theme);
 
   const modeHelpers = mode =>
     ({
@@ -151,7 +145,7 @@ const Modal = ({navigator}) => {
     </View>
   );
 };
-export default Modal;
+export default observer(Modal);
 
 const liveHeight = 70;
 const liveExpandedHeight = 180;

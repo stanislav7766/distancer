@@ -1,13 +1,21 @@
 import RNFS from 'react-native-fs';
+import {DEFAULT_ACTIVITY_SETTINGS, DEFAULT_APP_SETTINGS} from '../constants/constants';
 
 const EXT_JSON = '.json';
-const SETTINGS_PATH = RNFS.DocumentDirectoryPath + '/settings' + EXT_JSON;
+const APP_SETTINGS_PATH = RNFS.DocumentDirectoryPath + '/app_settings' + EXT_JSON;
+const ACTIVITY_SETTINGS_PATH = RNFS.DocumentDirectoryPath + '/activity_settings' + EXT_JSON;
 const ROUTES_PATH = RNFS.DocumentDirectoryPath + '/routes' + EXT_JSON;
 const ACTIVITIES_WALKING_PATH = RNFS.DocumentDirectoryPath + '/activities/walking';
 const ACTIVITIES_CYCLING_PATH = RNFS.DocumentDirectoryPath + '/activities/cycling';
 const ACTIVITIES_DRIVING_PATH = RNFS.DocumentDirectoryPath + '/activities/driving';
 
 const ENCODING = 'utf8';
+
+const getSettingsPath = type =>
+  ({
+    app: APP_SETTINGS_PATH,
+    activity: ACTIVITY_SETTINGS_PATH,
+  }[type]);
 
 const getDirectionPath = mode =>
   ({
@@ -96,21 +104,23 @@ export const readActivities = async (direction, userId) =>
     }
   });
 
-export const readSettings = async () =>
+export const readSettings = async type =>
   new Promise(async (resolve, reject) => {
     try {
-      const data = await _readFile(SETTINGS_PATH);
+      const path = getSettingsPath(type);
+      const data = await _readFile(path);
       resolve(JSON.parse(data));
     } catch (error) {
       reject(error);
     }
   });
 
-export const writeSettings = async obj =>
+export const writeSettings = async (obj, type) =>
   new Promise(async (resolve, reject) => {
     try {
-      const deleted = await _deleteFile(SETTINGS_PATH);
-      const written = deleted && (await _writeFile(SETTINGS_PATH, JSON.stringify(obj)));
+      const path = getSettingsPath(type);
+      const deleted = await _deleteFile(path);
+      const written = deleted && (await _writeFile(path, JSON.stringify(obj)));
       written ? resolve(written) : reject(written);
     } catch (err) {
       reject(err);
@@ -158,7 +168,8 @@ export const initialLoad = async () =>
         _mkdir(ACTIVITIES_DRIVING_PATH),
         _mkdir(ACTIVITIES_WALKING_PATH),
         _mkdir(ACTIVITIES_CYCLING_PATH),
-        _writeFile(SETTINGS_PATH, JSON.stringify({theme: 'light'})),
+        _writeFile(APP_SETTINGS_PATH, JSON.stringify(DEFAULT_APP_SETTINGS)),
+        _writeFile(ACTIVITY_SETTINGS_PATH, JSON.stringify(DEFAULT_ACTIVITY_SETTINGS)),
         _writeFile(ROUTES_PATH, JSON.stringify([])),
       ]);
 

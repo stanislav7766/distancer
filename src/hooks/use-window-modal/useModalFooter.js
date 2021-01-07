@@ -1,29 +1,21 @@
-import React, {useState, useContext} from 'react';
+import React from 'react';
 import {Text, View} from 'react-native';
-import {themeContext} from '../../contexts/contexts';
 import Window from '../../componets/window/Window';
 import {styles, windowWidth} from './styles';
+import {useTheme} from '../../stores/theme';
 
-export const useModalFooter = ({text, preset, onBottomNo, onBottomYes}) => {
-  const [shownWindow, setShowWindow] = useState(false);
-  const {getThemeStyle, theme} = useContext(themeContext);
-
-  const themeStyle = getThemeStyle(theme);
-
-  const onHideWindow = () => {
-    setShowWindow(false);
-  };
-  const onShowWindow = () => {
-    setShowWindow(true);
-  };
+export const useModalFooter = modalConfirm => {
+  const {shownWindow, onShowConfirm, onHideConfirm, init} = modalConfirm;
+  const {text, preset, onNo, onYes} = init;
+  const {themeStyle} = useTheme();
 
   const ShowWindow = shownWindow && (
     <Window
       opacity={0.35}
       preset={preset}
-      closeWindow={onHideWindow}
-      onBottomYes={onBottomYes}
-      onBottomNo={onBottomNo}
+      closeWindow={onHideConfirm}
+      onBottomYes={onYes}
+      onBottomNo={onNo}
       maskColor="#8d8d8d"
       backgroundColor={themeStyle.backgroundColor}
       width={windowWidth}
@@ -33,5 +25,5 @@ export const useModalFooter = ({text, preset, onBottomNo, onBottomYes}) => {
       </View>
     </Window>
   );
-  return [ShowWindow, onShowWindow, onHideWindow];
+  return [ShowWindow, onShowConfirm, onHideConfirm];
 };

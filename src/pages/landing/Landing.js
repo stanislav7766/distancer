@@ -1,4 +1,4 @@
-import React, {useEffect, useContext, Fragment} from 'react';
+import React, {useEffect, useContext} from 'react';
 import {appModeContext} from '../../contexts/contexts';
 import Toast from 'react-native-simple-toast';
 import Map from '../../componets/map/Map';
@@ -7,9 +7,18 @@ import useListenSettings from '../../hooks/use-listen-settings';
 import useGpsPermissions from '../../hooks/use-gps-permissions';
 import WithActions from '../../componets/with-actions/WithActions';
 import {getCurrentUser as _getCurrentUser} from '../../actions';
+import {observer} from 'mobx-react-lite';
+import {useModalPicker as usePicker} from '../../stores/modal-picker';
+import {useModalConfirm as useConfirm} from '../../stores/modal-confirm';
+import {useModalPicker} from '../../hooks/use-window-modal';
+import {useModalFooter as useModalConfirm} from '../../hooks/use-window-modal/useModalFooter';
 
 const Landing = ({navigator, getCurrentUser}) => {
   const {setAuth} = useContext(appModeContext);
+  const pickerModal = usePicker();
+  const confirmModal = useConfirm();
+  const [ModalPicker] = useModalPicker(pickerModal);
+  const [ModalConfirm] = useModalConfirm(confirmModal);
 
   useGpsPermissions();
   useListenSettings();
@@ -28,13 +37,15 @@ const Landing = ({navigator, getCurrentUser}) => {
   }, [getCurrentUser, setAuth]);
 
   return (
-    <Fragment>
+    <>
       <Map />
       <Modal navigator={navigator} />
-    </Fragment>
+      {ModalPicker}
+      {ModalConfirm}
+    </>
   );
 };
 const mapDispatchToProps = {
   getCurrentUser: _getCurrentUser,
 };
-export default WithActions(mapDispatchToProps)(Landing);
+export default WithActions(mapDispatchToProps)(observer(Landing));

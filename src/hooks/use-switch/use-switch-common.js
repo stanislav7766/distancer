@@ -1,11 +1,10 @@
-import React, {useContext} from 'react';
-import {themeContext} from '../../contexts/contexts';
+import React from 'react';
+import {useTheme} from '../../stores/theme';
 import Switch from '../../componets/switch';
 import {getCommonStyles, switchCommonSize} from './styles';
 
 export const useSwitchCommon = () => {
-  const {theme, getThemeStyle} = useContext(themeContext);
-  const themeStyle = getThemeStyle(theme);
+  const {themeStyle} = useTheme();
   const isOn = false;
 
   const onCommonTrue = () => {};
@@ -13,16 +12,17 @@ export const useSwitchCommon = () => {
 
   const {trueStyle, falseStyle} = getCommonStyles(themeStyle);
 
-  const renderSwitch = () => (
+  const renderSwitch = ({onTrue, onFalse, position}) => (
     <Switch
       withIcons={false}
       sizes={switchCommonSize}
-      initialPosition={isOn}
-      onFalse={onCommonFalse}
-      onTrue={onCommonTrue}
+      initialPosition={position}
+      onFalse={onFalse}
+      onTrue={onTrue}
       falseStyle={falseStyle}
       trueStyle={trueStyle}
     />
   );
-  return [renderSwitch(), renderSwitch];
+  const CommonSwitch = renderSwitch({onTrue: onCommonTrue, onFalse: onCommonFalse, position: isOn});
+  return [CommonSwitch, renderSwitch];
 };

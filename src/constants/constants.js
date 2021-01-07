@@ -26,6 +26,41 @@ export const APP_MODE = {
   SAVED_MODE: 'Saved',
   VIEW_ROUTE: 'viewRoute',
 };
+
+export const GET_SCREEN_MODE = ({VIEW_ROUTE: _, ...modes}) => ({...modes});
+
+export const DEFAULT_THEME = THEMES.LIGHT;
+export const DEFAULT_SCREEN = APP_MODE.VIEW_MODE;
+export const DEFAULT_TIMER_ON_START = 0;
+export const DEFAULT_VIBRATE_ON_START = false;
+export const DEFAULT_AUTO_PAUSE = false;
+
+export const DEFAULT_APP_SETTINGS = {
+  theme: DEFAULT_THEME,
+  defaultScreen: DEFAULT_SCREEN,
+};
+
+export const DEFAULT_ACTIVITY_SETTINGS = {
+  timerOnStart: DEFAULT_TIMER_ON_START,
+  vibrateOnStart: DEFAULT_VIBRATE_ON_START,
+  autoPause: DEFAULT_AUTO_PAUSE,
+};
+
+export const GET_SCREEN_PICKER_ITEMS = () =>
+  Object.values(GET_SCREEN_MODE(APP_MODE)).map(text => ({label: text, value: text}));
+
+export const GET_TIMER_PICKER_ITEMS = () => new Array(11).fill(0).map((_, i) => ({label: `${i} sec`, value: `${i}`}));
+
+export const GET_HEIGHT_PICKER_ITEMS = () =>
+  new Array(MAX_HEIGHT).fill(0).map((_, i) => ({label: `${i + 1} cm`, value: `${i + 1}`}));
+
+export const GET_WEIGHT_PICKER_ITEMS = () =>
+  new Array(MAX_WEIGHT).fill(0).map((_, i) => ({label: `${i + 1} kgs`, value: `${i + 1}`}));
+
+export const GET_GENDER_PICKER_ITEMS = () => [
+  {label: 'Male', value: 'Male'},
+  {label: 'Female', value: 'Female'},
+];
 export const LIVE_TYPES = {
   STOP: 'stop',
   PAUSE: 'pause',
@@ -168,3 +203,7 @@ export const WRONG_PASSWORD = 'Password wrong';
 export const NO_CURRENT_USER = 'You are not signed';
 export const WEB_CLIENT_ID = '904930169800-gdj1tqibo2rd87m8cu0pchdhjcitso6a.apps.googleusercontent.com';
 export const WRONG_AGE = 'Type the correct age';
+export const DELETE_ACTIVITY_CONFIRM = 'Are you sure you want to delete this activity?';
+export const DELETE_ROUTE_CONFIRM = 'Are you sure you want to delete this route?';
+export const LOGOUT_CONFIRM = 'Are you sure you want to logout?';
+export const DELETE_ACCOUNT_CONFIRM = 'Are you sure you want to delete your account?';

@@ -39,7 +39,11 @@ export const btnSignUpStyles = {
 };
 export const btnGoogleStyles = {
   containerStyle: {height: 40},
-  textStyle: btnTextStyle,
+  textStyle: {
+    ...btnTextStyle,
+    color: '#8d8d8d',
+    fontSize: 18,
+  },
 };
 
 export const mt30 = {

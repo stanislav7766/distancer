@@ -4,7 +4,8 @@ import Btn from '../btn/Btn';
 import {liveRouteContext, appModeContext} from '../../contexts/contexts';
 import Toast from 'react-native-simple-toast';
 import {Row, Column, stylesActivityProps, btnDeleteStyles, mt10} from './styles';
-import {APP_MODE, ERROR_OCCURRED} from '../../constants/constants';
+import {APP_MODE, ERROR_OCCURRED, DELETE_ACTIVITY_CONFIRM} from '../../constants/constants';
+import {useModalConfirm as useConfirm} from '../../stores/modal-confirm';
 import SelectDirection from '../directions-bar/SelectDirection';
 import WithActions from '../with-actions/WithActions';
 import {deleteActivity as _deleteActivity} from '../../actions';
@@ -16,6 +17,8 @@ const Activity = ({themeStyle, deleteActivity}) => {
 
   const {setAppMode, directionsMode, auth} = useContext(appModeContext);
   const {distance, pace, avgSpeed, totalTime, movingTime} = liveRoute;
+
+  const {setInit, onShowConfirm, onHideConfirm} = useConfirm();
 
   const onPressCancel = () => {
     setDefaultLiveRoute();
@@ -34,6 +37,15 @@ const Activity = ({themeStyle, deleteActivity}) => {
       .catch(_ => {
         Toast.show(ERROR_OCCURRED);
       });
+  };
+
+  const onRequestDelete = () => {
+    setInit({
+      text: DELETE_ACTIVITY_CONFIRM,
+      onNo: onHideConfirm,
+      onYes: onPressDelete,
+    });
+    onShowConfirm();
   };
 
   return (
@@ -87,7 +99,7 @@ const Activity = ({themeStyle, deleteActivity}) => {
           <SelectDirection themeStyle={themeStyle} mode={directionsMode ? directionsMode : ''} />
         </Column>
         <Column alignItems={'flex-end'}>
-          <Btn {...btnDeleteStyles} title={'Delete Activity'} onPress={onPressDelete} />
+          <Btn {...btnDeleteStyles} title={'Delete Activity'} onPress={onRequestDelete} />
         </Column>
       </Row>
     </>

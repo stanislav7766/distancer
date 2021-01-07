@@ -1,13 +1,32 @@
 import React from 'react';
 import {Text} from 'react-native';
 import {useSwitchTheme} from '../../hooks/use-switch';
+import {useAppSettings} from '../../stores/app-settings';
+import {useModalPicker as usePicker} from '../../stores/modal-picker';
 import {Row, Column, Styles, mx0, mt10, mb30, orangeColor} from './styles';
 import Touchable from '../../componets/touchable/Touchable';
 import {Form} from '../../constants/styles';
+import {GET_SCREEN_PICKER_ITEMS} from '../../constants/constants';
+import {observer} from 'mobx-react-lite';
 
-const Shared = ({themeStyle, navigator, screenPicker, selectPicker}) => {
+const Shared = ({themeStyle, navigator}) => {
   const {appSettingsStyle} = Styles(themeStyle);
+  const {defaultScreen, setDefaultScreen} = useAppSettings();
+  const {setInit, onShowPicker} = usePicker();
   const [SwitchTheme] = useSwitchTheme();
+
+  const onChangeDefaultScreen = ([value]) => {
+    setDefaultScreen(value);
+  };
+  const onSelectDefaultScreen = () => {
+    setInit({
+      pickerItems: GET_SCREEN_PICKER_ITEMS(),
+      selectedItems: [defaultScreen],
+      defaultItem: defaultScreen,
+      setSelectedItems: onChangeDefaultScreen,
+    });
+    onShowPicker();
+  };
 
   const AppSettingsGroup = (
     <Row {...mb30} {...mt10}>
@@ -31,8 +50,8 @@ const Shared = ({themeStyle, navigator, screenPicker, selectPicker}) => {
               </Column>
               <Column alignItems={'flex-end'}>
                 <Touchable
-                  Child={<Text style={[appSettingsStyle, orangeColor]}>{screenPicker}</Text>}
-                  onPress={() => selectPicker('screen')}
+                  Child={<Text style={[appSettingsStyle, orangeColor]}>{defaultScreen}</Text>}
+                  onPress={onSelectDefaultScreen}
                 />
               </Column>
             </Row>
@@ -45,4 +64,4 @@ const Shared = ({themeStyle, navigator, screenPicker, selectPicker}) => {
   return <>{AppSettingsGroup}</>;
 };
 
-export default Shared;
+export default observer(Shared);

@@ -1,23 +1,23 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import WheelPicker from '../../componets/wheel-picker/WheelPicker';
 import Window from '../../componets/window/Window';
-import {themeContext} from '../../contexts/contexts';
+import {useTheme} from '../../stores/theme';
 import {isEmpty} from '../../utils/validation/validator';
 import {styles, pickerSizes, windowWidth} from './styles';
 
 const isItemInArray = (arr, item) => arr.includes(item);
 
-export const useModalPicker = ({pickerItems, mode, setSelectedItems, selectedItems, defaultItem}) => {
-  const [shownWindow, setShowWindow] = useState(false);
-  const {getThemeStyle, theme} = useContext(themeContext);
+export const useModalPicker = modalPicker => {
+  const {shownWindow, onShowPicker, onHidePicker, init} = modalPicker;
+  const {pickerItems, mode, setSelectedItems, selectedItems, defaultItem} = init;
+  const {themeStyle} = useTheme();
 
-  const themeStyle = getThemeStyle(theme);
-  const firstItem = defaultItem || (pickerItems[0]?.value ?? '');
-  const [selectedItem, setSelectedItem] = useState(firstItem);
+  const [selectedItem, setSelectedItem] = useState('');
 
   useEffect(() => {
-    setSelectedItem(firstItem);
-  }, [firstItem]);
+    const value = defaultItem ?? (isEmpty(pickerItems) ? '' : pickerItems[0]?.value);
+    setSelectedItem(value);
+  }, [defaultItem, pickerItems]);
 
   const Picker = (
     <WheelPicker
@@ -31,18 +31,13 @@ export const useModalPicker = ({pickerItems, mode, setSelectedItems, selectedIte
       }}
     />
   );
-  const onHideWindow = () => {
-    setShowWindow(false);
-  };
-  const onShowWindow = () => {
-    setShowWindow(true);
-  };
+
   const isSingle = mode === 'single';
   const allowUpdate = !isItemInArray(selectedItems, selectedItem) && !isEmpty(selectedItem);
 
   const closeWindow = () => {
     allowUpdate && (isSingle ? setSelectedItems([selectedItem]) : setSelectedItems([...selectedItems, selectedItem]));
-    onHideWindow();
+    onHidePicker();
   };
 
   const ShowWindow = shownWindow && (
@@ -57,5 +52,5 @@ export const useModalPicker = ({pickerItems, mode, setSelectedItems, selectedIte
       {Picker}
     </Window>
   );
-  return [ShowWindow, onShowWindow, onHideWindow];
+  return [ShowWindow, onShowPicker, onHidePicker];
 };

@@ -1,14 +1,8 @@
 import React, {useEffect, useContext} from 'react';
 import {Dimensions, View} from 'react-native';
 import MapboxGL, {MapView, UserLocation, Camera} from '@react-native-mapbox-gl/maps';
-import {
-  mapContext,
-  routeContext,
-  themeContext,
-  appModeContext,
-  modalContext,
-  liveRouteContext,
-} from '../../contexts/contexts';
+import {mapContext, routeContext, appModeContext, modalContext, liveRouteContext} from '../../contexts/contexts';
+import {useTheme} from '../../stores/theme';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
 import MapRoute from '../map-route/MapRoute';
 import LiveRoute from '../map-route/LiveRoute';
@@ -26,6 +20,7 @@ import {isFilledArr} from '../../utils/isFilledArr';
 import {ERROR_OCCURRED, ERROR_NETWORK_FAILED, LIVE_SPECS_DEFAULT, ROUTE_TYPES} from '../../constants/constants';
 import {measureDistance} from '../../utils/measureDistanceCoords';
 import {timeToSec, kmToM, calcPace} from '../../utils/timeToSec';
+import {observer} from 'mobx-react-lite';
 
 const {height, width} = Dimensions.get('window');
 const {VIEW_ROUTE, DRAW_MODE, LIVE_MODE, VIEW_MODE} = APP_MODE;
@@ -35,14 +30,13 @@ MapboxGL.setAccessToken(MAP_TOKEN);
 const iconParams = {width: 32, height: 32};
 
 const Map = () => {
-  const {theme, getThemeStyle} = useContext(themeContext);
+  const {themeStyle} = useTheme();
   const {dragMode, expanded} = useContext(modalContext);
   const {appMode, viewMode, isDirectionsMode, directionsMode, setDirectionsMode} = useContext(appModeContext);
   const {setCameraRef, zoomLevel, coordinates, cameraRef} = useContext(mapContext);
   const {liveRoute, setLiveRoute} = useContext(liveRouteContext);
   const {points1, movingTime} = liveRoute;
   const {currentRoute, setCurrentRoute} = useContext(routeContext);
-  const themeStyle = getThemeStyle(theme);
   const {moveToCurrPosition} = Groove(cameraRef);
   const {points, inLive} = currentRoute;
   const setRoute = coords => setCurrentRoute({points: coords});
@@ -81,6 +75,7 @@ const Map = () => {
   const onPressMap = info => {
     const {coordinates: coords} = info.geometry;
     isDrawDirectionsMode &&
+      !inLive &&
       (isFilledArr(points) ? fetchDirections([points.slice(-1)[0], coords]) : setRoute([...points, coords]));
     isDrawMode && setRoute([...points, coords]);
   };
@@ -116,4 +111,4 @@ const Map = () => {
     </View>
   );
 };
-export default Map;
+export default observer(Map);

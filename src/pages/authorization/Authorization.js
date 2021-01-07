@@ -1,12 +1,12 @@
-import React, {useContext} from 'react';
-import {themeContext} from '../../contexts/contexts';
+import React from 'react';
 import SignIn from '../../componets/sign/SignIn';
 import SignUp from '../../componets/sign/SignUp';
 import {CenterXY, Container} from './styles';
+import {useTheme} from '../../stores/theme';
+import {observer} from 'mobx-react-lite';
 
 const Authorization = ({navigator, type}) => {
-  const {theme, getThemeStyle} = useContext(themeContext);
-  const themeStyle = getThemeStyle(theme);
+  const {themeStyle} = useTheme();
 
   const goToMain = () => {
     navigator.pop({animation: 'left'});
@@ -29,4 +29,4 @@ const Authorization = ({navigator, type}) => {
   );
 };
 
-export default Authorization;
+export default observer(Authorization);

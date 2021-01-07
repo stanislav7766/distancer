@@ -4,8 +4,9 @@ import Btn from '../btn/Btn';
 import {routeContext, appModeContext} from '../../contexts/contexts';
 import Toast from 'react-native-simple-toast';
 import {Row, Column, stylesTextKM, Styles, btnDeleteStyles, mt10} from './styles';
-import {APP_MODE, ERROR_OCCURRED} from '../../constants/constants';
+import {APP_MODE, ERROR_OCCURRED, DELETE_ROUTE_CONFIRM} from '../../constants/constants';
 import SelectDirection from '../directions-bar/SelectDirection';
+import {useModalConfirm as useConfirm} from '../../stores/modal-confirm';
 import useSvgFactory from '../../hooks/use-svg-factory';
 import {getMarker} from '../../assets/svg-icons/marker';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
@@ -16,9 +17,12 @@ const {VIEW_MODE, LIVE_MODE} = APP_MODE;
 const Route = ({themeStyle, deleteRoute}) => {
   const {setDefaultRoute, setDefaultRoutes, routes, currentRoute, setCurrentRoute} = useContext(routeContext);
 
-  const {setAppMode, directionsMode} = useContext(appModeContext);
+  const {setAppMode, directionsMode, auth} = useContext(appModeContext);
+  const {authorized} = auth;
   const {liveIconDims} = Styles(themeStyle);
   const {distance} = currentRoute;
+
+  const {setInit, onShowConfirm, onHideConfirm} = useConfirm();
 
   const onPressCancel = () => {
     setDefaultRoute();
@@ -38,6 +42,16 @@ const Route = ({themeStyle, deleteRoute}) => {
         Toast.show(ERROR_OCCURRED);
       });
   };
+
+  const onRequestDelete = () => {
+    setInit({
+      text: DELETE_ROUTE_CONFIRM,
+      onNo: onHideConfirm,
+      onYes: onPressDelete,
+    });
+    onShowConfirm();
+  };
+
   const onStartLiveWithRoute = () => {
     setDefaultRoutes();
     setCurrentRoute({inLive: true});
@@ -56,10 +70,10 @@ const Route = ({themeStyle, deleteRoute}) => {
           <SelectDirection themeStyle={themeStyle} mode={directionsMode ? directionsMode : ''} />
         </Column>
         <Column>
-          <RoundedIcon style={liveIconDims} IconComponent={IconMarker} onPress={onStartLiveWithRoute} />
+          {authorized && <RoundedIcon style={liveIconDims} IconComponent={IconMarker} onPress={onStartLiveWithRoute} />}
         </Column>
         <Column alignItems={'flex-end'}>
-          <Btn {...btnDeleteStyles} title={'Delete Route'} onPress={onPressDelete} />
+          <Btn {...btnDeleteStyles} title={'Delete Route'} onPress={onRequestDelete} />
         </Column>
       </Row>
     </Fragment>

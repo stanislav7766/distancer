@@ -1,20 +1,42 @@
-import React from 'react';
-import {Column, TextStyled, Row, Container} from './styles';
+import React, {useRef} from 'react';
+import {Animated} from 'react-native';
+import {Column, TextStyled, Row, Container, styles, Press} from './styles';
+
+const runSpring = (anim, params, cb) => {
+  Animated.spring(anim, params).start(() => {
+    cb?.();
+  });
+};
 
 const Item = ({text, style, onPress, IconComponent}) => {
+  const {width, height, fontSize, textColor, backgroundColor} = style;
   const [flexIcon, flexText] = [style.flexIcon || 0.1, 1 - (style.flexIcon || 0.1)];
+
+  const scaleAnim = useRef(new Animated.Value(0)).current;
+  const scale = scaleAnim.interpolate({inputRange: [0, 1], outputRange: [1, 0.95]});
+
+  const onPressIn = () => {
+    runSpring(scaleAnim, {toValue: 1, useNativeDriver: true});
+  };
+  const onPressOut = () => {
+    runSpring(scaleAnim, {toValue: 0, useNativeDriver: true});
+  };
   return (
-    <Container backgroundColor={style.backgroundColor} height={style.height} onPress={onPress}>
-      <Row>
-        <Column alignItems="flex-start" flex={flexIcon}>
-          {IconComponent && IconComponent}
-        </Column>
-        <Column alignItems="flex-start" flex={flexText}>
-          <TextStyled fontSize={style.fontSize} textColor={style.textColor}>
-            {text}
-          </TextStyled>
-        </Column>
-      </Row>
+    <Container width={width} height={height}>
+      <Animated.View style={[styles.button, {backgroundColor, height}, {transform: [{scale}]}]}>
+        <Press activeOpacity={1} onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut}>
+          <Row>
+            <Column alignItems="flex-start" flex={flexIcon}>
+              {IconComponent && IconComponent}
+            </Column>
+            <Column alignItems="flex-start" flex={flexText}>
+              <TextStyled fontSize={fontSize} textColor={textColor}>
+                {text}
+              </TextStyled>
+            </Column>
+          </Row>
+        </Press>
+      </Animated.View>
     </Container>
   );
 };

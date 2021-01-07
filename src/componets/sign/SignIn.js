@@ -68,7 +68,7 @@ const SignIn = ({themeStyle, goToMain, loginUser, loginWithGoogle}) => {
   const SignInGoogle = (
     <Row {...mt10}>
       <Column alignItems={'center'}>
-        <GoogleSignBtn {...btnGoogleStyles} title={'With Google'} onPress={onPressSignInGoogle} />
+        <GoogleSignBtn {...btnGoogleStyles} title={'Continue with Google'} onPress={onPressSignInGoogle} />
       </Column>
     </Row>
   );

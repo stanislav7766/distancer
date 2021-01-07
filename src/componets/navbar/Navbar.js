@@ -1,5 +1,6 @@
 import React, {useContext} from 'react';
-import {themeContext, appModeContext, liveRouteContext} from '../../contexts/contexts';
+import {appModeContext, liveRouteContext} from '../../contexts/contexts';
+import {useTheme} from '../../stores/theme';
 import {Touchable, Row, Column, Container, mx40} from './styles';
 import {getView} from '../../assets/svg-icons/view';
 import {getSaved} from '../../assets/svg-icons/saved';
@@ -9,17 +10,17 @@ import {getMarker} from '../../assets/svg-icons/marker';
 import {APP_MODE, LIVE_TYPES, PLEASE_FINISH_ACTIVITY} from '../../constants/constants';
 import Toast from 'react-native-simple-toast';
 import NavbarIcon from './NavbarIcon';
+import {observer} from 'mobx-react-lite';
 import {randomID} from '../../utils/randomID';
 
 const {STOP} = LIVE_TYPES;
 const {VIEW_MODE, DRAW_MODE, SAVED_MODE, MENU_MODE, LIVE_MODE} = APP_MODE;
 
 const Navbar = () => {
-  const {theme, getThemeStyle} = useContext(themeContext);
+  const {themeStyle} = useTheme();
   const {liveRoute} = useContext(liveRouteContext);
   const {appMode, setAppMode, auth} = useContext(appModeContext);
   const {authorized} = auth;
-  const themeStyle = getThemeStyle(theme);
   const {status} = liveRoute;
   const toastFinishLive = () => {
     Toast.show(PLEASE_FINISH_ACTIVITY);
@@ -47,7 +48,7 @@ const Navbar = () => {
     </Container>
   );
 };
-export default Navbar;
+export default observer(Navbar);
 
 const navbarItems = {
   LIVE_MODE: fill => <NavbarIcon getXml={getMarker} fillAccent={fill} title={LIVE_MODE} />,
