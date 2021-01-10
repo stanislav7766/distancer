@@ -9,7 +9,8 @@
     "log": "react-native log-android",
     "test": "jest",
     "lint": "eslint .",
-    "prettier": "prettier --write **/*.{js,jsx,ts,tsx,json} && prettier --write *.{js,jsx,ts,tsx,json}"
+    "prettier": "prettier --write **/*.{js,jsx,ts,tsx,json} && prettier --write *.{js,jsx,ts,tsx,json}",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@mauron85/react-native-background-geolocation": "^0.6.3",
@@ -43,6 +44,8 @@
     "eslint": "^6.5.1",
     "jest": "^25.1.0  ",
     "metro-react-native-babel-preset": "^0.59.0",
+    "patch-package": "^6.2.2",
+    "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.2.1",
     "react-native-svg-transformer": "^0.14.3",
     "react-test-renderer": "16.13.1"
