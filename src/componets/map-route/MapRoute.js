@@ -35,7 +35,7 @@ const MapRoute = () => {
 
   const showBounds = !isEmpty(first) && !isEmpty(last);
   const showDragDot = !isEmpty(dragCoord?.coordinate);
-  const showDot = isFilledArr(mappedCoords);
+  const showDot = isFilledArr(mappedCoords) && !inLive;
   const showLine = isFilledArr(points);
   const isDottedLine = inLive;
 
