@@ -111,3 +111,15 @@ export const mainPoint = {
   circleColor: ACCENT_BLUE,
   circleRadius: 20 / 2,
 };
+
+export const pressPoint = {
+  circleOpacity: 1,
+  circleColor: ACCENT_GREEN,
+  circleRadius: 20 / 2 - 3,
+};
+
+export const pressPointWrap = {
+  circleOpacity: 1,
+  circleColor: '#8d8d8d',
+  circleRadius: 20 / 2,
+};

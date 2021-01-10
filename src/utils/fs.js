@@ -1,9 +1,10 @@
 import RNFS from 'react-native-fs';
-import {DEFAULT_ACTIVITY_SETTINGS, DEFAULT_APP_SETTINGS} from '../constants/constants';
+import {DEFAULT_ACTIVITY_SETTINGS, DEFAULT_APP_SETTINGS, DEFAULT_ROUTE_SETTINGS} from '../constants/constants';
 
 const EXT_JSON = '.json';
 const APP_SETTINGS_PATH = RNFS.DocumentDirectoryPath + '/app_settings' + EXT_JSON;
 const ACTIVITY_SETTINGS_PATH = RNFS.DocumentDirectoryPath + '/activity_settings' + EXT_JSON;
+const ROUTE_SETTINGS_PATH = RNFS.DocumentDirectoryPath + '/route_settings' + EXT_JSON;
 const ROUTES_PATH = RNFS.DocumentDirectoryPath + '/routes' + EXT_JSON;
 const ACTIVITIES_WALKING_PATH = RNFS.DocumentDirectoryPath + '/activities/walking';
 const ACTIVITIES_CYCLING_PATH = RNFS.DocumentDirectoryPath + '/activities/cycling';
@@ -15,6 +16,7 @@ const getSettingsPath = type =>
   ({
     app: APP_SETTINGS_PATH,
     activity: ACTIVITY_SETTINGS_PATH,
+    route: ROUTE_SETTINGS_PATH,
   }[type]);
 
 const getDirectionPath = mode =>
@@ -170,6 +172,7 @@ export const initialLoad = async () =>
         _mkdir(ACTIVITIES_CYCLING_PATH),
         _writeFile(APP_SETTINGS_PATH, JSON.stringify(DEFAULT_APP_SETTINGS)),
         _writeFile(ACTIVITY_SETTINGS_PATH, JSON.stringify(DEFAULT_ACTIVITY_SETTINGS)),
+        _writeFile(ROUTE_SETTINGS_PATH, JSON.stringify(DEFAULT_ROUTE_SETTINGS)),
         _writeFile(ROUTES_PATH, JSON.stringify([])),
       ]);
 

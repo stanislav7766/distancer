@@ -3,6 +3,7 @@ import Toast from 'react-native-simple-toast';
 import {AppState} from 'react-native';
 import {useActivitySettings} from '../../stores/activity-settings';
 import {useAppSettings} from '../../stores/app-settings';
+import {useRouteSettings} from '../../stores/route-settings';
 import {IsFirstLaunch} from '../../utils/is-first-launch';
 import {initialLoad, readSettings, writeSettings} from '../../utils/fs';
 import {isGoOut} from '../../utils/isGoOut';
@@ -12,6 +13,7 @@ const useListenSettings = () => {
   const [appState, setAppState] = useState(AppState.currentState);
   const {timerOnStart, vibrateOnStart, autoPause, setActivitySettings} = useActivitySettings();
   const {theme, defaultScreen, setAppSettings} = useAppSettings();
+  const {dragHints, setRouteSettings} = useRouteSettings();
 
   const updateActivity = useCallback(async () => {
     try {
@@ -31,6 +33,15 @@ const useListenSettings = () => {
     }
   }, [theme, defaultScreen]);
 
+  const updateRoute = useCallback(async () => {
+    try {
+      const settings = await readSettings('route');
+      await writeSettings({...settings, dragHints}, 'route');
+    } catch (error) {
+      Toast.show(ERROR_OCCURRED);
+    }
+  }, [dragHints]);
+
   const setApp = useCallback(async () => {
     try {
       const settings = await readSettings('app');
@@ -39,6 +50,15 @@ const useListenSettings = () => {
       Toast.show(ERROR_OCCURRED);
     }
   }, [setAppSettings]);
+
+  const setRoute = useCallback(async () => {
+    try {
+      const settings = await readSettings('route');
+      setRouteSettings(settings);
+    } catch (error) {
+      Toast.show(ERROR_OCCURRED);
+    }
+  }, [setRouteSettings]);
 
   const setActivity = useCallback(async () => {
     try {
@@ -53,8 +73,9 @@ const useListenSettings = () => {
     (async () => {
       isGoOut(appState) && (await updateActivity());
       isGoOut(appState) && (await updateApp());
+      isGoOut(appState) && (await updateRoute());
     })();
-  }, [appState, updateActivity, updateApp]);
+  }, [appState, updateActivity, updateApp, updateRoute]);
 
   useEffect(() => {
     AppState.addEventListener('change', _handleAppStateChange);
@@ -66,6 +87,7 @@ const useListenSettings = () => {
       }
       await setActivity();
       await setApp();
+      await setRoute();
     })();
     return () => {
       AppState.removeEventListener('change', _handleAppStateChange);

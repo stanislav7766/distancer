@@ -34,10 +34,15 @@ export const DEFAULT_SCREEN = APP_MODE.VIEW_MODE;
 export const DEFAULT_TIMER_ON_START = 0;
 export const DEFAULT_VIBRATE_ON_START = false;
 export const DEFAULT_AUTO_PAUSE = false;
+export const DEFAULT_DRAG_HINTS = false;
 
 export const DEFAULT_APP_SETTINGS = {
   theme: DEFAULT_THEME,
   defaultScreen: DEFAULT_SCREEN,
+};
+
+export const DEFAULT_ROUTE_SETTINGS = {
+  dragHints: DEFAULT_DRAG_HINTS,
 };
 
 export const DEFAULT_ACTIVITY_SETTINGS = {
@@ -207,3 +212,6 @@ export const DELETE_ACTIVITY_CONFIRM = 'Are you sure you want to delete this act
 export const DELETE_ROUTE_CONFIRM = 'Are you sure you want to delete this route?';
 export const LOGOUT_CONFIRM = 'Are you sure you want to logout?';
 export const DELETE_ACCOUNT_CONFIRM = 'Are you sure you want to delete your account?';
+export const NOT_IN_DRAG_MODE = 'Drag mode not active. Press drag button';
+export const SELECT_NEEDED_POINT = "Press on point that you'll drag";
+export const DRAG_POINT_NOW = 'Drag selected point now';
