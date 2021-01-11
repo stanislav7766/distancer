@@ -4,17 +4,18 @@ import {appModeContext} from '../../contexts/contexts';
 import Shared from './Shared';
 import NotAuthorized from './NotAuthorized';
 import Authorized from './Authorized';
-import {scrollViewStyle} from './styles';
+import {styles} from './styles';
 
 const MenuMode = ({themeStyle, navigator}) => {
-  const {auth, setDefaultAuth} = useContext(appModeContext);
-  const {authorized} = auth;
+  const {
+    auth: {authorized},
+  } = useContext(appModeContext);
 
   return (
     <>
-      <ScrollView showsVerticalScrollIndicator={false} style={scrollViewStyle}>
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
         {authorized ? (
-          <Authorized setDefaultAuth={setDefaultAuth} themeStyle={themeStyle} navigator={navigator} />
+          <Authorized themeStyle={themeStyle} navigator={navigator} />
         ) : (
           <NotAuthorized themeStyle={themeStyle} navigator={navigator} />
         )}
