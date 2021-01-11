@@ -1,3 +1,5 @@
+import {randomID} from './randomID';
+
 const mapMonth = {
   1: 'jan',
   2: 'feb',
@@ -32,7 +34,10 @@ const splitByMonth = arr =>
     };
   }, {});
 
-const mapSortedEntries = obj => Object.entries(obj).sort((a, b) => b[0] - a[0]);
+const mapSortedEntries = obj =>
+  Object.entries(obj)
+    .sort((a, b) => b[0] - a[0])
+    .map(arr => [...arr, randomID()]);
 
 export const mapper = arr => {
   if (arr.length === 0) return [];
