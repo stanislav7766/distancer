@@ -1,4 +1,4 @@
-import React, {Fragment, useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Text} from 'react-native';
 import SavedRoutes from './SavedRoutes';
 import {appModeContext} from '../../contexts/contexts';
@@ -10,63 +10,49 @@ import {ROUTE_TYPES} from '../../constants/constants';
 
 const {ROUTE, ACTIVITY} = ROUTE_TYPES;
 
-const SavedMode = ({themeStyle, closeModal}) => {
-  const [routeType, setRouteType] = useState(ROUTE);
-  const {auth} = useContext(appModeContext);
-  const {authorized} = auth;
-
-  useEffect(() => {
-    setRouteType(authorized ? ACTIVITY : ROUTE);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+const SavedMode = ({themeStyle}) => {
+  const [tabType, setTabType] = useState(ROUTE);
+  const isRoute = tabType === ROUTE;
+  const {
+    auth: {authorized},
+  } = useContext(appModeContext);
 
   const {styleSection} = Styles(themeStyle);
-  const routeTypeBorder = type => (type === routeType ? themeStyle.accentColor : themeStyle.sectionColor);
-  const changeRouteType = _routeType => setRouteType(_routeType);
+  const routeTypeBorder = type => (type === tabType ? themeStyle.accentColor : themeStyle.sectionColor);
+  const changeRouteType = _routeType => setTabType(_routeType);
 
-  const RoutesButton = (
-    <Touchable
-      onPress={() => changeRouteType(ROUTE)}
-      Child={
-        <>
-          <Text style={styleSection}>Routes</Text>
-          <Section width={130} borderColor={routeTypeBorder(ROUTE)} />
-        </>
-      }
-    />
-  );
-
-  const ActivitiesButton = (
-    <Touchable
-      onPress={() => changeRouteType(ACTIVITY)}
-      Child={
-        <>
-          <Text style={styleSection}>Activities</Text>
-          <Section width={130} borderColor={routeTypeBorder(ACTIVITY)} />
-        </>
-      }
-    />
-  );
-
-  const Buttons = authorized && (
+  const renderButton = ({title, type}) => (
     <>
-      <Column>{ActivitiesButton}</Column>
-      <Column>{RoutesButton}</Column>
+      <Text style={styleSection}>{title}</Text>
+      <Section width={130} borderColor={routeTypeBorder(type)} />
     </>
   );
 
-  const List =
-    routeType === ROUTE ? (
-      <SavedRoutes themeStyle={themeStyle} closeModal={closeModal} />
-    ) : (
-      <SavedActivities themeStyle={themeStyle} closeModal={closeModal} />
-    );
+  const Buttons = authorized && (
+    <Row {...mt20}>
+      <Column>
+        <Touchable
+          onPress={changeRouteType.bind(null, ACTIVITY)}
+          Child={renderButton({title: 'Activities', type: ACTIVITY})}
+        />
+      </Column>
+      <Column>
+        <Touchable onPress={changeRouteType.bind(null, ROUTE)} Child={renderButton({title: 'Routes', type: ROUTE})} />
+      </Column>
+    </Row>
+  );
+
+  const List = (
+    <Row {...mt10}>
+      {isRoute ? <SavedRoutes themeStyle={themeStyle} /> : <SavedActivities themeStyle={themeStyle} />}
+    </Row>
+  );
 
   return (
-    <Fragment>
-      <Row {...mt20}>{Buttons}</Row>
-      <Row {...mt10}>{List}</Row>
-    </Fragment>
+    <>
+      {Buttons}
+      {List}
+    </>
   );
 };
 

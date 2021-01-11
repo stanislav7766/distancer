@@ -1,12 +1,11 @@
-import React, {Fragment, useEffect, useContext} from 'react';
-import {ScrollView} from 'react-native';
+import React, {useEffect, useContext, useCallback} from 'react';
+import VirtualList from '../virtualized-list';
 import {mapContext, appModeContext, routeContext} from '../../contexts/contexts';
 import {Groove} from '../../contexts/Groove';
 import Toast from 'react-native-simple-toast';
 import Item from '../item/Item';
 import Preview from '../preview/Preview';
-import {isFilledArr} from '../../utils/isFilledArr';
-import {Row, Styles, mt20} from './styles';
+import {Row, Styles, mt20, mb20} from './styles';
 import {APP_MODE, WINDOW_HEIGHT, NAVBAR_HEIGHT, ERROR_OCCURRED, ROUTE_TYPES} from '../../constants/constants';
 import WithActions from '../with-actions/WithActions';
 import {getRoutes as _getRoutes} from '../../actions';
@@ -16,14 +15,14 @@ const {VIEW_ROUTE} = APP_MODE;
 const {ROUTE} = ROUTE_TYPES;
 
 const SavedRoutes = ({themeStyle, getRoutes}) => {
-  const {setLoading, isLoading, SpinnerComponent} = useSpinner({position: 'top'});
+  const {setLoading, isLoading} = useSpinner({position: 'top'});
   const {zoomLevel, cameraRef} = useContext(mapContext);
   const {setAppMode, setViewMode, setDirectionsMode} = useContext(appModeContext);
   const {moveCamera} = Groove(cameraRef);
   const {routes, setCurrentRoute, setRoutes, setDefaultRoutes} = useContext(routeContext);
-  const maxHeight = WINDOW_HEIGHT - WINDOW_HEIGHT * 0.15 - NAVBAR_HEIGHT - 100;
+  const maxHeight = WINDOW_HEIGHT - WINDOW_HEIGHT * 0.15 - NAVBAR_HEIGHT - 80;
 
-  useEffect(() => {
+  const onRefresh = useCallback(() => {
     setLoading(true);
     getRoutes()
       .then(res => {
@@ -31,17 +30,20 @@ const SavedRoutes = ({themeStyle, getRoutes}) => {
         success ? setRoutes(data.routes) : Toast.show(reason);
       })
       .catch(_ => {
-        //todo handle storage denied perms
         Toast.show(ERROR_OCCURRED);
       })
       .finally(_ => {
         setLoading(false);
       });
-    return () => {
-      setDefaultRoutes();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [getRoutes, setLoading, setRoutes]);
+
+  useEffect(() => {
+    setTimeout(onRefresh, 700);
+  }, [onRefresh]);
+
+  useEffect(() => {
+    setDefaultRoutes();
+  }, [setDefaultRoutes]);
 
   const {styleItemRoute} = Styles(themeStyle);
   const routeWihoutDirections = ({directionsMode, ...route}) => route;
@@ -55,25 +57,30 @@ const SavedRoutes = ({themeStyle, getRoutes}) => {
     moveCamera({zoomLevel, centerCoordinate: route.points[0]});
   };
 
-  const isLastRoutesPoint = i => i === routes.length - 1;
+  const Footer = <Row {...mb20} />;
 
-  const UserRoutes = (
-    <Fragment>
-      {isFilledArr(routes) &&
-        routes.map((el, i) => (
-          <Row key={i} marginBottom={isLastRoutesPoint(i) ? 20 : 0} {...mt20}>
-            <Item
-              style={styleItemRoute}
-              onPress={() => onPressItem(el)}
-              IconComponent={IconWrap(el.points)}
-              text={`${el.distance} km${el.city.name && ', ' + el.city.name}`}
-            />
-          </Row>
-        ))}
-    </Fragment>
+  const renderItem = ({item}) => (
+    <Row {...mt20}>
+      <Item
+        style={styleItemRoute}
+        onPress={() => onPressItem(item)}
+        IconComponent={IconWrap(item.points)}
+        text={`${item.distance} km`}
+      />
+    </Row>
   );
 
-  return isLoading ? SpinnerComponent : <ScrollView style={{maxHeight}}>{UserRoutes}</ScrollView>;
+  return (
+    <VirtualList
+      refresh={{refreshing: isLoading, onRefresh}}
+      containerStyle={{maxHeight}}
+      renderItem={renderItem}
+      Footer={Footer}
+      items={routes}
+      initialNumToRender={10}
+      keyExtractor={item => item.id}
+    />
+  );
 };
 
 const mapDispatchToProps = {

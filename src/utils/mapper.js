@@ -1,3 +1,4 @@
+import {calcFromMonth} from './calcActivities';
 import {randomID} from './randomID';
 
 const mapMonth = {
@@ -34,14 +35,32 @@ const splitByMonth = arr =>
     };
   }, {});
 
+const splitByGroups = arr => {
+  const groups = [];
+
+  for (let i = 0; i < arr.length; i++) {
+    const [year, data] = arr[i];
+    const arr1 = Object.keys(data);
+    for (let index = 0; index < arr1.length; index++) {
+      const month = arr1[index];
+      const items = data[month];
+      const monthTotals = calcFromMonth(items);
+      groups.push({items, year, month, monthTotals, id: randomID()});
+    }
+  }
+
+  return groups;
+};
+
 const mapSortedEntries = obj =>
   Object.entries(obj)
     .sort((a, b) => b[0] - a[0])
-    .map(arr => [...arr, randomID()]);
+    .map(arr => [...arr]);
 
 export const mapper = arr => {
   if (arr.length === 0) return [];
   const sortedDate = sortByDate(arr);
   const splitted = splitByMonth(sortedDate);
-  return mapSortedEntries(splitted);
+  const entries = mapSortedEntries(splitted);
+  return splitByGroups(entries);
 };

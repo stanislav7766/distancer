@@ -1,90 +1,80 @@
-import React, {useState, useEffect, useContext, useRef} from 'react';
-import {ScrollView, Text, View} from 'react-native';
+import React, {useState, useEffect, useContext, useRef, useCallback} from 'react';
+import VirtualList from '../virtualized-list';
 import {mapContext, appModeContext, liveRouteContext} from '../../contexts/contexts';
 import {Groove} from '../../contexts/Groove';
 import Toast from 'react-native-simple-toast';
-import Item from '../item/Item';
-import Preview from '../preview/Preview';
-import {isFilledArr} from '../../utils/isFilledArr';
-import {Row, Column, Styles, mt10} from './styles';
-import {
-  APP_MODE,
-  WINDOW_HEIGHT,
-  NAVBAR_HEIGHT,
-  ERROR_OCCURRED,
-  ROUTE_TYPES,
-  DIRECTIONS_MODE,
-} from '../../constants/constants';
+import {APP_MODE, WINDOW_HEIGHT, NAVBAR_HEIGHT, ERROR_OCCURRED, ROUTE_TYPES} from '../../constants/constants';
 import WithActions from '../with-actions/WithActions';
 import {getActivities as _getActivities} from '../../actions';
 import useSpinner from '../spinner/useSpinner';
 import {mapper} from '../../utils/mapper';
-import {calcFromMonth} from '../../utils/calcActivities';
-import {randomID} from '../../utils/randomID';
-import Section from '../section/Section';
+import ActivityGroup from '../activity-group';
 
 const {VIEW_ROUTE} = APP_MODE;
 const {ACTIVITY} = ROUTE_TYPES;
-const {WALKING} = DIRECTIONS_MODE;
 
 const SavedActivities = ({themeStyle, getActivities}) => {
   const [preparedData, setPrepared] = useState([]);
-  const {setLoading, isLoading, SpinnerComponent} = useSpinner({position: 'top'});
+  const {setLoading, isLoading} = useSpinner({position: 'top'});
 
   const {zoomLevel, cameraRef} = useContext(mapContext);
   const {setAppMode, setViewMode, directionsMode, setDirectionsMode, setIsDirectionsMode, auth} = useContext(
     appModeContext,
   );
-  let localDirections = useRef(directionsMode);
+  const localDirections = useRef(directionsMode);
   const {moveCamera} = Groove(cameraRef);
   const {activities, setActivities, setDefaultActivities, setLiveRoute} = useContext(liveRouteContext);
-  const maxHeight = WINDOW_HEIGHT - WINDOW_HEIGHT * 0.15 - NAVBAR_HEIGHT - 100;
+  const maxHeight = WINDOW_HEIGHT - WINDOW_HEIGHT * 0.15 - NAVBAR_HEIGHT - 80;
 
-  const fetchActivities = direction => {
+  const onRefresh = useCallback(() => {
     setLoading(true);
-    setTimeout(() => {
-      getActivities({payload: {direction, userId: auth.userId}})
-        .then(res => {
-          const {success, reason, data} = res;
-          if (!success) {
-            Toast.show(reason);
-            setDefaultActivities();
-            return;
-          }
-          setActivities(data.activities);
-        })
-        .catch(_ => {
+    getActivities({payload: {direction: localDirections.current, userId: auth.userId}})
+      .then(res => {
+        const {success, reason, data} = res;
+        if (!success) {
+          Toast.show(reason);
           setDefaultActivities();
-          Toast.show(ERROR_OCCURRED);
-        })
-        .finally(_ => {
-          setLoading(false);
-        });
-    }, 200);
-  };
+          return;
+        }
+        setActivities(data.activities);
+      })
+      .catch(_ => {
+        setDefaultActivities();
+        Toast.show(ERROR_OCCURRED);
+      })
+      .finally(_ => {
+        setLoading(false);
+      });
+  }, [auth.userId, getActivities, setActivities, setDefaultActivities, setLoading]);
+
+  useEffect(() => {
+    onRefresh();
+  }, [onRefresh]);
 
   useEffect(() => {
     setIsDirectionsMode(true);
-    fetchActivities(directionsMode);
     return () => {
       setIsDirectionsMode(false);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setIsDirectionsMode]);
 
   useEffect(() => {
-    localDirections.current !== directionsMode && fetchActivities(directionsMode);
+    setDefaultActivities();
+  }, [setDefaultActivities]);
+
+  useEffect(() => {
+    if (localDirections.current === directionsMode) {
+      return;
+    }
     localDirections.current = directionsMode;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [directionsMode]);
+    onRefresh();
+  }, [directionsMode, onRefresh]);
 
   useEffect(() => {
     setPrepared(mapper(activities));
   }, [activities]);
 
-  const {styleItemActivity, styleFormHeaderDate, styleFormHeaderInfo} = Styles(themeStyle);
   const routeWihoutDirections = ({directionsMode, ...route}) => route;
-  const IconWrap = coords => <Preview coords={coords} />;
 
   const onPressActivityItem = activitity => {
     setAppMode(VIEW_ROUTE);
@@ -94,67 +84,29 @@ const SavedActivities = ({themeStyle, getActivities}) => {
     moveCamera({zoomLevel, centerCoordinate: activitity.points1[0]});
   };
 
-  const buildItemString = ({date, distance, pace, movingTime, avgSpeed}, direction) =>
-    `${date}\n ${distance} km     ${direction === WALKING ? pace + ' /km' : avgSpeed + 'km/h'}      ${movingTime}`;
+  const renderGroup = ({item}) => {
+    const {year, month, items, monthTotals} = item;
 
-  const renderItem = (el, direction) => (
-    <Row key={randomID()} {...mt10}>
-      <Item
-        style={styleItemActivity}
-        IconComponent={IconWrap(el.points1)}
-        onPress={() => onPressActivityItem(el)}
-        text={buildItemString(el, direction)}
-      />
-    </Row>
-  );
-  const renderFormHeaderInfo = text => <Text style={styleFormHeaderInfo}>{text}</Text>;
-
-  const renderGroup = (
-    {month, year, itemComponents, monthAvgSpeed, monthAvgPace, monthDistance, monthCount},
-    direction,
-  ) => (
-    <View key={randomID()}>
-      <Row {...mt10}>
-        <Column alignItems={'flex-start'}>
-          <Text style={styleFormHeaderDate}>
-            {month.toUpperCase()} {year}
-          </Text>
-        </Column>
-        <Column alignItems={'flex-end'}>
-          {renderFormHeaderInfo(
-            direction === WALKING
-              ? `${monthCount} runs    ${monthDistance} km   ${monthAvgPace} /km`
-              : `${monthCount} activities    ${monthDistance} km   ${monthAvgSpeed} km/h`,
-          )}
-        </Column>
-      </Row>
-      <Section borderColor={themeStyle.sectionColor} />
-      {itemComponents}
-      <Row marginBottom={20} />
-    </View>
-  );
-
-  const UserActivities = () => {
-    const components = [];
-
-    preparedData.forEach(([year, data]) => {
-      Object.keys(data).forEach(month => {
-        const activs = data[month];
-        const monthTotals = calcFromMonth(activs);
-        const itemComponents = activs.map(el => renderItem(el, directionsMode));
-        components.push(renderGroup({itemComponents, year, month, ...monthTotals}, directionsMode));
-      });
-    });
-
-    return (
-      <>
-        {isFilledArr(preparedData) && components.map(C => C)}
-        <Row marginBottom={20} />
-      </>
-    );
+    const groupProps = {
+      themeStyle,
+      items,
+      header: {year, month, monthTotals},
+      direction: localDirections.current,
+      onPresItem: onPressActivityItem,
+    };
+    return <ActivityGroup {...groupProps} />;
   };
 
-  return isLoading ? SpinnerComponent : <ScrollView style={{maxHeight}}>{UserActivities()}</ScrollView>;
+  return (
+    <VirtualList
+      refresh={{refreshing: isLoading, onRefresh}}
+      containerStyle={{maxHeight}}
+      renderItem={renderGroup}
+      items={preparedData}
+      initialNumToRender={2}
+      keyExtractor={item => item.id}
+    />
+  );
 };
 
 const mapDispatchToProps = {
