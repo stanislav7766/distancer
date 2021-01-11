@@ -8,7 +8,7 @@ const runSpring = (anim, params, cb) => {
   });
 };
 
-const RoundedIcon = ({IconComponent, style, onPress}) => {
+const RoundedIcon = ({IconComponent, style, onPress, onLongPress}) => {
   const {top, bottom, right, left, position, ...restStyle} = style;
   const {width} = style;
   const dimensions = {top, bottom, right, left, position};
@@ -26,7 +26,13 @@ const RoundedIcon = ({IconComponent, style, onPress}) => {
   return (
     <Container {...dimensions}>
       <Animated.View style={[styles.button, restStyle, {transform: [{scale}]}]}>
-        <Press activeOpacity={1} onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut}>
+        <Press
+          activeOpacity={1}
+          onPress={onPress}
+          onLongPress={onLongPress}
+          onPressIn={onPressIn}
+          onPressOut={onPressOut}
+        >
           {IconComponent}
         </Press>
       </Animated.View>

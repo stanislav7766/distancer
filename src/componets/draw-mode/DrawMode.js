@@ -66,7 +66,11 @@ const DrawMode = ({themeStyle, saveRoute}) => {
     setDefaultRoute();
   };
 
-  const onPressBackStep = () => setPoints(points.slice(0, -1));
+  const onPressBackStep = () => {
+    setPoints(points.slice(0, -1));
+  };
+  const onClearPoints = () => setPoints([]);
+
   const onPressDragMode = () => {
     if (!dragMode) {
       dragHints && Toast.show(SELECT_NEEDED_POINT);
@@ -99,7 +103,12 @@ const DrawMode = ({themeStyle, saveRoute}) => {
         </Row>
         <Row {...mt10}>
           <Column alignItems={'flex-start'}>
-            <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrow} onPress={onPressBackStep} />
+            <RoundedIcon
+              style={arrowIconDims}
+              IconComponent={IconLeftArrow}
+              onPress={onPressBackStep}
+              onLongPress={onClearPoints}
+            />
           </Column>
           <Column>
             <RoundedIcon style={{...dragIconDims, ...dragIconBg}} IconComponent={IconDrag} onPress={onPressDragMode} />
