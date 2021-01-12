@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useContext} from 'react';
 import {Keyboard, Animated, View} from 'react-native';
-import {modalContext, routeContext, placesContext, appModeContext, liveRouteContext} from '../../contexts/contexts';
+import {modalContext, routeContext, appModeContext, liveRouteContext} from '../../contexts/contexts';
 import DrawMode from '../draw-mode/DrawMode';
 import ViewRoute from '../view-route/ViewRoute';
 import ViewMode from '../view-mode/ViewMode';
@@ -15,7 +15,6 @@ const {VIEW_ROUTE, VIEW_MODE, DRAW_MODE, MENU_MODE, SAVED_MODE, LIVE_MODE} = APP
 
 const Modal = ({navigator}) => {
   const modalY = useRef(new Animated.Value(viewHeight)).current;
-  const {setDefaultPlaces} = useContext(placesContext);
   const {themeStyle} = useTheme();
   const {appMode, viewMode} = useContext(appModeContext);
   const {setExpanded, setDragMode} = useContext(modalContext);
@@ -106,7 +105,6 @@ const Modal = ({navigator}) => {
   };
 
   const viewModal = () => {
-    setDefaultPlaces();
     setExpanded(false);
     Keyboard.dismiss();
     animateModal(viewHeight);

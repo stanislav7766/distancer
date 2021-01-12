@@ -1,11 +1,9 @@
 import {useState} from 'react';
-import {Animated} from 'react-native';
 import {
   THEMES,
   DEFAULT_MAP,
   DEFAULT_ROUTES,
   DEFAULT_LIVE_ROUTE,
-  DEFAULT_PLACES,
   DEFAULT_ROUTE,
   DEFAULT_ACTIVITIES,
   APP_MODE,
@@ -69,15 +67,6 @@ export const LiveRouteState = () => {
     setDefaultActivities: () => setState(prev => ({...prev, activities: DEFAULT_ACTIVITIES})),
   });
   return liveRouteState;
-};
-
-export const PlacesState = () => {
-  const [placesState, setState] = useState({
-    places: DEFAULT_PLACES,
-    setDefaultPlaces: () => setState(prev => ({...prev, places: DEFAULT_PLACES})),
-    setPlaces: places => setState(prev => ({...prev, places})),
-  });
-  return placesState;
 };
 
 export const ThemeState = () => {

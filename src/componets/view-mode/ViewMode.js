@@ -1,5 +1,5 @@
-import React, {Fragment, useContext} from 'react';
-import {mapContext, modalContext, placesContext, routeContext} from '../../contexts/contexts';
+import React, {Fragment, useContext, useState} from 'react';
+import {mapContext, modalContext, routeContext} from '../../contexts/contexts';
 import {Groove} from '../../contexts/Groove';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
 import TextInput from '../text-input/TextInput';
@@ -17,7 +17,7 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
   const {moveToCurrPosition, moveCamera} = Groove(cameraRef);
   const {currentRoute, setCurrentRoute} = useContext(routeContext);
   const {expanded} = useContext(modalContext);
-  const {places, setPlaces} = useContext(placesContext);
+  const [places, setPlaces] = useState([]);
 
   const {styleItem, arrowIconDims, inputStyle} = Styles(themeStyle);
 

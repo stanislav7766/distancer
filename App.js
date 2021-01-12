@@ -4,19 +4,10 @@ import {
   appModeContext,
   themeContext,
   routeContext,
-  placesContext,
   modalContext,
   liveRouteContext,
 } from './src/contexts/contexts';
-import {
-  MapState,
-  AppModeState,
-  ThemeState,
-  PlacesState,
-  RouteState,
-  ModalState,
-  LiveRouteState,
-} from './src/contexts/initialStates';
+import {MapState, AppModeState, ThemeState, RouteState, ModalState, LiveRouteState} from './src/contexts/initialStates';
 import Landing from './src/pages/landing';
 import Authorization from './src/pages/authorization';
 import EditProfile from './src/pages/edit-profile';
@@ -36,7 +27,6 @@ const App = () => {
   const appMode = AppModeState();
   const map = MapState();
   const modal = ModalState();
-  const places = PlacesState();
   const route = RouteState();
   const theme = ThemeState();
   const liveRoute = LiveRouteState();
@@ -51,7 +41,6 @@ const App = () => {
         {Context: mapContext, value: map},
         {Context: routeContext, value: route},
         {Context: modalContext, value: modal},
-        {Context: placesContext, value: places},
       ]}
     />
   );

@@ -45,12 +45,6 @@ export const liveRouteContext = createContext({
   setDefaultActivities: () => {},
 });
 
-export const placesContext = createContext({
-  places: DEFAULT_PLACES,
-  setDefaultPlaces: () => {},
-  setPlaces: () => {},
-});
-
 export const themeContext = createContext({
   theme: THEMES.LIGHT,
   getThemeStyle: () => {},
