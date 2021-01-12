@@ -1,5 +1,3 @@
-import {useContext} from 'react';
-import {appModeContext} from '../../contexts/contexts';
 import useSvgFactory from '../../hooks/use-svg-factory';
 import {getDriving} from '../../assets/svg-icons/driving';
 import {getWalking} from '../../assets/svg-icons/walking';
@@ -12,9 +10,8 @@ const directionParams = {
 };
 
 const {WALKING, CYCLING, DRIVING} = DIRECTIONS_MODE;
-const SelectDirection = ({mode, themeStyle}) => {
-  const {directionsMode} = useContext(appModeContext);
-  const defineTheme = curr => (directionsMode === curr ? themeStyle.accentColor : themeStyle.textColorSecondary);
+const SelectDirection = ({mode, themeStyle, currentMode}) => {
+  const defineTheme = curr => (currentMode === curr ? themeStyle.accentColor : themeStyle.textColorSecondary);
 
   const ModeCall = type =>
     ({

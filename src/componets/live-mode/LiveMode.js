@@ -8,15 +8,18 @@ import {randomID} from '../../utils/randomID';
 import {LIVE_TYPES, LIVE_MODDING, LIVE_SPECS_DEFAULT, ERROR_OCCURRED, DIRECTIONS_MODE} from '../../constants/constants';
 import {yyyymmddNow} from '../../utils/timeToSec';
 import {makeIterator} from '../../utils/makeIterator';
+import {useOnDirectionsMode, useOnIsDirectionsMode} from '../../hooks/use-directions-mode';
 import {useActivitySettings} from '../../stores/activity-settings';
 import Toast from 'react-native-simple-toast';
 import useBackgroundLocation from '../../hooks/use-background-location';
 import useBackgroundStopWatch from '../../hooks/use-background-stopwatch';
 import {saveActivity as _saveActivity} from '../../actions';
 import WithActions from '../with-actions/WithActions';
+import {useDirectionsMode} from '../../stores/directions-mode';
+import {observer} from 'mobx-react-lite';
 
-const {WALKING} = DIRECTIONS_MODE;
 const {STOP, GO, PAUSE} = LIVE_TYPES;
+const {WALKING} = DIRECTIONS_MODE;
 
 const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
   const {vibrateOnStart} = useActivitySettings();
@@ -38,22 +41,20 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
 
   const {start, stop} = useBackgroundLocation(onUpdateLocation);
 
-  const {directionsMode, setIsDirectionsMode, setDirectionsMode, auth} = useContext(appModeContext);
+  const {auth} = useContext(appModeContext);
+  const {directionsMode} = useDirectionsMode();
 
   const {currentSpeed, status, pace, distance, avgSpeed, movingTime} = liveRoute;
   const isGo = status === GO;
   const isStop = status === STOP;
   const {onStartWatch, onContinueWatch, onTimeWatch, onResetWatch, onStopWatch, hhmmss} = useBackgroundStopWatch(isGo);
 
+  useOnIsDirectionsMode({mount: true});
   useEffect(() => {
     isStop && openModal();
-    setIsDirectionsMode(true);
-    setDirectionsMode(WALKING);
-    return () => {
-      setIsDirectionsMode(false);
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const [aIt] = useState(makeIterator(LIVE_MODDING));
   const [A, setA] = useState(aIt.next().value);
 
@@ -198,4 +199,4 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
 const mapDispatchToProps = {
   saveActivity: _saveActivity,
 };
-export default WithActions(mapDispatchToProps)(LiveMode);
+export default WithActions(mapDispatchToProps)(observer(LiveMode));

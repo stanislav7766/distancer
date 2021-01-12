@@ -10,6 +10,9 @@ import {APP_MODE, WINDOW_HEIGHT, NAVBAR_HEIGHT, ERROR_OCCURRED, ROUTE_TYPES} fro
 import WithActions from '../with-actions/WithActions';
 import {getRoutes as _getRoutes} from '../../actions';
 import useSpinner from '../spinner/useSpinner';
+import {useOnIsDirectionsMode} from '../../hooks/use-directions-mode';
+import {observer} from 'mobx-react-lite';
+import {useDirectionsMode} from '../../stores/directions-mode';
 
 const {VIEW_ROUTE} = APP_MODE;
 const {ROUTE} = ROUTE_TYPES;
@@ -17,10 +20,12 @@ const {ROUTE} = ROUTE_TYPES;
 const SavedRoutes = ({themeStyle, getRoutes}) => {
   const {setLoading, isLoading} = useSpinner({position: 'top'});
   const {zoomLevel, cameraRef} = useContext(mapContext);
-  const {setAppMode, setViewMode, setDirectionsMode} = useContext(appModeContext);
+  const {setAppMode, setViewMode} = useContext(appModeContext);
+  const {setDirectionsMode} = useDirectionsMode();
   const {moveCamera} = Groove(cameraRef);
   const {routes, setCurrentRoute, setRoutes, setDefaultRoutes} = useContext(routeContext);
   const maxHeight = WINDOW_HEIGHT - WINDOW_HEIGHT * 0.15 - NAVBAR_HEIGHT - 80;
+  useOnIsDirectionsMode({mount: false});
 
   const onRefresh = useCallback(() => {
     setLoading(true);
@@ -86,4 +91,4 @@ const SavedRoutes = ({themeStyle, getRoutes}) => {
 const mapDispatchToProps = {
   getRoutes: _getRoutes,
 };
-export default WithActions(mapDispatchToProps)(SavedRoutes);
+export default WithActions(mapDispatchToProps)(observer(SavedRoutes));

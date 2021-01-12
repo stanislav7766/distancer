@@ -4,7 +4,7 @@ import Btn from '../btn/Btn';
 import {routeContext, appModeContext} from '../../contexts/contexts';
 import Toast from 'react-native-simple-toast';
 import {Row, Column, stylesTextKM, Styles, btnDeleteStyles, mt10} from './styles';
-import {APP_MODE, ERROR_OCCURRED, DELETE_ROUTE_CONFIRM} from '../../constants/constants';
+import {APP_MODE, ERROR_OCCURRED, DELETE_ROUTE_CONFIRM, DIRECTIONS_MODE} from '../../constants/constants';
 import SelectDirection from '../directions-bar/SelectDirection';
 import {useModalConfirm as useConfirm} from '../../stores/modal-confirm';
 import useSvgFactory from '../../hooks/use-svg-factory';
@@ -12,17 +12,24 @@ import {getMarker} from '../../assets/svg-icons/marker';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
 import WithActions from '../with-actions/WithActions';
 import {deleteRoute as _deleteRoute} from '../../actions';
+import {useOnIsDirectionsMode, useOnDirectionsMode} from '../../hooks/use-directions-mode';
+import {useDirectionsMode} from '../../stores/directions-mode';
+import {observer} from 'mobx-react-lite';
 const {VIEW_MODE, LIVE_MODE} = APP_MODE;
+const {WALKING} = DIRECTIONS_MODE;
 
 const Route = ({themeStyle, deleteRoute}) => {
   const {setDefaultRoute, setDefaultRoutes, routes, currentRoute, setCurrentRoute} = useContext(routeContext);
 
-  const {setAppMode, directionsMode, auth} = useContext(appModeContext);
+  const {setAppMode, auth} = useContext(appModeContext);
+  const {directionsMode} = useDirectionsMode();
   const {authorized} = auth;
   const {liveIconDims} = Styles(themeStyle);
   const {distance} = currentRoute;
 
   const {setInit, onShowConfirm, onHideConfirm} = useConfirm();
+  useOnIsDirectionsMode({mount: false});
+  useOnDirectionsMode(directionsMode === '' && {unmount: WALKING});
 
   const onPressCancel = () => {
     setDefaultRoute();
@@ -67,7 +74,7 @@ const Route = ({themeStyle, deleteRoute}) => {
           <Text style={[stylesTextKM, {color: themeStyle.textColorSecondary}]}>{distance} km</Text>
         </Column>
         <Column flex={0.3}>
-          <SelectDirection themeStyle={themeStyle} mode={directionsMode ? directionsMode : ''} />
+          <SelectDirection themeStyle={themeStyle} currentMode={directionsMode} mode={directionsMode} />
         </Column>
         <Column>
           {authorized && <RoundedIcon style={liveIconDims} IconComponent={IconMarker} onPress={onStartLiveWithRoute} />}
@@ -81,4 +88,4 @@ const Route = ({themeStyle, deleteRoute}) => {
 };
 
 const mapDispatchToProps = {deleteRoute: _deleteRoute};
-export default WithActions(mapDispatchToProps)(Route);
+export default WithActions(mapDispatchToProps)(observer(Route));

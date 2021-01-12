@@ -2,10 +2,11 @@ import React, {useEffect, useContext, useMemo} from 'react';
 import {Text} from 'react-native';
 import Btn from '../btn/Btn';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
-import {routeContext, modalContext, appModeContext, mapContext} from '../../contexts/contexts';
+import {routeContext, modalContext, mapContext} from '../../contexts/contexts';
 import {useSwitchDrawMode} from '../../hooks/use-switch';
 import {useRouteSettings} from '../../stores/route-settings';
 import useSvgFactory from '../../hooks/use-svg-factory';
+import {useOnIsDirectionsMode, useOnDirectionsMode} from '../../hooks/use-directions-mode';
 import {getLeftArrow} from '../../assets/svg-icons/left-arrow';
 import {Groove} from '../../contexts/Groove';
 import {getDrag} from '../../assets/svg-icons/drag';
@@ -13,17 +14,21 @@ import Toast from 'react-native-simple-toast';
 import {randomID} from '../../utils/randomID';
 import {measureDistance} from '../../utils/measureDistanceCoords';
 import {Row, Column, Styles, btnSaveStyles, mt10} from './styles';
-import {ACCENT_RED, ERROR_OCCURRED, SELECT_NEEDED_POINT} from '../../constants/constants';
+import {ACCENT_RED, ERROR_OCCURRED, SELECT_NEEDED_POINT, DIRECTIONS_MODE} from '../../constants/constants';
 import {saveRoute as _saveRoute} from '../../actions';
 import WithActions from '../with-actions/WithActions';
 import {isFilledArr} from '../../utils/isFilledArr';
+import {useDirectionsMode} from '../../stores/directions-mode';
+import {observer} from 'mobx-react-lite';
+
+const {WALKING} = DIRECTIONS_MODE;
 
 const DrawMode = ({themeStyle, saveRoute}) => {
   const [SwitchDrawMode, drawMode] = useSwitchDrawMode();
   const {cameraRef} = useContext(mapContext);
   const {dragHints} = useRouteSettings();
   const {setCurrentRoute, setDefaultRoute, currentRoute} = useContext(routeContext);
-  const {setIsDirectionsMode, directionsMode} = useContext(appModeContext);
+  const {directionsMode} = useDirectionsMode();
   const {dragMode, setDragMode} = useContext(modalContext);
   const {moveCamera} = Groove(cameraRef);
 
@@ -54,12 +59,8 @@ const DrawMode = ({themeStyle, saveRoute}) => {
     isFilledArr(coordinate) && moveCamera({zoomLevel: 16, centerCoordinate: coordinate});
   };
 
-  useEffect(() => {
-    setIsDirectionsMode(drawMode);
-    return () => {
-      setIsDirectionsMode(false);
-    };
-  }, [drawMode, setIsDirectionsMode]);
+  useOnIsDirectionsMode({mount: drawMode});
+  useOnDirectionsMode({mount: drawMode ? WALKING : '', unmount: WALKING});
 
   const onPressCancel = () => {
     setDragMode(false);
@@ -127,4 +128,4 @@ const DrawMode = ({themeStyle, saveRoute}) => {
 const mapDispatchToProps = {
   saveRoute: _saveRoute,
 };
-export default WithActions(mapDispatchToProps)(DrawMode);
+export default WithActions(mapDispatchToProps)(observer(DrawMode));

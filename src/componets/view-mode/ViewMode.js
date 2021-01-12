@@ -9,6 +9,7 @@ import {getMarker} from '../../assets/svg-icons/marker';
 import {getLeftArrow} from '../../assets/svg-icons/left-arrow';
 import {Fetch} from '../../utils/geolocation';
 import {isFilledArr} from '../../utils/isFilledArr';
+import {useOnIsDirectionsMode} from '../../hooks/use-directions-mode';
 import {Row, Column, Styles, mt20, mt10} from './styles';
 import {CITY_NOT_FOUND, CHOOSE_YOUR_LOCATION, TYPE_CITY} from '../../constants/constants';
 
@@ -20,7 +21,7 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
   const [places, setPlaces] = useState([]);
 
   const {styleItem, arrowIconDims, inputStyle} = Styles(themeStyle);
-
+  useOnIsDirectionsMode({mount: false});
   const IconMarker = useSvgFactory(getMarker, {width: 24, height: 32, fillAccent: themeStyle.accentColor});
   const IconLeftArrow = useSvgFactory(getLeftArrow, {width: 30, height: 33, fillAccent: themeStyle.accentColor});
   const {city} = currentRoute;

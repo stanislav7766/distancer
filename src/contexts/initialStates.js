@@ -8,7 +8,6 @@ import {
   APP_MODE,
   ROUTE_TYPES,
   DEFAULT_AUTH,
-  DIRECTIONS_MODE,
 } from '../constants/constants';
 
 export const ModalState = () => {
@@ -72,8 +71,6 @@ export const AppModeState = () => {
     auth: DEFAULT_AUTH,
     appMode: APP_MODE.VIEW_MODE,
     viewMode: ROUTE_TYPES.ROUTE,
-    directionsMode: DIRECTIONS_MODE.WALKING,
-    isDirectionsMode: false,
     setAuth: auth =>
       setState(prev => {
         const rest = prev.auth;
@@ -85,12 +82,6 @@ export const AppModeState = () => {
     },
     setViewMode(viewMode) {
       setState(prev => ({...prev, viewMode}));
-    },
-    setIsDirectionsMode(isDirectionsMode) {
-      setState(prev => ({...prev, isDirectionsMode}));
-    },
-    setDirectionsMode(directionsMode) {
-      setState(prev => ({...prev, directionsMode}));
     },
   });
   return appModeState;

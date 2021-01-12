@@ -3,6 +3,7 @@ import {ScrollView} from 'react-native';
 import {appModeContext} from '../../contexts/contexts';
 import Shared from './Shared';
 import NotAuthorized from './NotAuthorized';
+import {useOnIsDirectionsMode} from '../../hooks/use-directions-mode';
 import Authorized from './Authorized';
 import {styles} from './styles';
 
@@ -10,7 +11,7 @@ const MenuMode = ({themeStyle, navigator}) => {
   const {
     auth: {authorized},
   } = useContext(appModeContext);
-
+  useOnIsDirectionsMode({mount: false});
   return (
     <>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>

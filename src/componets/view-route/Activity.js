@@ -3,22 +3,27 @@ import {Text} from 'react-native';
 import Btn from '../btn/Btn';
 import {liveRouteContext, appModeContext} from '../../contexts/contexts';
 import Toast from 'react-native-simple-toast';
+import {useOnIsDirectionsMode} from '../../hooks/use-directions-mode';
 import {Row, Column, stylesActivityProps, btnDeleteStyles, mt10} from './styles';
 import {APP_MODE, ERROR_OCCURRED, DELETE_ACTIVITY_CONFIRM} from '../../constants/constants';
 import {useModalConfirm as useConfirm} from '../../stores/modal-confirm';
 import SelectDirection from '../directions-bar/SelectDirection';
 import WithActions from '../with-actions/WithActions';
 import {deleteActivity as _deleteActivity} from '../../actions';
+import {useDirectionsMode} from '../../stores/directions-mode';
+import {observer} from 'mobx-react-lite';
 
 const {VIEW_MODE} = APP_MODE;
 
 const Activity = ({themeStyle, deleteActivity}) => {
   const {setDefaultLiveRoute, setDefaultActivities, liveRoute} = useContext(liveRouteContext);
 
-  const {setAppMode, directionsMode, auth} = useContext(appModeContext);
+  const {setAppMode, auth} = useContext(appModeContext);
+  const {directionsMode} = useDirectionsMode();
   const {distance, pace, avgSpeed, totalTime, movingTime} = liveRoute;
 
   const {setInit, onShowConfirm, onHideConfirm} = useConfirm();
+  useOnIsDirectionsMode({mount: false});
 
   const onPressCancel = () => {
     setDefaultLiveRoute();
@@ -96,7 +101,7 @@ const Activity = ({themeStyle, deleteActivity}) => {
       </Row>
       <Row alignItems="center" {...mt10}>
         <Column alignItems={'flex-start'}>
-          <SelectDirection themeStyle={themeStyle} mode={directionsMode ? directionsMode : ''} />
+          <SelectDirection themeStyle={themeStyle} mode={directionsMode} currentMode={directionsMode} />
         </Column>
         <Column alignItems={'flex-end'}>
           <Btn {...btnDeleteStyles} title={'Delete Activity'} onPress={onRequestDelete} />
@@ -107,4 +112,4 @@ const Activity = ({themeStyle, deleteActivity}) => {
 };
 
 const mapDispatchToProps = {deleteActivity: _deleteActivity};
-export default WithActions(mapDispatchToProps)(Activity);
+export default WithActions(mapDispatchToProps)(observer(Activity));

@@ -21,6 +21,7 @@ import {ERROR_OCCURRED, ERROR_NETWORK_FAILED, LIVE_SPECS_DEFAULT, ROUTE_TYPES} f
 import {measureDistance} from '../../utils/measureDistanceCoords';
 import {timeToSec, kmToM, calcPace} from '../../utils/timeToSec';
 import {observer} from 'mobx-react-lite';
+import {useDirectionsMode} from '../../stores/directions-mode';
 
 const {height, width} = Dimensions.get('window');
 const {VIEW_ROUTE, DRAW_MODE, LIVE_MODE, VIEW_MODE} = APP_MODE;
@@ -32,7 +33,8 @@ const iconParams = {width: 32, height: 32};
 const Map = () => {
   const {themeStyle} = useTheme();
   const {dragMode, expanded} = useContext(modalContext);
-  const {appMode, viewMode, isDirectionsMode, directionsMode, setDirectionsMode} = useContext(appModeContext);
+  const {appMode, viewMode} = useContext(appModeContext);
+  const {isDirectionsMode, directionsMode} = useDirectionsMode();
   const {setCameraRef, zoomLevel, coordinates, cameraRef} = useContext(mapContext);
   const {liveRoute, setLiveRoute} = useContext(liveRouteContext);
   const {points1, movingTime} = liveRoute;
@@ -107,7 +109,7 @@ const Map = () => {
         <UserLocation />
       </MapView>
       {!expanded && [LIVE_MODE, VIEW_MODE, DRAW_MODE].includes(appMode) && Icons}
-      {isDirectionsMode && <DirectionsBar setMode={setDirectionsMode} themeStyle={themeStyle} />}
+      {<DirectionsBar themeStyle={themeStyle} />}
     </View>
   );
 };
