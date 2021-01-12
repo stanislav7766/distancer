@@ -1,6 +1,5 @@
 import {useState} from 'react';
 import {
-  THEMES,
   DEFAULT_MAP,
   DEFAULT_ROUTES,
   DEFAULT_LIVE_ROUTE,
@@ -11,7 +10,6 @@ import {
   DEFAULT_AUTH,
   DIRECTIONS_MODE,
 } from '../constants/constants';
-import {ThemeStyle} from '../constants/styles';
 
 export const ModalState = () => {
   const [modalState, setState] = useState({
@@ -67,15 +65,6 @@ export const LiveRouteState = () => {
     setDefaultActivities: () => setState(prev => ({...prev, activities: DEFAULT_ACTIVITIES})),
   });
   return liveRouteState;
-};
-
-export const ThemeState = () => {
-  const [themeState, setState] = useState({
-    theme: THEMES.LIGHT,
-    getThemeStyle: theme => ThemeStyle[theme],
-    setTheme: theme => setState(prev => ({...prev, theme})),
-  });
-  return themeState;
 };
 
 export const AppModeState = () => {

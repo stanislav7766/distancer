@@ -1,13 +1,6 @@
 import React from 'react';
-import {
-  mapContext,
-  appModeContext,
-  themeContext,
-  routeContext,
-  modalContext,
-  liveRouteContext,
-} from './src/contexts/contexts';
-import {MapState, AppModeState, ThemeState, RouteState, ModalState, LiveRouteState} from './src/contexts/initialStates';
+import {mapContext, appModeContext, routeContext, modalContext, liveRouteContext} from './src/contexts/contexts';
+import {MapState, AppModeState, RouteState, ModalState, LiveRouteState} from './src/contexts/initialStates';
 import Landing from './src/pages/landing';
 import Authorization from './src/pages/authorization';
 import EditProfile from './src/pages/edit-profile';
@@ -28,7 +21,6 @@ const App = () => {
   const map = MapState();
   const modal = ModalState();
   const route = RouteState();
-  const theme = ThemeState();
   const liveRoute = LiveRouteState();
 
   const a = (
@@ -37,7 +29,6 @@ const App = () => {
       wrappers={[
         {Context: liveRouteContext, value: liveRoute},
         {Context: appModeContext, value: appMode},
-        {Context: themeContext, value: theme},
         {Context: mapContext, value: map},
         {Context: routeContext, value: route},
         {Context: modalContext, value: modal},

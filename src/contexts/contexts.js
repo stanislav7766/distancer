@@ -1,10 +1,8 @@
 import {createContext} from 'react';
 import {
-  THEMES,
   DEFAULT_MAP,
   APP_MODE,
   DEFAULT_ROUTE,
-  DEFAULT_PLACES,
   DEFAULT_ROUTES,
   DEFAULT_LIVE_ROUTE,
   DEFAULT_ACTIVITIES,
@@ -43,12 +41,6 @@ export const liveRouteContext = createContext({
   setLiveRoute: () => {},
   setDefaultLiveRoute: () => {},
   setDefaultActivities: () => {},
-});
-
-export const themeContext = createContext({
-  theme: THEMES.LIGHT,
-  getThemeStyle: () => {},
-  setTheme: () => {},
 });
 
 export const appModeContext = createContext({
