@@ -11,6 +11,7 @@ import SelectDirection from '../directions-bar/SelectDirection';
 import WithActions from '../with-actions/WithActions';
 import {deleteActivity as _deleteActivity} from '../../actions';
 import {useDirectionsMode} from '../../stores/directions-mode';
+import {useAuth} from '../../stores/auth';
 import {observer} from 'mobx-react-lite';
 
 const {VIEW_MODE} = APP_MODE;
@@ -18,7 +19,8 @@ const {VIEW_MODE} = APP_MODE;
 const Activity = ({themeStyle, deleteActivity}) => {
   const {setDefaultLiveRoute, setDefaultActivities, liveRoute} = useContext(liveRouteContext);
 
-  const {setAppMode, auth} = useContext(appModeContext);
+  const {setAppMode} = useContext(appModeContext);
+  const {profile} = useAuth();
   const {directionsMode} = useDirectionsMode();
   const {distance, pace, avgSpeed, totalTime, movingTime} = liveRoute;
 
@@ -32,7 +34,7 @@ const Activity = ({themeStyle, deleteActivity}) => {
   };
 
   const onPressDelete = () => {
-    const payload = {activityId: liveRoute.id, userId: auth.userId, directionsMode};
+    const payload = {activityId: liveRoute.id, userId: profile.userId, directionsMode};
     deleteActivity({payload})
       .then(res => {
         const {success, reason} = res;

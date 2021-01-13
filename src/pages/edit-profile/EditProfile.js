@@ -1,6 +1,5 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Text} from 'react-native';
-import {appModeContext} from '../../contexts/contexts';
 import {CenterXY, Container, Row, Column, Styles, btnSaveStyles, mt20, mt30} from './styles';
 import RoundedIcon from '../../componets/rounded-icon/RoundedIcon';
 import useSpinner from '../../componets/spinner/useSpinner';
@@ -16,6 +15,7 @@ import ProfileInputs from './ProfileInputs';
 import ProfilePickers from './ProfilePickers';
 import {observer} from 'mobx-react-lite';
 import {useTheme} from '../../stores/theme';
+import {useAuth} from '../../stores/auth';
 import {useModalPicker} from '../../hooks/use-window-modal';
 
 const EditProfile = ({navigator, updateProfile}) => {
@@ -25,11 +25,10 @@ const EditProfile = ({navigator, updateProfile}) => {
 
   const [profile, setProfile] = useState({firstName: '', lastName: '', age: '', gender: '', height: '', weight: ''});
 
-  const {auth, setAuth} = useContext(appModeContext);
+  const auth = useAuth();
 
   useEffect(() => {
-    const {authorized, ...restAuth} = auth;
-    setProfile(restAuth);
+    setProfile(auth.profile);
   }, [auth]);
 
   const {themeStyle} = useTheme();
@@ -50,7 +49,7 @@ const EditProfile = ({navigator, updateProfile}) => {
             Toast.show(reason);
             return;
           }
-          setAuth(profile);
+          auth.setProfile(profile);
           goToMain();
         })
         .catch(err => Toast.show(err))

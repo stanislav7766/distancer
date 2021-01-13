@@ -15,15 +15,17 @@ import {deleteRoute as _deleteRoute} from '../../actions';
 import {useOnIsDirectionsMode, useOnDirectionsMode} from '../../hooks/use-directions-mode';
 import {useDirectionsMode} from '../../stores/directions-mode';
 import {observer} from 'mobx-react-lite';
+import {useAuth} from '../../stores/auth';
+
 const {VIEW_MODE, LIVE_MODE} = APP_MODE;
 const {WALKING} = DIRECTIONS_MODE;
 
 const Route = ({themeStyle, deleteRoute}) => {
   const {setDefaultRoute, setDefaultRoutes, routes, currentRoute, setCurrentRoute} = useContext(routeContext);
 
-  const {setAppMode, auth} = useContext(appModeContext);
+  const {setAppMode} = useContext(appModeContext);
   const {directionsMode} = useDirectionsMode();
-  const {authorized} = auth;
+  const {authorized} = useAuth();
   const {liveIconDims} = Styles(themeStyle);
   const {distance} = currentRoute;
 

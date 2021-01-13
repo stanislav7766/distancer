@@ -1,22 +1,23 @@
-import React, {useState, useContext} from 'react';
+import React, {useState} from 'react';
 import {Text} from 'react-native';
 import Btn from '../btn/Btn';
 import TextInput from '../text-input/TextInput';
 import useSvgFactory from '../../hooks/use-svg-factory';
 import {getLeftArrow} from '../../assets/svg-icons/left-arrow';
 import RoundedIcon from '../rounded-icon/RoundedIcon';
-import {appModeContext} from '../../contexts/contexts';
 import {Row, Column, Styles, btnSignInStyles, btnGoogleStyles, mt10, mt30, mb30} from './styles';
 import WithActions from '../with-actions/WithActions';
 import {loginUser as _loginUser, loginWithGoogle as _loginWithGoogle} from '../../actions';
 import Toast from 'react-native-simple-toast';
 import GoogleSignBtn from '../google-sign-btn/GoogleSignBtn';
 import useSpinner from '../spinner/useSpinner';
+import {observer} from 'mobx-react-lite';
+import {useAuth} from '../../stores/auth';
 
 const SignIn = ({themeStyle, goToMain, loginUser, loginWithGoogle}) => {
   const {setLoading, isLoading, SpinnerComponent} = useSpinner({position: 'bottom'});
   const [input, setInput] = useState({email: '', password: ''});
-  const {setAuth} = useContext(appModeContext);
+  const {setAuthorized, setProfile} = useAuth();
 
   const IconLeftArrow = useSvgFactory(getLeftArrow, {width: 30, height: 33, fillAccent: themeStyle.accentColor});
 
@@ -33,7 +34,8 @@ const SignIn = ({themeStyle, goToMain, loginUser, loginWithGoogle}) => {
       Toast.show(reason);
       return;
     }
-    setAuth({authorized: true, ...data.user});
+    setProfile(data.user);
+    setAuthorized(true);
     goToMain();
     Toast.show('Authorized');
   };
@@ -127,4 +129,4 @@ const mapDispatchToProps = {
   loginUser: _loginUser,
   loginWithGoogle: _loginWithGoogle,
 };
-export default WithActions(mapDispatchToProps)(SignIn);
+export default WithActions(mapDispatchToProps)(observer(SignIn));

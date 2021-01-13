@@ -7,7 +7,6 @@ import {
   DEFAULT_ACTIVITIES,
   APP_MODE,
   ROUTE_TYPES,
-  DEFAULT_AUTH,
 } from '../constants/constants';
 
 export const ModalState = () => {
@@ -68,15 +67,8 @@ export const LiveRouteState = () => {
 
 export const AppModeState = () => {
   const [appModeState, setState] = useState({
-    auth: DEFAULT_AUTH,
     appMode: APP_MODE.VIEW_MODE,
     viewMode: ROUTE_TYPES.ROUTE,
-    setAuth: auth =>
-      setState(prev => {
-        const rest = prev.auth;
-        return {...prev, auth: {...rest, ...auth}};
-      }),
-    setDefaultAuth: () => setState(prev => ({...prev, auth: DEFAULT_AUTH})),
     setAppMode(appMode) {
       setState(prev => ({...prev, appMode}));
     },

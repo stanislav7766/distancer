@@ -120,9 +120,8 @@ export const DEFAULT_LIVE_ROUTE = {
   id: '',
   points1: [],
 };
-export const DEFAULT_AUTH = {
+export const DEFAULT_PROFILE = {
   userId: '',
-  authorized: false,
   email: '',
   age: '',
   height: '',

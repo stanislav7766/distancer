@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import {appModeContext, liveRouteContext} from '../../contexts/contexts';
 import {useTheme} from '../../stores/theme';
+import {useAuth} from '../../stores/auth';
 import {Touchable, Row, Column, Container, mx40} from './styles';
 import {getView} from '../../assets/svg-icons/view';
 import {getSaved} from '../../assets/svg-icons/saved';
@@ -19,8 +20,8 @@ const {VIEW_MODE, DRAW_MODE, SAVED_MODE, MENU_MODE, LIVE_MODE} = APP_MODE;
 const Navbar = () => {
   const {themeStyle} = useTheme();
   const {liveRoute} = useContext(liveRouteContext);
-  const {appMode, setAppMode, auth} = useContext(appModeContext);
-  const {authorized} = auth;
+  const {appMode, setAppMode} = useContext(appModeContext);
+  const {authorized} = useAuth();
   const {status} = liveRoute;
   const toastFinishLive = () => {
     Toast.show(PLEASE_FINISH_ACTIVITY);

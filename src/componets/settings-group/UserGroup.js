@@ -1,6 +1,5 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import Btn from '../btn/Btn';
-import {appModeContext} from '../../contexts/contexts';
 import {useModalConfirm as useConfirm} from '../../stores/modal-confirm';
 import {Row, Column, Styles, mt10, mb30, btnLogoutStyles, btnProfileStyles} from './styles';
 import WithActions from '../with-actions/WithActions';
@@ -9,12 +8,13 @@ import Toast from 'react-native-simple-toast';
 import {NO_CURRENT_USER, LOGOUT_CONFIRM} from '../../constants/constants';
 import Avatar from '../avatar/Avatar';
 import {observer} from 'mobx-react-lite';
+import {useAuth} from '../../stores/auth';
 
 const GroupUser = ({themeStyle, loading, navigator, logoutUser}) => {
-  const {auth, setDefaultAuth} = useContext(appModeContext);
+  const {profile, setAuthorized} = useAuth();
   const {setInit: setInitConfirm, onShowConfirm, onHideConfirm} = useConfirm();
 
-  const {photoURL, email, firstName} = auth;
+  const {photoURL, email, firstName} = profile;
   const {avatarTitleStyle} = Styles(themeStyle);
   const {setLoading, isLoading, SpinnerComponent} = loading;
 
@@ -34,16 +34,16 @@ const GroupUser = ({themeStyle, loading, navigator, logoutUser}) => {
     setLoading(true);
 
     setTimeout(() => {
-      logoutUser({payload: {userId: auth.userId}})
+      logoutUser({payload: {userId: profile.userId}})
         .then(({success, reason}) => {
           if (!success) {
             Toast.show(reason);
             return;
           }
-          setDefaultAuth();
+          setAuthorized(false);
         })
         .catch(err => {
-          err === NO_CURRENT_USER ? setDefaultAuth() : Toast.show(err);
+          err === NO_CURRENT_USER ? setAuthorized(false) : Toast.show(err);
         })
         .finally(_ => {
           setLoading(false);
@@ -67,7 +67,7 @@ const GroupUser = ({themeStyle, loading, navigator, logoutUser}) => {
     <Row {...mt10} {...mb30}>
       {SpinnerComponent}
       <Column justifyContent={'center'} alignItems={'flex-start'}>
-        <Avatar size={80} title={firstName ?? email} titleStyle={avatarTitleStyle} src={avatarSource} />
+        <Avatar size={80} title={firstName || email} titleStyle={avatarTitleStyle} src={avatarSource} />
       </Column>
       <Column justifyContent={'center'} alignItems={'flex-end'}>
         <Btn {...btnProfileStyles} onPress={onPressViewProfile} title={'View Profile'} />

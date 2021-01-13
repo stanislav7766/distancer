@@ -1,5 +1,4 @@
-import React, {useContext} from 'react';
-import {appModeContext} from '../../contexts/contexts';
+import React from 'react';
 import {useModalConfirm as useConfirm} from '../../stores/modal-confirm';
 import WithActions from '../with-actions/WithActions';
 import {deleteAccount as _deleteAccount} from '../../actions';
@@ -8,10 +7,11 @@ import Toast from 'react-native-simple-toast';
 import Touchable from '../../componets/touchable/Touchable';
 import {NO_CURRENT_USER, DELETE_ACCOUNT_CONFIRM} from '../../constants/constants';
 import {observer} from 'mobx-react-lite';
+import {useAuth} from '../../stores/auth';
 
 const GroupAccount = ({themeStyle, loading, deleteAccount}) => {
   const {setLoading, isLoading} = loading;
-  const {auth, setDefaultAuth} = useContext(appModeContext);
+  const {profile, setAuthorized} = useAuth();
 
   const {setInit: setInitConfirm, onShowConfirm, onHideConfirm} = useConfirm();
 
@@ -36,16 +36,16 @@ const GroupAccount = ({themeStyle, loading, deleteAccount}) => {
     }
     setLoading(true);
     setTimeout(() => {
-      deleteAccount({payload: {userId: auth.userId}})
+      deleteAccount({payload: {userId: profile.userId}})
         .then(({success, reason}) => {
           if (!success) {
             Toast.show(reason);
             return;
           }
-          setDefaultAuth();
+          setAuthorized(false);
         })
         .catch(err => {
-          err === NO_CURRENT_USER ? setDefaultAuth() : Toast.show(err);
+          err === NO_CURRENT_USER ? setAuthorized(false) : Toast.show(err);
         })
         .finally(_ => {
           setLoading(false);

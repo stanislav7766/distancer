@@ -1,16 +1,15 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {ScrollView} from 'react-native';
-import {appModeContext} from '../../contexts/contexts';
 import Shared from './Shared';
 import NotAuthorized from './NotAuthorized';
 import {useOnIsDirectionsMode} from '../../hooks/use-directions-mode';
 import Authorized from './Authorized';
 import {styles} from './styles';
+import {useAuth} from '../../stores/auth';
+import {observer} from 'mobx-react-lite';
 
 const MenuMode = ({themeStyle, navigator}) => {
-  const {
-    auth: {authorized},
-  } = useContext(appModeContext);
+  const {authorized} = useAuth();
   useOnIsDirectionsMode({mount: false});
   return (
     <>
@@ -26,4 +25,4 @@ const MenuMode = ({themeStyle, navigator}) => {
   );
 };
 
-export default MenuMode;
+export default observer(MenuMode);

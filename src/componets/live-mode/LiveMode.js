@@ -3,7 +3,7 @@ import {Vibration} from 'react-native';
 import {Row, Column, Styles, btnStartStyles, btnPauseStyles, btnContinueStyles, mt10} from './styles';
 import Btn from '../btn/Btn';
 import LiveInfo from '../live-info/LiveInfo';
-import {liveRouteContext, appModeContext} from '../../contexts/contexts';
+import {liveRouteContext} from '../../contexts/contexts';
 import {randomID} from '../../utils/randomID';
 import {LIVE_TYPES, LIVE_MODDING, LIVE_SPECS_DEFAULT, ERROR_OCCURRED, DIRECTIONS_MODE} from '../../constants/constants';
 import {yyyymmddNow} from '../../utils/timeToSec';
@@ -16,6 +16,7 @@ import useBackgroundStopWatch from '../../hooks/use-background-stopwatch';
 import {saveActivity as _saveActivity} from '../../actions';
 import WithActions from '../with-actions/WithActions';
 import {useDirectionsMode} from '../../stores/directions-mode';
+import {useAuth} from '../../stores/auth';
 import {observer} from 'mobx-react-lite';
 
 const {STOP, GO, PAUSE} = LIVE_TYPES;
@@ -41,7 +42,7 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
 
   const {start, stop} = useBackgroundLocation(onUpdateLocation);
 
-  const {auth} = useContext(appModeContext);
+  const {profile} = useAuth();
   const {directionsMode} = useDirectionsMode();
 
   const {currentSpeed, status, pace, distance, avgSpeed, movingTime} = liveRoute;
@@ -119,7 +120,7 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
     const {currentSpeed, status, distance, ...rest} = liveRoute;
     const _distance = Number(distance);
     const activity = {...rest, distance: _distance, totalTime, directionsMode};
-    saveActivity({payload: {activity, userId: auth.userId}})
+    saveActivity({payload: {activity, userId: profile.userId}})
       .then(res => {
         const {success, reason} = res;
         Toast.show(success ? 'Saved' : reason);

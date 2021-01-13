@@ -1,21 +1,20 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import {Text} from 'react-native';
 import SavedRoutes from './SavedRoutes';
-import {appModeContext} from '../../contexts/contexts';
 import SavedActivities from './SavedActivities';
 import Section from '../section/Section';
 import Touchable from '../touchable/Touchable';
 import {Row, Column, Styles, mt20, mt10} from './styles';
 import {ROUTE_TYPES} from '../../constants/constants';
+import {useAuth} from '../../stores/auth';
+import {observer} from 'mobx-react-lite';
 
 const {ROUTE, ACTIVITY} = ROUTE_TYPES;
 
 const SavedMode = ({themeStyle}) => {
   const [tabType, setTabType] = useState(ROUTE);
   const isRoute = tabType === ROUTE;
-  const {
-    auth: {authorized},
-  } = useContext(appModeContext);
+  const {authorized} = useAuth();
 
   const {styleSection} = Styles(themeStyle);
   const routeTypeBorder = type => (type === tabType ? themeStyle.accentColor : themeStyle.sectionColor);
@@ -56,4 +55,4 @@ const SavedMode = ({themeStyle}) => {
   );
 };
 
-export default SavedMode;
+export default observer(SavedMode);

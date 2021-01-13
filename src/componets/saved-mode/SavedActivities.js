@@ -18,6 +18,7 @@ import useSpinner from '../spinner/useSpinner';
 import {mapper} from '../../utils/mapper';
 import ActivityGroup from '../activity-group';
 import {observer} from 'mobx-react-lite';
+import {useAuth} from '../../stores/auth';
 import {useDirectionsMode} from '../../stores/directions-mode';
 
 const {VIEW_ROUTE} = APP_MODE;
@@ -29,7 +30,8 @@ const SavedActivities = ({themeStyle, getActivities}) => {
   const {setLoading, isLoading} = useSpinner({position: 'top'});
 
   const {zoomLevel, cameraRef} = useContext(mapContext);
-  const {setAppMode, setViewMode, auth} = useContext(appModeContext);
+  const {setAppMode, setViewMode} = useContext(appModeContext);
+  const {profile} = useAuth();
   const {directionsMode, setDirectionsMode} = useDirectionsMode();
   const localDirections = useRef(directionsMode);
   const {moveCamera} = Groove(cameraRef);
@@ -39,7 +41,7 @@ const SavedActivities = ({themeStyle, getActivities}) => {
   const onRefresh = useCallback(() => {
     setLoading(true);
     const direction = localDirections.current ?? WALKING;
-    getActivities({payload: {direction, userId: auth.userId}})
+    getActivities({payload: {direction, userId: profile.userId}})
       .then(res => {
         const {success, reason, data} = res;
         if (!success) {
@@ -56,7 +58,7 @@ const SavedActivities = ({themeStyle, getActivities}) => {
       .finally(_ => {
         setLoading(false);
       });
-  }, [auth.userId, getActivities, setActivities, setDefaultActivities, setLoading]);
+  }, [profile.userId, getActivities, setActivities, setDefaultActivities, setLoading]);
   useOnIsDirectionsMode({mount: true});
 
   useEffect(() => {
