@@ -10,6 +10,7 @@ const VirtualList = ({
   initialNumToRender,
   renderItem,
   keyExtractor,
+  showsVerticalScrollIndicator,
   refresh,
 }) => {
   const getItemCount = _ => items.length;
@@ -21,6 +22,7 @@ const VirtualList = ({
       style={containerStyle}
       scrollEnabled={scrollEnabled}
       nestedScrollEnabled
+      showsVerticalScrollIndicator={showsVerticalScrollIndicator}
       ListHeaderComponent={Header}
       ListFooterComponent={Footer}
       data={[]}
@@ -39,6 +41,7 @@ VirtualList.defaultProps = {
   scrollEnabled: true,
   Header: null,
   Footer: null,
+  showsVerticalScrollIndicator: false,
   refresh: {},
 };
 
