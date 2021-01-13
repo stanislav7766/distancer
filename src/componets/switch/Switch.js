@@ -9,8 +9,10 @@ const Switch = ({initialPosition, withIcons, sizes, onTrue, onFalse, trueStyle, 
   const [active, setActive] = useState(initialPosition);
 
   const onPress = () => {
-    !active ? onTrue && onTrue() : onFalse && onFalse();
     setActive(old => !old);
+  };
+  const onCb = () => {
+    active ? onTrue?.() : onFalse?.();
   };
 
   const {width, height} = sizes;
@@ -56,7 +58,7 @@ const Switch = ({initialPosition, withIcons, sizes, onTrue, onFalse, trueStyle, 
   const animateWithoutIcons = position => {
     const animCircleOffset = compositeCircleOffset({toValue: position ? 1 : 0});
     const animations = [animCircleOffset];
-    runSequence(animations);
+    runSequence(animations, onCb);
   };
   const animateWithIcons = position => {
     const animCircleOffset = compositeCircleOffset({toValue: position ? 1 : 0, duration: 100});
@@ -65,6 +67,7 @@ const Switch = ({initialPosition, withIcons, sizes, onTrue, onFalse, trueStyle, 
     const animShowIcon = compositeIconFade({toValue: 1});
     const animations = [animIconOffset, animCircleOffset, animShowIcon];
     runAnimation(animHideIcon, () => {
+      onCb();
       setIcon(position ? TrueIcon : FalseIcon);
       runSequence(animations);
     });
