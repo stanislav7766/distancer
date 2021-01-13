@@ -3,14 +3,7 @@ import VirtualList from '../virtualized-list';
 import {mapContext, appModeContext, liveRouteContext} from '../../contexts/contexts';
 import {Groove} from '../../contexts/Groove';
 import Toast from 'react-native-simple-toast';
-import {
-  APP_MODE,
-  WINDOW_HEIGHT,
-  NAVBAR_HEIGHT,
-  ERROR_OCCURRED,
-  ROUTE_TYPES,
-  DIRECTIONS_MODE,
-} from '../../constants/constants';
+import {APP_MODE, ERROR_OCCURRED, ROUTE_TYPES, DIRECTIONS_MODE} from '../../constants/constants';
 import WithActions from '../with-actions/WithActions';
 import {useOnIsDirectionsMode} from '../../hooks/use-directions-mode';
 import {getActivities as _getActivities} from '../../actions';
@@ -36,7 +29,6 @@ const SavedActivities = ({themeStyle, getActivities}) => {
   const localDirections = useRef(directionsMode);
   const {moveCamera} = Groove(cameraRef);
   const {activities, setActivities, setDefaultActivities, setLiveRoute} = useContext(liveRouteContext);
-  const maxHeight = WINDOW_HEIGHT - WINDOW_HEIGHT * 0.15 - NAVBAR_HEIGHT - 80;
 
   const onRefresh = useCallback(() => {
     setLoading(true);
@@ -107,7 +99,6 @@ const SavedActivities = ({themeStyle, getActivities}) => {
   return (
     <VirtualList
       refresh={{refreshing: isLoading, onRefresh}}
-      containerStyle={{maxHeight}}
       renderItem={renderGroup}
       items={preparedData}
       initialNumToRender={2}

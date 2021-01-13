@@ -9,7 +9,7 @@ import MenuMode from '../menu-mode/MenuMode';
 import SavedMode from '../saved-mode/SavedMode';
 import {useTheme} from '../../stores/theme';
 import {styleContainer, styleModal, noModalRadius} from './styles';
-import {APP_MODE, ROUTE_TYPES, WINDOW_HEIGHT} from '../../constants/constants';
+import {APP_MODE, NAVBAR_HEIGHT, ROUTE_TYPES, WINDOW_HEIGHT} from '../../constants/constants';
 import {observer} from 'mobx-react-lite';
 const {VIEW_ROUTE, VIEW_MODE, DRAW_MODE, MENU_MODE, SAVED_MODE, LIVE_MODE} = APP_MODE;
 
@@ -134,7 +134,7 @@ const Modal = ({navigator}) => {
       <Animated.View
         style={[
           styleModal,
-          {minHeight: modalY, backgroundColor: themeStyle.backgroundColor},
+          {height: modalY, backgroundColor: themeStyle.backgroundColor},
           appMode === MENU_MODE && noModalRadius,
         ]}
       >
@@ -153,4 +153,4 @@ const drawHeight = 120;
 const savedHeight = WINDOW_HEIGHT * 0.8;
 const viewActivityHeight = 210;
 const viewRouteHeight = 70;
-const menuHeight = WINDOW_HEIGHT;
+const menuHeight = WINDOW_HEIGHT - NAVBAR_HEIGHT;

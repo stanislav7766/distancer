@@ -6,7 +6,7 @@ import Toast from 'react-native-simple-toast';
 import Item from '../item/Item';
 import Preview from '../preview/Preview';
 import {Row, Styles, mt20, mb20} from './styles';
-import {APP_MODE, WINDOW_HEIGHT, NAVBAR_HEIGHT, ERROR_OCCURRED, ROUTE_TYPES} from '../../constants/constants';
+import {APP_MODE, ERROR_OCCURRED, ROUTE_TYPES} from '../../constants/constants';
 import WithActions from '../with-actions/WithActions';
 import {getRoutes as _getRoutes} from '../../actions';
 import useSpinner from '../spinner/useSpinner';
@@ -24,7 +24,6 @@ const SavedRoutes = ({themeStyle, getRoutes}) => {
   const {setDirectionsMode} = useDirectionsMode();
   const {moveCamera} = Groove(cameraRef);
   const {routes, setCurrentRoute, setRoutes, setDefaultRoutes} = useContext(routeContext);
-  const maxHeight = WINDOW_HEIGHT - WINDOW_HEIGHT * 0.15 - NAVBAR_HEIGHT - 80;
   useOnIsDirectionsMode({mount: false});
 
   const onRefresh = useCallback(() => {
@@ -78,7 +77,6 @@ const SavedRoutes = ({themeStyle, getRoutes}) => {
   return (
     <VirtualList
       refresh={{refreshing: isLoading, onRefresh}}
-      containerStyle={{maxHeight}}
       renderItem={renderItem}
       Footer={Footer}
       items={routes}
