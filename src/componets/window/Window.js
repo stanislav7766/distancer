@@ -76,7 +76,7 @@ const Window = ({
     runParalel([compositeAnimationWindow({toValue: 1, duration: 100}), compositeAnimationMask({toValue: 1})]);
   }, [compositeAnimationMask, compositeAnimationWindow]);
   return (
-    <Animated.View style={[styles.container, {opacity: animWindowOpacity}]}>
+    <Animated.View needsOffscreenAlphaCompositing style={[styles.container, {opacity: animWindowOpacity}]}>
       <Animated.View style={[styles.mask, {backgroundColor: maskColor, opacity: animMaskOpacity}]} />
       <CenterXY>
         <Form backgroundColor={backgroundColor} width={width}>
