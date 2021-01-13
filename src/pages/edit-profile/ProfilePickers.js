@@ -1,7 +1,14 @@
 import React from 'react';
 import {TouchableOpacity, Text} from 'react-native';
 import {useModalPicker as usePicker} from '../../stores/modal-picker';
-import {GET_HEIGHT_PICKER_ITEMS, GET_WEIGHT_PICKER_ITEMS, GET_GENDER_PICKER_ITEMS} from '../../constants/constants';
+import {
+  GET_HEIGHT_PICKER_ITEMS,
+  GET_WEIGHT_PICKER_ITEMS,
+  GET_GENDER_PICKER_ITEMS,
+  DEFAULT_WEIGHT,
+  DEFAULT_HEIGHT,
+  DEFAULT_GENDER,
+} from '../../constants/constants';
 import {Styles, Row, Column, ContainerPickers, pickerTextStyle, mt10} from './styles';
 
 const pickerItems = type =>
@@ -9,6 +16,13 @@ const pickerItems = type =>
     height: GET_HEIGHT_PICKER_ITEMS(),
     weight: GET_WEIGHT_PICKER_ITEMS(),
     gender: GET_GENDER_PICKER_ITEMS(),
+  }[type]);
+
+const defaultItem = type =>
+  ({
+    height: DEFAULT_HEIGHT,
+    weight: DEFAULT_WEIGHT,
+    gender: DEFAULT_GENDER,
   }[type]);
 
 const ProfilePickers = ({themeStyle, profile, setProfile}) => {
@@ -20,7 +34,7 @@ const ProfilePickers = ({themeStyle, profile, setProfile}) => {
     setInit({
       pickerItems: pickerItems(type),
       selectedItems: [profile[type]],
-      defaultItem: profile[type],
+      defaultItem: profile[type] || defaultItem(type),
       setSelectedItems: ([value]) => {
         setProfile(old => ({...old, [type]: value}));
       },
