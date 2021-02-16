@@ -1,14 +1,13 @@
-import {useEffect, useState} from 'react';
-import useStopwatch from '../../componets/stopwatch/useStopwatch';
-import {AppState} from 'react-native';
-import {msTohhmmss} from '../../utils/timeToSec';
-import {isGoOut} from '../../utils/isGoOut';
+import {useEffect, useState, useCallback} from 'react';
+import useStopwatch from '~/hooks/use-stopwatch';
+import useAppState from '~/hooks/use-app-state';
+import {msTohhmmss} from '~/utils/time-helpers';
 
 const useBackgroundStopWatch = allowStartTimer => {
-  const [appState, setAppState] = useState(AppState.currentState);
+  const [, isGoOutState] = useAppState();
 
-  const {time, startWatch, resetWatch, stopWatch} = useStopwatch();
-  const {hhmmss, ms, status: statusWatch} = time;
+  const {time, startWatch, resetWatch, stopWatch, statusWatch} = useStopwatch();
+  const {hhmmss, ms} = time;
 
   const [timeChanges, setTimeChanges] = useState({
     startBg: 0,
@@ -16,59 +15,48 @@ const useBackgroundStopWatch = allowStartTimer => {
     startMS: 0,
   });
 
-  const onStartWatch = () => {
+  const onStartWatch = useCallback(() => {
+    if (statusWatch?.current === 'tick') return;
     startWatch();
     const startMS = new Date().getTime();
     setTimeChanges({...timeChanges, startMS});
-  };
-  const onContinueWatch = () => {
+  }, [startWatch, statusWatch, timeChanges]);
+
+  const onContinueWatch = useCallback(() => {
     startWatch();
-  };
+  }, [startWatch]);
 
-  const onStopWatch = () => {
+  const onStopWatch = useCallback(() => {
     stopWatch();
-  };
-  const onResetWatch = () => {
+  }, [stopWatch]);
+  const onResetWatch = useCallback(() => {
     resetWatch();
-  };
+  }, [resetWatch]);
 
-  const onTimeWatch = () => {
-    return msTohhmmss(new Date().getTime() - timeChanges.startMS);
-  };
+  const onTimeWatch = useCallback(() => msTohhmmss(new Date().getTime() - timeChanges.startMS), [timeChanges.startMS]);
 
-  const onBackground = () => {
-    if (statusWatch === 'tick') {
-      stopWatch();
-      setTimeChanges({
-        ...timeChanges,
-        startBg: new Date().getTime(),
-        beforeBg: ms,
-      });
-    }
-  };
+  const onBackground = useCallback(() => {
+    if (statusWatch?.current !== 'tick') return;
+    stopWatch();
+    setTimeChanges({
+      ...timeChanges,
+      startBg: new Date().getTime(),
+      beforeBg: ms,
+    });
+  }, [ms, statusWatch, stopWatch, timeChanges]);
 
-  const onForeground = () => {
-    if (statusWatch === 'stop' && allowStartTimer) {
-      const {startBg, beforeBg} = timeChanges;
-      const dif = new Date().getTime() - startBg;
-      startWatch(dif + beforeBg);
-      return;
-    }
-  };
+  const onForeground = useCallback(() => {
+    if (statusWatch?.current !== 'stop' || !allowStartTimer) return;
+    const {startBg, beforeBg} = timeChanges;
+    const dif = new Date().getTime() - startBg;
+    startWatch(dif + beforeBg);
+  }, [allowStartTimer, startWatch, statusWatch, timeChanges]);
 
   useEffect(() => {
-    isGoOut(appState) ? onBackground() : onForeground();
+    isGoOutState ? onBackground() : onForeground();
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [appState]);
+  }, [isGoOutState]);
 
-  useEffect(() => {
-    AppState.addEventListener('change', _handleAppStateChange);
-    return () => {
-      AppState.removeEventListener('change', _handleAppStateChange);
-    };
-  }, []);
-
-  const _handleAppStateChange = async nextAppState => setAppState(nextAppState);
   return {
     onStartWatch,
     onContinueWatch,
@@ -76,7 +64,6 @@ const useBackgroundStopWatch = allowStartTimer => {
     onStopWatch,
     onTimeWatch,
     hhmmss,
-    statusWatch,
   };
 };
 

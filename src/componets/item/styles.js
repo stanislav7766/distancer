@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 import styled from 'styled-components';
-export {Row, Column} from '../../constants/styles';
+export {Row, Column} from '~/constants/styles';
 
 export const Container = styled.TouchableOpacity`
   width: 100%;
@@ -25,8 +25,9 @@ export const Press = styled.TouchableOpacity`
 export const styles = StyleSheet.create({
   button: {
     borderRadius: 15,
-    justifyContent: "center",
+    justifyContent: 'center',
     backgroundColor: '#fff',
-    elevation: 7,
   },
 });
+
+export const ELEVATION = 7;

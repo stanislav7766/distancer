@@ -1,6 +1,6 @@
 import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
-import {DEFAULT_PROFILE} from '../../constants/constants';
+import {DEFAULT_PROFILE} from '~/constants/constants';
 
 export class AuthStore {
   constructor() {

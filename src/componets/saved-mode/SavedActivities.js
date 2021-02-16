@@ -1,38 +1,35 @@
-import React, {useState, useEffect, useContext, useRef, useCallback} from 'react';
-import VirtualList from '../virtualized-list';
-import {mapContext, appModeContext, liveRouteContext} from '../../contexts/contexts';
-import {Groove} from '../../contexts/Groove';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
+import {InteractionManager} from 'react-native';
+import {VirtualList} from '~/componets/virtualized-list';
 import Toast from 'react-native-simple-toast';
-import {APP_MODE, ERROR_OCCURRED, ROUTE_TYPES, DIRECTIONS_MODE} from '../../constants/constants';
-import WithActions from '../with-actions/WithActions';
-import {useOnIsDirectionsMode} from '../../hooks/use-directions-mode';
-import {getActivities as _getActivities} from '../../actions';
-import useSpinner from '../spinner/useSpinner';
-import {mapper} from '../../utils/mapper';
-import ActivityGroup from '../activity-group';
+import {ERROR_OCCURRED, DIRECTIONS_MODE} from '~/constants/constants';
+import {useOnDirectionsMode, useOnIsDirectionsMode} from '~/hooks/use-on-effect';
+import {getActivities} from '~/actions';
+import useSpinner from '~/componets/spinner/useSpinner';
+import {mapper} from '~/utils/activity-helpers/mapper';
+import {ActivityGroup} from '~/componets/activity-group';
 import {observer} from 'mobx-react-lite';
-import {useAuth} from '../../stores/auth';
-import {useDirectionsMode} from '../../stores/directions-mode';
+import {useAuth} from '~/stores/auth';
+import {useDirectionsMode} from '~/stores/directions-mode';
+import {useLiveRoute} from '~/stores/live-route';
+import {useActivities} from '~/stores/activities';
 
-const {VIEW_ROUTE} = APP_MODE;
-const {ACTIVITY} = ROUTE_TYPES;
 const {WALKING} = DIRECTIONS_MODE;
 
-const SavedActivities = ({themeStyle, getActivities}) => {
+const SavedActivities = ({themeStyle, goToRoute}) => {
+  const mounted = useRef(false);
   const [preparedData, setPrepared] = useState([]);
   const {setLoading, isLoading} = useSpinner({position: 'top'});
 
-  const {zoomLevel, cameraRef} = useContext(mapContext);
-  const {setAppMode, setViewMode} = useContext(appModeContext);
   const {profile} = useAuth();
   const {directionsMode, setDirectionsMode} = useDirectionsMode();
   const localDirections = useRef(directionsMode);
-  const {moveCamera} = Groove(cameraRef);
-  const {activities, setActivities, setDefaultActivities, setLiveRoute} = useContext(liveRouteContext);
+  const {setLiveRoute} = useLiveRoute();
+  const {activities, setActivities, setDefaultActivities} = useActivities();
 
   const onRefresh = useCallback(() => {
     setLoading(true);
-    const direction = localDirections.current ?? WALKING;
+    const direction = localDirections.current || WALKING;
     getActivities({payload: {direction, userId: profile.userId}})
       .then(res => {
         const {success, reason, data} = res;
@@ -50,37 +47,36 @@ const SavedActivities = ({themeStyle, getActivities}) => {
       .finally(_ => {
         setLoading(false);
       });
-  }, [profile.userId, getActivities, setActivities, setDefaultActivities, setLoading]);
+  }, [profile.userId, setActivities, setDefaultActivities, setLoading]);
+
   useOnIsDirectionsMode({mount: true});
+  useOnDirectionsMode({mount: WALKING});
 
   useEffect(() => {
-    onRefresh();
+    const interactionPromise = InteractionManager.runAfterInteractions(() => {
+      onRefresh();
+      mounted.current = true;
+    });
+    return () => interactionPromise.cancel();
   }, [onRefresh]);
 
   useEffect(() => {
-    setDefaultActivities();
-  }, [setDefaultActivities]);
-
-  useEffect(() => {
-    if (localDirections.current === directionsMode) {
-      return;
-    }
+    if (localDirections.current === directionsMode) return;
     localDirections.current = directionsMode;
-    onRefresh();
+
+    if (!mounted.current) return;
+    const interactionPromise = InteractionManager.runAfterInteractions(() => onRefresh());
+    return () => interactionPromise.cancel();
   }, [directionsMode, onRefresh]);
 
   useEffect(() => {
     setPrepared(mapper(activities));
   }, [activities]);
 
-  const routeWihoutDirections = ({directionsMode, ...route}) => route;
-
   const onPressActivityItem = activitity => {
-    setAppMode(VIEW_ROUTE);
-    setViewMode(ACTIVITY);
     setDirectionsMode(activitity.directionsMode);
-    setLiveRoute(routeWihoutDirections(activitity));
-    moveCamera({zoomLevel, centerCoordinate: activitity.points1[0]});
+    setLiveRoute(activitity);
+    goToRoute();
   };
 
   const renderGroup = ({item}) => {
@@ -107,7 +103,4 @@ const SavedActivities = ({themeStyle, getActivities}) => {
   );
 };
 
-const mapDispatchToProps = {
-  getActivities: _getActivities,
-};
-export default WithActions(mapDispatchToProps)(observer(SavedActivities));
+export default observer(SavedActivities);

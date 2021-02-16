@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {ACCENT_BLUE, WINDOW_WIDTH} from '../../constants/constants';
+import {WINDOW_WIDTH} from '~/constants/constants';
 
 const centerXY = {flex: 1, justifyContent: 'center', alignItems: 'center'};
 

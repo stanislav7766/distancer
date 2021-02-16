@@ -16,6 +16,8 @@ export const DEFAULT_HEIGHT = '170';
 export const DEFAULT_WEIGHT = '70';
 export const WINDOW_HEIGHT = height;
 export const WINDOW_WIDTH = width;
+export const NAVBAR_HEIGHT = height * 0.06;
+export const CURRENT_POSITION_ZOOM = 15;
 export const REQUIRE_LOCATION_PERMS = 'App requires location tracking permission';
 export const QUESTION_OPEN_SETTINGS = 'Would you like to open app settings?';
 export const APP_MODE = {
@@ -24,10 +26,19 @@ export const APP_MODE = {
   DRAW_MODE: 'Draw',
   MENU_MODE: 'Menu',
   SAVED_MODE: 'Saved',
-  VIEW_ROUTE: 'viewRoute',
 };
 
-export const GET_SCREEN_MODE = ({VIEW_ROUTE: _, ...modes}) => ({...modes});
+export const MODAL_HEIGHTS = {
+  LIVE_HEIGHT: 70,
+  LIVE_EXP_HEIGHT: 180,
+  VIEW_HEIGHT: 70,
+  VIEW_EXP_HEIGHT: WINDOW_HEIGHT * 0.8,
+  DRAW_HEIGHT: 120,
+  SAVED_HEIGHT: WINDOW_HEIGHT * 0.8,
+  MENU_HEIGHT: WINDOW_HEIGHT - NAVBAR_HEIGHT,
+  VIEW_ROUTE_HEIGHT: 70,
+  VIEW_ACTIVITY_HEIGHT: 210,
+};
 
 export const DEFAULT_THEME = THEMES.LIGHT;
 export const DEFAULT_SCREEN = APP_MODE.VIEW_MODE;
@@ -41,6 +52,11 @@ export const DEFAULT_APP_SETTINGS = {
   defaultScreen: DEFAULT_SCREEN,
 };
 
+export const DEFAULT_MAP_SETTINGS = {
+  zoomLevel: 14,
+  centerCoordinate: [30.5238, 50.45466],
+};
+
 export const DEFAULT_ROUTE_SETTINGS = {
   dragHints: DEFAULT_DRAG_HINTS,
 };
@@ -51,9 +67,8 @@ export const DEFAULT_ACTIVITY_SETTINGS = {
   autoPause: DEFAULT_AUTO_PAUSE,
 };
 
-export const GET_SCREEN_PICKER_ITEMS = () =>
-  Object.values(GET_SCREEN_MODE(APP_MODE)).map(text => ({label: text, value: text}));
-
+export const LIVE_STATIONARY_FILTER_M = 5;
+export const GET_SCREEN_PICKER_ITEMS = () => Object.values(APP_MODE).map(text => ({label: text, value: text}));
 export const GET_TIMER_PICKER_ITEMS = () => new Array(11).fill(0).map((_, i) => ({label: `${i} sec`, value: `${i}`}));
 
 export const GET_HEIGHT_PICKER_ITEMS = () =>
@@ -77,12 +92,17 @@ export const LIVE_MODDING = [
   {title: ' km', subTitle: 'Distance', type: 'distance'},
   {title: '', subTitle: 'Time', type: 'time'},
 ];
+export const LIVE_CURRENT_PROPS = [
+  {title: ' km/h', subTitle: 'Current speed', type: 'currentSpeed'},
+  {title: '', subTitle: 'Current pace', type: 'currentPace'},
+];
 export const LIVE_SPECS_DEFAULT = {
   avgSpeed: 0.0,
   distance: 0,
   time: '00:00:00',
   pace: '0\'0"',
-  currSpeed: 0.0,
+  currentPace: '0\'0"',
+  currentSpeed: 0.0,
 };
 
 export const ROUTE_TYPES = {
@@ -96,17 +116,11 @@ export const DIRECTIONS_MODE = {
   DRIVING: 'driving',
 };
 
-export const NAVBAR_HEIGHT = height * 0.06;
-
 export const DEFAULT_ROUTE = {
-  inLive: false,
   distance: 0,
   id: '',
+  directionsMode: '',
   points: [],
-  city: {
-    name: '',
-    centerCoords: [],
-  },
 };
 export const DEFAULT_LIVE_ROUTE = {
   distance: 0,
@@ -115,8 +129,7 @@ export const DEFAULT_LIVE_ROUTE = {
   movingTime: '00:00:00',
   totalTime: '00:00:00',
   avgSpeed: 0.0,
-  currentSpeed: 0.0,
-  status: 'stop',
+  directionsMode: '',
   id: '',
   points1: [],
 };
@@ -134,10 +147,6 @@ export const DEFAULT_PROFILE = {
 export const DEFAULT_ACTIVITIES = [];
 export const DEFAULT_ROUTES = [];
 export const DEFAULT_PLACES = [];
-export const DEFAULT_MAP = {
-  ZOOM: 14,
-  COORDINATES: [30.5238, 50.45466],
-};
 
 export const MAX_HEIGHT = 220;
 export const MAX_WEIGHT = 230;
@@ -147,45 +156,9 @@ export const CHOOSE_YOUR_LOCATION = 'Choose your location';
 export const TYPE_CITY = 'Type City';
 export const DRAW_ROUTE_BTN = 'Draw Route';
 
-export const chars = {
-  а: 'a',
-  б: 'b',
-  в: 'v',
-  г: 'g',
-  д: 'd',
-  е: 'e',
-  ё: 'e',
-  ж: 'j',
-  з: 'z',
-  и: 'i',
-  к: 'k',
-  л: 'l',
-  м: 'm',
-  н: 'n',
-  о: 'o',
-  п: 'p',
-  р: 'r',
-  с: 's',
-  т: 't',
-  у: 'u',
-  ф: 'f',
-  х: 'h',
-  ц: 'c',
-  ч: 'ch',
-  ш: 'sh',
-  щ: 'shch',
-  ы: 'y',
-  э: 'e',
-  ю: 'u',
-  я: 'ya',
-  ї: 'yi',
-  є: 'ye',
-  i: 'i',
-  ґ: 'g',
-};
-
 export const HAS_LAUNCHED = 'hasLaunched';
 export const ERROR_GPS_TURNED_OFF = 'No location provider available. Turn on GPS';
+export const ERROR_GPS_PROBLEM = 'No location provider available. Check your GPS settings';
 export const ERROR_TRY_AGAIN = 'Try again';
 export const ERROR_OCCURRED = 'An error occurred';
 export const ERROR_NETWORK_FAILED = 'Network request failed';
@@ -214,3 +187,5 @@ export const DELETE_ACCOUNT_CONFIRM = 'Are you sure you want to delete your acco
 export const NOT_IN_DRAG_MODE = 'Drag mode not active. Press drag button';
 export const SELECT_NEEDED_POINT = "Press on point that you'll drag";
 export const DRAG_POINT_NOW = 'Drag selected point now';
+export const FINISH_LIVE_ROUTE_CONFIRM = 'Are you sure you want to finish this activity?';
+export const NOT_FOUND_CITY = 'City Not Found';

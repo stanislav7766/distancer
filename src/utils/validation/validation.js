@@ -1,7 +1,8 @@
-import {isEmpty, validateFields} from './validator';
+import {validateFields} from './validator';
+import {isFilledObj} from './helpers';
 
 export const validateData = fields => {
   const errors = validateFields(fields);
-  const reason = Object.keys(errors).length === 0 ? '' : Object.values(errors)[0];
-  return {reason, isValid: isEmpty(errors)};
+  const reason = !isFilledObj(errors) ? '' : Object.values(errors)[0];
+  return {reason, isValid: !isFilledObj(errors)};
 };

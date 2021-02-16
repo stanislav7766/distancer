@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Image} from 'react-native';
-import gif from '../../assets/spinner.gif';
+import gif from '~/assets/spinner.gif';
 import {Styles} from './styles';
 
 const Spinner = ({position}) => {

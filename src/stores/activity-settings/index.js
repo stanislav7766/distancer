@@ -1,6 +1,7 @@
 import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
-import {DEFAULT_AUTO_PAUSE, DEFAULT_TIMER_ON_START, DEFAULT_VIBRATE_ON_START} from '../../constants/constants';
+import {DEFAULT_AUTO_PAUSE, DEFAULT_TIMER_ON_START, DEFAULT_VIBRATE_ON_START} from '~/constants/constants';
+import {isExist} from '~/utils/validation/helpers';
 
 export class ActivitySettingsStore {
   constructor() {
@@ -21,10 +22,9 @@ export class ActivitySettingsStore {
     this.autoPause = autoPause;
   };
   setActivitySettings = ({timerOnStart, vibrateOnStart, autoPause}) => {
-    //valid
-    timerOnStart && this.setTimerOnStart(timerOnStart);
-    vibrateOnStart && this.setVibrateOnStart(vibrateOnStart);
-    autoPause && this.setAutoPause(autoPause);
+    isExist(timerOnStart) && this.setTimerOnStart(timerOnStart);
+    isExist(vibrateOnStart) && this.setVibrateOnStart(vibrateOnStart);
+    isExist(autoPause) && this.setAutoPause(autoPause);
   };
 }
 

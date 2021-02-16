@@ -1,13 +1,13 @@
 import React, {useEffect} from 'react';
 import {TouchableOpacity, View, Animated} from 'react-native';
-import useSvgFactory from '../../hooks/use-svg-factory';
-import Btn from '../btn/Btn';
-import useAnimated from '../../hooks/use-animated';
-import {ACCENT_GREEN, ACCENT_RED} from '../../constants/constants';
+import useSvgFactory from '~/hooks/use-svg-factory';
+import {Btn} from '~/componets/btn';
+import useAnimated from '~/hooks/use-animated';
+import {ACCENT_GREEN, ACCENT_RED} from '~/constants/constants';
 import {CenterXY, Form, styles, Column, btnYesStyles, btnNoStyles} from './styles';
-import {runParalel} from '../../utils/animations';
-import {getCheck} from '../../assets/svg-icons/check';
-import {getClose} from '../../assets/svg-icons/close';
+import {runParalel} from '~/utils/animations';
+import {getCheck} from '~/assets/svg-icons/check';
+import {getClose} from '~/assets/svg-icons/close';
 
 const checkSvgParams = {
   width: 33,

@@ -1,14 +1,20 @@
 import React from 'react';
-import useSpinner from '../spinner/useSpinner';
+import useSpinner from '~/componets/spinner/useSpinner';
 import {observer} from 'mobx-react-lite';
-import {UserGroup, AccountGroup, ActivityGroup} from '../settings-group';
+import {UserGroup, AccountGroup, ActivityGroup} from '~/componets/settings-group';
+import {useNavigation} from '~/stores/navigation';
 
-const Authorized = ({themeStyle, navigator}) => {
+const Authorized = () => {
   const loading = useSpinner({position: 'top'});
+  const {pushScreen} = useNavigation();
 
-  const UserInfoGroup = <UserGroup themeStyle={themeStyle} navigator={navigator} loading={loading} />;
-  const AccountSettingsGroup = <AccountGroup themeStyle={themeStyle} loading={loading} />;
-  const ActivitySettingsGroup = <ActivityGroup themeStyle={themeStyle} />;
+  const goToEditProfile = () => {
+    pushScreen({screenId: 'EditProfile'});
+  };
+
+  const UserInfoGroup = <UserGroup goToEditProfile={goToEditProfile} loading={loading} />;
+  const AccountSettingsGroup = <AccountGroup loading={loading} />;
+  const ActivitySettingsGroup = <ActivityGroup />;
 
   return (
     <>

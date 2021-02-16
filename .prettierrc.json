@@ -1,7 +1,7 @@
 {
   "arrowParens": "avoid",
   "bracketSpacing": false,
-  "endOfLine": "lf",
+  "endOfLine": "auto",
   "htmlWhitespaceSensitivity": "css",
   "jsxBracketSameLine": false,
   "printWidth": 120,

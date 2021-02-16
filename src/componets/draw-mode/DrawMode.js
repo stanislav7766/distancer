@@ -1,36 +1,44 @@
-import React, {useEffect, useContext, useMemo} from 'react';
+import React from 'react';
 import {Text} from 'react-native';
-import Btn from '../btn/Btn';
-import RoundedIcon from '../rounded-icon/RoundedIcon';
-import {routeContext, modalContext, mapContext} from '../../contexts/contexts';
-import {useSwitchDrawMode} from '../../hooks/use-switch';
-import {useRouteSettings} from '../../stores/route-settings';
-import useSvgFactory from '../../hooks/use-svg-factory';
-import {useOnIsDirectionsMode, useOnDirectionsMode} from '../../hooks/use-directions-mode';
-import {getLeftArrow} from '../../assets/svg-icons/left-arrow';
-import {Groove} from '../../contexts/Groove';
-import {getDrag} from '../../assets/svg-icons/drag';
+import {Btn} from '~/componets/btn';
+import {RoundedIcon} from '~/componets/rounded-icon';
+import {useSwitchDrawMode} from '~/hooks/use-switch';
+import {useRouteSettings} from '~/stores/route-settings';
+import useSvgFactory from '~/hooks/use-svg-factory';
+import {
+  useOnIsDirectionsMode,
+  useOnDirectionsMode,
+  useOnDragMode,
+  useOnWatchRoutePoints,
+  useOnDefaultRoute,
+  useOnShowMapIcons,
+} from '~/hooks/use-on-effect';
+import {getLeftArrow} from '~/assets/svg-icons/left-arrow';
+import {useLocationPosition} from '~/hooks/use-location-position';
+import {getDrag} from '~/assets/svg-icons/drag';
 import Toast from 'react-native-simple-toast';
-import {randomID} from '../../utils/randomID';
-import {measureDistance} from '../../utils/measureDistanceCoords';
-import {Row, Column, Styles, btnSaveStyles, mt10} from './styles';
-import {ACCENT_RED, ERROR_OCCURRED, SELECT_NEEDED_POINT, DIRECTIONS_MODE} from '../../constants/constants';
-import {saveRoute as _saveRoute} from '../../actions';
-import WithActions from '../with-actions/WithActions';
-import {isFilledArr} from '../../utils/isFilledArr';
-import {useDirectionsMode} from '../../stores/directions-mode';
+import {randomID} from '~/utils/random-id';
+import {Row, Column, Styles, btnSaveStyles, mt10, mx0} from './styles';
+import {ACCENT_RED, ERROR_OCCURRED, SELECT_NEEDED_POINT, DIRECTIONS_MODE} from '~/constants/constants';
+import {saveRoute} from '~/actions';
+import {isFilledArr} from '~/utils/validation/helpers';
+import {useDirectionsMode} from '~/stores/directions-mode';
+import {useMap} from '~/stores/map';
+import {useCurrentRoute} from '~/stores/current-route';
+import {useAppMode} from '~/stores/app-mode';
 import {observer} from 'mobx-react-lite';
 
 const {WALKING} = DIRECTIONS_MODE;
 
-const DrawMode = ({themeStyle, saveRoute}) => {
+const DrawMode = ({themeStyle}) => {
   const [SwitchDrawMode, drawMode] = useSwitchDrawMode();
-  const {cameraRef} = useContext(mapContext);
+  const {cameraRef} = useMap();
   const {dragHints} = useRouteSettings();
-  const {setCurrentRoute, setDefaultRoute, currentRoute} = useContext(routeContext);
+  const {dragMode, setDragMode} = useAppMode();
+  const {clearPoints, popPoints, setDefaultRoute, currentRoute} = useCurrentRoute();
   const {directionsMode} = useDirectionsMode();
-  const {dragMode, setDragMode} = useContext(modalContext);
-  const {moveCamera} = Groove(cameraRef);
+  const {moveCamera} = useLocationPosition(cameraRef);
+  const {points, distance} = currentRoute;
 
   const {arrowIconDims, dragIconDims, stylesTextKM} = Styles(themeStyle);
 
@@ -44,38 +52,26 @@ const DrawMode = ({themeStyle, saveRoute}) => {
     fillAccent: dragIconColor,
   });
 
-  const {points, distance} = currentRoute;
-
-  const setDistance = _distance => setCurrentRoute({distance: _distance});
-  const setPoints = _points => setCurrentRoute({points: _points});
-
-  useEffect(() => {
-    setDistance(measureDistance(points));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [points]);
-
   const flyToFirst = () => {
-    const coordinate = points[0];
-    isFilledArr(coordinate) && moveCamera({zoomLevel: 16, centerCoordinate: coordinate});
+    isFilledArr(points[0]) && moveCamera({zoomLevel: 16, centerCoordinate: points[0]});
   };
 
   useOnIsDirectionsMode({mount: drawMode});
+  useOnDefaultRoute({mount: true, unmount: true});
+  useOnShowMapIcons({mount: true});
+  useOnDragMode({mount: false, unmount: false});
   useOnDirectionsMode({mount: drawMode ? WALKING : '', unmount: WALKING});
+  useOnWatchRoutePoints({mount: true, unmount: false});
 
   const onPressCancel = () => {
     setDragMode(false);
     setDefaultRoute();
   };
 
-  const onPressBackStep = () => {
-    setPoints(points.slice(0, -1));
-  };
-  const onClearPoints = () => setPoints([]);
-
   const onPressDragMode = () => {
     if (!dragMode) {
       dragHints && Toast.show(SELECT_NEEDED_POINT);
-      flyToFirst();
+      isFilledArr(points) && flyToFirst();
     }
     setDragMode(!dragMode);
   };
@@ -93,39 +89,40 @@ const DrawMode = ({themeStyle, saveRoute}) => {
         });
   };
 
-  return useMemo(
-    () => (
-      <>
-        <Row {...mt10}>
-          <Column alignItems={'flex-start'}>
-            <Text style={stylesTextKM}>{distance} km</Text>
-          </Column>
-          <Column alignItems={'flex-end'}>{SwitchDrawMode}</Column>
-        </Row>
-        <Row {...mt10}>
-          <Column alignItems={'flex-start'}>
-            <RoundedIcon
-              style={arrowIconDims}
-              IconComponent={IconLeftArrow}
-              onPress={onPressBackStep}
-              onLongPress={onClearPoints}
-            />
-          </Column>
-          <Column>
-            <RoundedIcon style={{...dragIconDims, ...dragIconBg}} IconComponent={IconDrag} onPress={onPressDragMode} />
-          </Column>
-          <Column alignItems={'flex-end'}>
-            <Btn onPress={onPressSave} title={'Save Route'} {...btnSaveStyles} />
-          </Column>
-        </Row>
-      </>
-    ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [distance, dragMode, drawMode],
+  return (
+    <>
+      <Row {...mt10}>
+        <Column alignItems={'flex-start'}>
+          <Text style={stylesTextKM}>{distance} km</Text>
+        </Column>
+        <Column alignItems={'flex-end'}>{SwitchDrawMode}</Column>
+      </Row>
+      <Row {...mt10}>
+        <Column>
+          <Row {...mx0}>
+            <Column alignItems={'flex-start'}>
+              <RoundedIcon
+                style={arrowIconDims}
+                IconComponent={IconLeftArrow}
+                onPress={popPoints}
+                onLongPress={clearPoints}
+              />
+            </Column>
+            <Column alignItems={'flex-end'}>
+              <RoundedIcon
+                style={{...dragIconDims, ...dragIconBg}}
+                IconComponent={IconDrag}
+                onPress={onPressDragMode}
+              />
+            </Column>
+          </Row>
+        </Column>
+        <Column alignItems={'flex-end'}>
+          <Btn onPress={onPressSave} title={'Save Route'} {...btnSaveStyles} />
+        </Column>
+      </Row>
+    </>
   );
 };
 
-const mapDispatchToProps = {
-  saveRoute: _saveRoute,
-};
-export default WithActions(mapDispatchToProps)(observer(DrawMode));
+export default observer(DrawMode);

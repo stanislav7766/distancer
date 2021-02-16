@@ -8,6 +8,7 @@ const Input = ({
   secureTextEntry,
   onChangeText,
   style,
+  keyboardType,
   onSubmitEditing,
   placeholder,
   openModal,
@@ -25,22 +26,19 @@ const Input = ({
   return (
     <View style={styleContainer}>
       <TextInput
-        secureTextEntry={secureTextEntry || false}
-        autoCompleteType={autoCompleteType || 'off'}
+        secureTextEntry={secureTextEntry ?? false}
+        autoCompleteType={autoCompleteType ?? 'off'}
         style={(styleTextInput, {color: style.textColor})}
         placeholder={placeholder}
         placeholderTextColor={style.placeholderColor}
         onSubmitEditing={onSubmitEditing}
-        keyboardType="default"
+        keyboardType={keyboardType ?? 'default'}
         onFocus={handleFocus}
         value={value}
         onChangeText={onChangeText}
         onBlur={handleBlur}
       />
-      <View
-        style={styleUnderline}
-        borderBottomColor={`${isFocused || value ? style.underlineFocusedColor : '#d3d3d3'}`}
-      />
+      <View style={styleUnderline} borderBottomColor={`${isFocused ? style.underlineFocusedColor : '#d3d3d3'}`} />
     </View>
   );
 };

@@ -1,59 +1,77 @@
-import React, {Fragment, useContext, useState} from 'react';
-import {mapContext, modalContext, routeContext} from '../../contexts/contexts';
-import {Groove} from '../../contexts/Groove';
-import RoundedIcon from '../rounded-icon/RoundedIcon';
-import TextInput from '../text-input/TextInput';
-import Item from '../item/Item';
-import useSvgFactory from '../../hooks/use-svg-factory';
-import {getMarker} from '../../assets/svg-icons/marker';
-import {getLeftArrow} from '../../assets/svg-icons/left-arrow';
-import {Fetch} from '../../utils/geolocation';
-import {isFilledArr} from '../../utils/isFilledArr';
-import {useOnIsDirectionsMode} from '../../hooks/use-directions-mode';
+import React, {useState} from 'react';
+import {Keyboard} from 'react-native';
+import {useLocationPosition} from '~/hooks/use-location-position';
+import {RoundedIcon} from '~/componets/rounded-icon';
+import {TextInput} from '~/componets/text-input';
+import {Item} from '~/componets/item';
+import useSvgFactory from '~/hooks/use-svg-factory';
+import {useMap} from '~/stores/map';
+import {getMarker} from '~/assets/svg-icons/marker';
+import {getLeftArrow} from '~/assets/svg-icons/left-arrow';
+import {FetchCities} from '~/utils/fetch-helpers/fetch-city';
+import {isFilledArr} from '~/utils/validation/helpers';
+import {useOnIsDirectionsMode, useOnShowMapIcons} from '~/hooks/use-on-effect';
 import {Row, Column, Styles, mt20, mt10} from './styles';
-import {CITY_NOT_FOUND, CHOOSE_YOUR_LOCATION, TYPE_CITY} from '../../constants/constants';
+import {CITY_NOT_FOUND, CHOOSE_YOUR_LOCATION, TYPE_CITY, ERROR_OCCURRED} from '~/constants/constants';
+import {observer} from 'mobx-react-lite';
+import Toast from 'react-native-simple-toast';
 
 const ViewMode = ({themeStyle, closeModal, openModal}) => {
-  const {cameraRef, zoomLevel} = useContext(mapContext);
-  const {moveToCurrPosition, moveCamera} = Groove(cameraRef);
-  const {currentRoute, setCurrentRoute} = useContext(routeContext);
-  const {expanded} = useContext(modalContext);
+  const {cameraRef, zoomLevel, setShowMapIcons} = useMap();
+  const {moveToCurrPosition, moveCamera} = useLocationPosition(cameraRef);
   const [places, setPlaces] = useState([]);
+  const [expanded, setExpanded] = useState(false);
 
   const {styleItem, arrowIconDims, inputStyle} = Styles(themeStyle);
+
   useOnIsDirectionsMode({mount: false});
+  useOnShowMapIcons({mount: true});
+
   const IconMarker = useSvgFactory(getMarker, {width: 24, height: 32, fillAccent: themeStyle.accentColor});
   const IconLeftArrow = useSvgFactory(getLeftArrow, {width: 30, height: 33, fillAccent: themeStyle.accentColor});
-  const {city} = currentRoute;
+  const [city, setCity] = useState({
+    name: '',
+    centerCoordinate: [],
+  });
+
+  const onCloseModal = () => {
+    setExpanded(false);
+    Keyboard.dismiss();
+    closeModal();
+    setShowMapIcons(true);
+  };
+  const onOpenModal = () => {
+    setExpanded(true);
+    setShowMapIcons(false);
+    openModal();
+  };
 
   const onPressItem = ({text: name, center: centerCoords}) => {
-    setCurrentRoute({
-      city: {
-        name,
-        centerCoords,
-      },
+    setCity({
+      name,
+      centerCoords,
     });
-    closeModal();
+    onCloseModal();
     moveCamera({zoomLevel, centerCoordinate: centerCoords});
   };
 
   const onCurrentLocation = () => {
-    closeModal();
+    onCloseModal();
     moveToCurrPosition(zoomLevel);
   };
-  const onChangeText = text => setCurrentRoute({city: {...city, name: text}});
+  const onChangeText = text => setCity(old => ({...old, name: text}));
 
   const onSubmitEditing = async () => {
     try {
-      const [res, err] = await Fetch(city.name);
+      const [res, err] = await FetchCities(city.name);
       setPlaces(err === '' ? res : [{text: CITY_NOT_FOUND}]);
     } catch (error) {
-      console.log(error);
+      Toast.show(ERROR_OCCURRED);
     }
   };
 
   const InputVariants = (
-    <Fragment>
+    <>
       {isFilledArr(places) &&
         places.map((el, i) => (
           <Row key={i} {...mt20}>
@@ -68,34 +86,34 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
       <Row {...mt20}>
         <Item style={styleItem} onPress={onCurrentLocation} IconComponent={IconMarker} text={CHOOSE_YOUR_LOCATION} />
       </Row>
-    </Fragment>
+    </>
   );
 
   const ExpandedModal = (
     <Row>
       <Column alignItems={'flex-start'}>
-        <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrow} onPress={closeModal} />
+        <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrow} onPress={onCloseModal} />
       </Column>
     </Row>
   );
 
   return (
-    <Fragment>
+    <>
       {expanded && ExpandedModal}
       <Row {...mt10}>
         <TextInput
           style={inputStyle}
           placeholder={TYPE_CITY}
-          value={city.name}
+          value={city?.name}
           onSubmitEditing={onSubmitEditing}
-          openModal={openModal}
-          closeModal={closeModal}
+          openModal={onOpenModal}
+          closeModal={onCloseModal}
           onChangeText={onChangeText}
         />
       </Row>
       {expanded && InputVariants}
-    </Fragment>
+    </>
   );
 };
 
-export default ViewMode;
+export default observer(ViewMode);

@@ -1,14 +1,13 @@
 import {createContext, useContext} from 'react';
 import {makeAutoObservable, observe} from 'mobx';
-import {DEFAULT_SCREEN, DEFAULT_THEME} from '../../constants/constants';
+import {DEFAULT_SCREEN, DEFAULT_THEME} from '~/constants/constants';
+import {isExist} from '~/utils/validation/helpers';
 
 export class AppSettingsStore {
   constructor(themeStore) {
     this.themeStore = themeStore;
     this.theme = themeStore.theme;
-    observe(this.themeStore, ({name, oldValue, newValue}) => {
-      name === 'theme' && this.theme === oldValue && (this.theme = newValue);
-    });
+    observe(this.themeStore, this._listenThemeStore);
     makeAutoObservable(this);
   }
 
@@ -22,9 +21,12 @@ export class AppSettingsStore {
     this.themeStore.setTheme(theme);
   };
   setAppSettings = ({theme, defaultScreen}) => {
-    //valid
-    theme && this.setTheme(theme);
-    defaultScreen && this.setDefaultScreen(defaultScreen);
+    isExist(theme) && this.setTheme(theme);
+    isExist(defaultScreen) && this.setDefaultScreen(defaultScreen);
+  };
+
+  _listenThemeStore = ({name, oldValue, newValue}) => {
+    name === 'theme' && this.theme === oldValue && (this.theme = newValue);
   };
 }
 

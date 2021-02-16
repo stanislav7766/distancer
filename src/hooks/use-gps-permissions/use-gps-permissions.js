@@ -1,13 +1,13 @@
 import {useEffect} from 'react';
 import {BackHandler} from 'react-native';
-import {askGpsPermissions} from '../../utils/ask-permissions';
+import {askGpsPermissions} from '~/utils/ask-permissions';
 import Toast from 'react-native-simple-toast';
 import {
   ERROR_OCCURRED,
   GPS_ALLOW_PERMISSIONS,
   GPS_PERMISSIONS_DENIED,
   GPS_PERMISSIONS_GRANTED,
-} from '../../constants/constants';
+} from '~/constants/constants';
 
 const useGpsPermissions = () => {
   useEffect(() => {

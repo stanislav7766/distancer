@@ -1,6 +1,6 @@
 import React from 'react';
 import {TouchableOpacity, Text} from 'react-native';
-import {useModalPicker as usePicker} from '../../stores/modal-picker';
+import {useModalPicker as usePicker} from '~/stores/modal-picker';
 import {
   GET_HEIGHT_PICKER_ITEMS,
   GET_WEIGHT_PICKER_ITEMS,
@@ -8,7 +8,7 @@ import {
   DEFAULT_WEIGHT,
   DEFAULT_HEIGHT,
   DEFAULT_GENDER,
-} from '../../constants/constants';
+} from '~/constants/constants';
 import {Styles, Row, Column, ContainerPickers, pickerTextStyle, mt10} from './styles';
 
 const pickerItems = type =>

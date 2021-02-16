@@ -2,7 +2,7 @@ import React, {useRef} from 'react';
 import PropTypes from 'prop-types';
 import {View, Text, VirtualizedList} from 'react-native';
 import {Styles, Container, SelectedItem, textStyleDefault} from './styles';
-import {randomID} from '../../utils/randomID';
+import {randomID} from '~/utils/random-id';
 
 const findIndex = (arr, val) => arr.findIndex(obj => obj.value === val);
 

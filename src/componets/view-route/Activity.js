@@ -1,37 +1,41 @@
-import React, {useContext} from 'react';
+import React, {useEffect} from 'react';
 import {Text} from 'react-native';
-import Btn from '../btn/Btn';
-import {liveRouteContext, appModeContext} from '../../contexts/contexts';
+import {Btn} from '~/componets/btn';
 import Toast from 'react-native-simple-toast';
-import {useOnIsDirectionsMode} from '../../hooks/use-directions-mode';
+import {useLocationPosition} from '~/hooks/use-location-position';
 import {Row, Column, stylesActivityProps, btnDeleteStyles, mt10} from './styles';
-import {APP_MODE, ERROR_OCCURRED, DELETE_ACTIVITY_CONFIRM} from '../../constants/constants';
-import {useModalConfirm as useConfirm} from '../../stores/modal-confirm';
-import SelectDirection from '../directions-bar/SelectDirection';
-import WithActions from '../with-actions/WithActions';
-import {deleteActivity as _deleteActivity} from '../../actions';
-import {useDirectionsMode} from '../../stores/directions-mode';
-import {useAuth} from '../../stores/auth';
+import {ERROR_OCCURRED, DELETE_ACTIVITY_CONFIRM, ACCENT_BLUE} from '~/constants/constants';
+import {useModalConfirm as useConfirm} from '~/stores/modal-confirm';
+import {useOnDefaultActivity} from '~/hooks/use-on-effect';
+import SelectDirection from '~/componets/directions-bar/SelectDirection';
+import {deleteActivity} from '~/actions';
+import {useAuth} from '~/stores/auth';
+import {useMap} from '~/stores/map';
 import {observer} from 'mobx-react-lite';
+import {useLiveRoute} from '~/stores/live-route';
+import {useActivities} from '~/stores/activities';
+import {isFilledArr} from '~/utils/validation/helpers';
 
-const {VIEW_MODE} = APP_MODE;
+const Activity = ({themeStyle, goToMain}) => {
+  const {liveRoute} = useLiveRoute();
+  const {removeById} = useActivities();
 
-const Activity = ({themeStyle, deleteActivity}) => {
-  const {setDefaultLiveRoute, setDefaultActivities, liveRoute} = useContext(liveRouteContext);
-
-  const {setAppMode} = useContext(appModeContext);
   const {profile} = useAuth();
-  const {directionsMode} = useDirectionsMode();
-  const {distance, pace, avgSpeed, totalTime, movingTime} = liveRoute;
+  const {zoomLevel, cameraRef} = useMap();
+  const {moveCamera} = useLocationPosition(cameraRef);
+  const {distance, pace, avgSpeed, totalTime, movingTime, points1, directionsMode, id: activityId} = liveRoute;
 
   const {setInit, onShowConfirm, onHideConfirm} = useConfirm();
-  useOnIsDirectionsMode({mount: false});
+
+  useOnDefaultActivity({unmount: true});
 
   const onPressCancel = () => {
-    setDefaultLiveRoute();
-    setDefaultActivities();
-    setAppMode(VIEW_MODE);
+    removeById(activityId);
+    goToMain();
   };
+  useEffect(() => {
+    isFilledArr(points1) && moveCamera({zoomLevel, centerCoordinate: points1[0]});
+  }, [moveCamera, points1, zoomLevel]);
 
   const onPressDelete = () => {
     const payload = {activityId: liveRoute.id, userId: profile.userId, directionsMode};
@@ -103,7 +107,7 @@ const Activity = ({themeStyle, deleteActivity}) => {
       </Row>
       <Row alignItems="center" {...mt10}>
         <Column alignItems={'flex-start'}>
-          <SelectDirection themeStyle={themeStyle} mode={directionsMode} currentMode={directionsMode} />
+          <SelectDirection mode={directionsMode} color={ACCENT_BLUE} />
         </Column>
         <Column alignItems={'flex-end'}>
           <Btn {...btnDeleteStyles} title={'Delete Activity'} onPress={onRequestDelete} />
@@ -113,5 +117,4 @@ const Activity = ({themeStyle, deleteActivity}) => {
   );
 };
 
-const mapDispatchToProps = {deleteActivity: _deleteActivity};
-export default WithActions(mapDispatchToProps)(observer(Activity));
+export default observer(Activity);

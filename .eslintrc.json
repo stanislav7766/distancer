@@ -3,6 +3,7 @@
     "es6": true,
     "node": true
   },
+  "extends": "@react-native-community",
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2018,
@@ -11,7 +12,7 @@
     }
   },
   "rules": {
-    "curly": [2, "multi-or-nest"],
+    "curly": [2, "multi"],
     "dot-notation": 2,
     "no-const-assign": 2,
     "no-await-in-loop": 2,
@@ -24,8 +25,7 @@
     "no-template-curly-in-string": 2,
     "no-unreachable": 2,
     "use-isnan": 2,
-    "callback-return": 2,
-    // "no-return-await": 2,
+    "callback-return": 0,
     "prefer-destructuring": [
       2,
       {
@@ -34,7 +34,7 @@
           "object": true
         },
         "AssignmentExpression": {
-          "array": true,
+          "array": false,
           "object": false
         }
       },
@@ -51,15 +51,8 @@
     "no-else-return": 2,
     "no-inner-declarations": 2,
     "no-lonely-if": 2,
-    // "no-magic-numbers": [
-    //   2,
-    //   {
-    //     "ignore": [-1, 0, 1]
-    //   }
-    // ],
     "no-shadow": 2,
     "no-unneeded-ternary": 2,
-    // "no-unused-expressions": 2,
     "no-var": 2,
     "no-unused-vars": [
       2,
@@ -74,8 +67,8 @@
     "prefer-template": 2,
     "require-yield": 2,
     "prefer-rest-params": 2,
-    "prefer-promise-reject-errors": 2,
-    "sort-imports": 2,
+    "prefer-promise-reject-errors": 0,
+    "sort-imports": 0,
     "sort-keys": [
       0,
       "asc",

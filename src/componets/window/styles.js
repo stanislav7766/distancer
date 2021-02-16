@@ -1,9 +1,9 @@
 import {StyleSheet} from 'react-native';
 import styled from 'styled-components';
-import {ACCENT_BLUE, ACCENT_RED} from '../../constants/constants';
-import {btnContainerStyle, btnTextStyle} from '../../constants/styles';
+import {ACCENT_BLUE, ACCENT_RED} from '~/constants/constants';
+import {btnContainerStyle, btnTextStyle} from '~/constants/styles';
 
-export {Column} from '../../constants/styles';
+export {Column} from '~/constants/styles';
 
 export const Container = styled.View`
   width: 100%;
@@ -19,7 +19,7 @@ export const CenterXY = styled.View`
 
 export const Form = styled.View`
   padding: 10px;
-  width: ${props => (props.width ? props.width + 'px' : '100%')};
+  width: ${props => (props.width ? `${props.width}px` : '100%')};
   border-radius: 15px;
   justify-content: center;
   background-color: ${props => props.backgroundColor || '#fff'};

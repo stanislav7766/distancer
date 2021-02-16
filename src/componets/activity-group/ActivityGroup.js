@@ -1,32 +1,39 @@
 import React, {memo} from 'react';
 import {Text, View} from 'react-native';
-import VirtualList from '../virtualized-list';
-import Item from '../item/Item';
-import Preview from '../preview/Preview';
+import {VirtualList} from '~/componets/virtualized-list';
+import {Item} from '~/componets/item';
+import {Preview} from '~/componets/preview';
 import {Row, Column, Styles, mt10, mb20, mx0} from './styles';
-import {DIRECTIONS_MODE} from '../../constants/constants';
-import Section from '../section/Section';
+import {DIRECTIONS_MODE} from '~/constants/constants';
+import {Section} from '~/componets/section';
 import {buildActivityString, buildRunString, buildItemString} from './papyrus';
+import {isEqualJson} from '~/utils/validation/helpers';
 
 const {WALKING} = DIRECTIONS_MODE;
+const onUpdate = (prev, next) => isEqualJson(prev, next);
 
-const ActivityGroup = ({items, header, direction, onPresItem, themeStyle}) => {
-  const {styleItemActivity, styleFormHeaderDate, styleFormHeaderInfo} = Styles(themeStyle);
-
-  const isRun = direction === WALKING;
-  const initNumToRender = items.length <= 15 ? items.length : 15;
-  const Footer = <Row {...mb20} />;
-  const renderPreview = coords => <Preview coords={coords} />;
-
-  const renderItem = ({item}) => (
+const ActivityItem = memo(({themeStyle, item, onPresItem, isRun}) => {
+  const {styleItemActivity} = Styles(themeStyle);
+  return (
     <Row {...mt10}>
       <Item
         style={styleItemActivity}
-        IconComponent={renderPreview(item.points1)}
+        IconComponent={<Preview coords={item.points1} />}
         onPress={() => onPresItem(item)}
         text={buildItemString(item, isRun)}
       />
     </Row>
+  );
+}, onUpdate);
+
+const ActivityGroup = ({items, header, direction, onPresItem, themeStyle}) => {
+  const {styleFormHeaderDate, styleFormHeaderInfo} = Styles(themeStyle);
+  const isRun = direction === WALKING;
+  const initNumToRender = items.length <= 15 ? items.length : 15;
+  const Footer = <Row {...mb20} />;
+
+  const renderItem = ({item}) => (
+    <ActivityItem isRun={isRun} themeStyle={themeStyle} onPresItem={onPresItem} item={item} />
   );
   const renderGroupHeader = ({year, month, monthTotals}) => (
     <>
@@ -62,4 +69,4 @@ const ActivityGroup = ({items, header, direction, onPresItem, themeStyle}) => {
   );
 };
 
-export default memo(ActivityGroup, (prev, next) => JSON.stringify(prev) === JSON.stringify(next));
+export default memo(ActivityGroup, onUpdate);

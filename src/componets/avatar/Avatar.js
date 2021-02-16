@@ -1,6 +1,6 @@
 import React from 'react';
 import {Image, Text, View} from 'react-native';
-import defaultImg from '../../assets/avatar.png';
+import defaultImg from '~/assets/avatar.png';
 import {titleDefaultStyle, getAvatarStyle, Row, mx0} from './styles';
 
 const Avatar = ({src, size, title, titleStyle}) => {
@@ -12,7 +12,7 @@ const Avatar = ({src, size, title, titleStyle}) => {
       </Row>
       {title && (
         <Row {...mx0}>
-          <Text style={titleStyle ?? titleDefaultStyle}>{title}</Text>
+          <Text style={[titleDefaultStyle, titleStyle]}>{title}</Text>
         </Row>
       )}
     </View>

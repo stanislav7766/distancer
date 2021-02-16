@@ -1,5 +1,5 @@
-import {getItem, setItem} from '../asyncStorage';
-import {HAS_LAUNCHED} from '../../constants/constants';
+import {getItem, setItem} from '~/utils/fs/asyncStorage';
+import {HAS_LAUNCHED} from '~/constants/constants';
 
 export const IsFirstLaunch = async () => {
   try {

@@ -1,46 +1,51 @@
-import React, {Fragment, useContext} from 'react';
+import React, {useEffect} from 'react';
 import {Text} from 'react-native';
-import Btn from '../btn/Btn';
-import {routeContext, appModeContext} from '../../contexts/contexts';
+import {Btn} from '~/componets/btn';
 import Toast from 'react-native-simple-toast';
-import {Row, Column, stylesTextKM, Styles, btnDeleteStyles, mt10} from './styles';
-import {APP_MODE, ERROR_OCCURRED, DELETE_ROUTE_CONFIRM, DIRECTIONS_MODE} from '../../constants/constants';
-import SelectDirection from '../directions-bar/SelectDirection';
-import {useModalConfirm as useConfirm} from '../../stores/modal-confirm';
-import useSvgFactory from '../../hooks/use-svg-factory';
-import {getMarker} from '../../assets/svg-icons/marker';
-import RoundedIcon from '../rounded-icon/RoundedIcon';
-import WithActions from '../with-actions/WithActions';
-import {deleteRoute as _deleteRoute} from '../../actions';
-import {useOnIsDirectionsMode, useOnDirectionsMode} from '../../hooks/use-directions-mode';
-import {useDirectionsMode} from '../../stores/directions-mode';
+import {Row, Column, stylesTextKM, Styles, btnDeleteStyles, mt10, mx0} from './styles';
+import {APP_MODE, ERROR_OCCURRED, DELETE_ROUTE_CONFIRM, ACCENT_BLUE} from '~/constants/constants';
+import SelectDirection from '~/componets/directions-bar/SelectDirection';
+import {useModalConfirm as useConfirm} from '~/stores/modal-confirm';
+import useSvgFactory from '~/hooks/use-svg-factory';
+import {getMarker} from '~/assets/svg-icons/marker';
+import {RoundedIcon} from '~/componets/rounded-icon';
+import {deleteRoute} from '~/actions';
+import {useLocationPosition} from '~/hooks/use-location-position';
 import {observer} from 'mobx-react-lite';
-import {useAuth} from '../../stores/auth';
+import {useAuth} from '~/stores/auth';
+import {useAppMode} from '~/stores/app-mode';
+import {useMap} from '~/stores/map';
+import {useCurrentRoute} from '~/stores/current-route';
+import {useRoutes} from '~/stores/routes';
+import {isFilledArr} from '~/utils/validation/helpers';
 
-const {VIEW_MODE, LIVE_MODE} = APP_MODE;
-const {WALKING} = DIRECTIONS_MODE;
+const {LIVE_MODE} = APP_MODE;
 
-const Route = ({themeStyle, deleteRoute}) => {
-  const {setDefaultRoute, setDefaultRoutes, routes, currentRoute, setCurrentRoute} = useContext(routeContext);
+const Route = ({themeStyle, goToMain}) => {
+  const {setDefaultRoute, currentRoute} = useCurrentRoute();
+  const {distance, points, directionsMode, id: routeId} = currentRoute;
+  const {setDefaultRoutes, routes, removeById} = useRoutes();
 
-  const {setAppMode} = useContext(appModeContext);
-  const {directionsMode} = useDirectionsMode();
+  const {setAppMode, setLiveWithRoute} = useAppMode();
+  const {zoomLevel, cameraRef} = useMap();
+  const {moveCamera} = useLocationPosition(cameraRef);
   const {authorized} = useAuth();
   const {liveIconDims} = Styles(themeStyle);
-  const {distance} = currentRoute;
+
+  useEffect(() => {
+    isFilledArr(points) && moveCamera({zoomLevel, centerCoordinate: points[0]});
+  }, [moveCamera, points, zoomLevel]);
 
   const {setInit, onShowConfirm, onHideConfirm} = useConfirm();
-  useOnIsDirectionsMode({mount: false});
-  useOnDirectionsMode(directionsMode === '' && {unmount: WALKING});
 
   const onPressCancel = () => {
+    removeById(routeId);
     setDefaultRoute();
-    setDefaultRoutes();
-    setAppMode(VIEW_MODE);
+    goToMain();
   };
 
   const onPressDelete = () => {
-    const payload = {routeId: currentRoute.id, routes};
+    const payload = {routeId, routes};
     deleteRoute({payload})
       .then(res => {
         const {success, reason} = res;
@@ -63,31 +68,37 @@ const Route = ({themeStyle, deleteRoute}) => {
 
   const onStartLiveWithRoute = () => {
     setDefaultRoutes();
-    setCurrentRoute({inLive: true});
+    setLiveWithRoute(true);
     setAppMode(LIVE_MODE);
+    goToMain();
   };
 
   const IconMarker = useSvgFactory(getMarker, {width: 27, height: 23, fillAccent: themeStyle.accentColor});
 
   return (
-    <Fragment>
+    <>
       <Row alignItems="center" {...mt10}>
-        <Column flex={0.7} alignItems={'flex-start'}>
-          <Text style={[stylesTextKM, {color: themeStyle.textColorSecondary}]}>{distance} km</Text>
-        </Column>
-        <Column flex={0.3}>
-          <SelectDirection themeStyle={themeStyle} currentMode={directionsMode} mode={directionsMode} />
-        </Column>
         <Column>
-          {authorized && <RoundedIcon style={liveIconDims} IconComponent={IconMarker} onPress={onStartLiveWithRoute} />}
+          <Row {...mx0}>
+            <Column flex={0.5} alignItems={'flex-start'}>
+              <Text style={[stylesTextKM, {color: themeStyle.textColorSecondary}]}>{distance} km</Text>
+            </Column>
+            <Column flex={0.2} alignItems={'flex-start'}>
+              <SelectDirection mode={directionsMode} color={ACCENT_BLUE} />
+            </Column>
+            <Column flex={0.3} alignItems={'flex-end'}>
+              {authorized && (
+                <RoundedIcon style={liveIconDims} IconComponent={IconMarker} onPress={onStartLiveWithRoute} />
+              )}
+            </Column>
+          </Row>
         </Column>
         <Column alignItems={'flex-end'}>
           <Btn {...btnDeleteStyles} title={'Delete Route'} onPress={onRequestDelete} />
         </Column>
       </Row>
-    </Fragment>
+    </>
   );
 };
 
-const mapDispatchToProps = {deleteRoute: _deleteRoute};
-export default WithActions(mapDispatchToProps)(observer(Route));
+export default observer(Route);

@@ -5,7 +5,7 @@ import {
   WRONG_PASSWORD,
   USER_NOT_FOUND,
   NO_CURRENT_USER,
-} from '../constants/constants';
+} from '~/constants/constants';
 
 const FIREBASE_CODE_EMAIL_USER = 'auth/email-already-in-use';
 const FIREBASE_CODE_WEAK_PASSWORD = 'auth/weak-password';
@@ -21,3 +21,4 @@ export const FIREBASE_CODES = {
   [FIREBASE_CODE_WRONG_PASSWORD]: WRONG_PASSWORD,
   [FIREBASE_CODE_NO_CURRENT_USER]: NO_CURRENT_USER,
 };
+// firestore/unknown

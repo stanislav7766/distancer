@@ -1,3 +1,1 @@
-import ActivityGroup from './ActivityGroup';
-
-export default ActivityGroup;
+export {default as ActivityGroup} from './ActivityGroup';

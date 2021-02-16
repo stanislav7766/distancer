@@ -1,12 +1,13 @@
-import {btnContainerStyle, btnTextStyle} from '../../constants/styles';
+import {btnContainerStyle, btnTextStyle} from '~/constants/styles';
+import {filterByKey} from '~/utils/common-helpers/obj-helpers';
 
-export {Row, Column, Form, mt10} from '../../constants/styles';
+export {Row, Column, Form, mt10} from '~/constants/styles';
 
-const {width: _, ...btnContStyle} = btnContainerStyle;
+const btnContStyle = filterByKey('width', btnContainerStyle);
 
 export const Styles = themeStyle => {
   const inputStyle = {
-    textColor: themeStyle.textColor,
+    textColor: themeStyle.textColorThird,
     underlineFocusedColor: themeStyle.accentColor,
     underlineBluredColor: themeStyle.textColorSecondary,
     placeholderColor: themeStyle.textColorSecondary,

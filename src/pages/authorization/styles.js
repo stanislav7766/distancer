@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-export {Row} from '../../constants/styles';
+export {Row} from '~/constants/styles';
 
 export const Container = styled.View`
   width: 100%;

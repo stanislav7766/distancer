@@ -1,9 +1,10 @@
+import {Platform} from 'react-native';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 
-export const bgConfig = {
+const androidConfig = {
   desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
-  stationaryRadius: 5,
-  distanceFilter: 5,
+  stationaryRadius: 10,
+  distanceFilter: 50,
   notificationsEnabled: false,
   debug: false,
   startOnBoot: false,
@@ -14,3 +15,9 @@ export const bgConfig = {
   activitiesInterval: 10000,
   stopOnStillActivity: false,
 };
+const iosConfig = {};
+
+export const bgConfig = Platform.select({
+  android: androidConfig,
+  ios: iosConfig,
+});

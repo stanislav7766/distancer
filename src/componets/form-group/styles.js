@@ -1,4 +1,4 @@
-export {Row, Column, Form, mx0, mt10} from '../../constants/styles';
+export {Row, Column, Form, mx0, mt10} from '~/constants/styles';
 
 export const Styles = themeStyle => {
   const headerSettingsStyle = {

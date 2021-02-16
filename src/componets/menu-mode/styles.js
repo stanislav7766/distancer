@@ -5,7 +5,7 @@ const padding = 10;
 
 export const styles = StyleSheet.create({
   scrollView: {
-    top: hasNotch ? 0 : StatusBar.currentHeight,
-    marginTop: padding,
+    marginTop: hasNotch ? 0 : StatusBar.currentHeight,
+    top: padding,
   },
 });

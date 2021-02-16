@@ -1,20 +1,19 @@
 import React, {useState} from 'react';
 import {Text} from 'react-native';
-import Btn from '../btn/Btn';
-import TextInput from '../text-input/TextInput';
-import useSvgFactory from '../../hooks/use-svg-factory';
-import {getLeftArrow} from '../../assets/svg-icons/left-arrow';
-import RoundedIcon from '../rounded-icon/RoundedIcon';
+import {Btn} from '~/componets/btn';
+import {TextInput} from '~/componets/text-input';
+import useSvgFactory from '~/hooks/use-svg-factory';
+import {getLeftArrow} from '~/assets/svg-icons/left-arrow';
+import {RoundedIcon} from '~/componets/rounded-icon';
 import {Row, Column, Styles, btnSignInStyles, btnGoogleStyles, mt10, mt30, mb30} from './styles';
-import WithActions from '../with-actions/WithActions';
-import {loginUser as _loginUser, loginWithGoogle as _loginWithGoogle} from '../../actions';
+import {loginUser, loginWithGoogle} from '~/actions';
 import Toast from 'react-native-simple-toast';
-import GoogleSignBtn from '../google-sign-btn/GoogleSignBtn';
-import useSpinner from '../spinner/useSpinner';
+import {GoogleSignBtn} from '~/componets/google-sign-btn';
+import useSpinner from '~/componets/spinner/useSpinner';
 import {observer} from 'mobx-react-lite';
-import {useAuth} from '../../stores/auth';
+import {useAuth} from '~/stores/auth';
 
-const SignIn = ({themeStyle, goToMain, loginUser, loginWithGoogle}) => {
+const SignIn = ({themeStyle, goToMain}) => {
   const {setLoading, isLoading, SpinnerComponent} = useSpinner({position: 'bottom'});
   const [input, setInput] = useState({email: '', password: ''});
   const {setAuthorized, setProfile} = useAuth();
@@ -40,7 +39,8 @@ const SignIn = ({themeStyle, goToMain, loginUser, loginWithGoogle}) => {
     Toast.show('Authorized');
   };
 
-  const onPressSignInGoogle = async () => {
+  const onPressSignInGoogle = () => {
+    if (isLoading) return;
     setLoading(true);
     loginWithGoogle()
       .then(_resultSignIn)
@@ -50,7 +50,8 @@ const SignIn = ({themeStyle, goToMain, loginUser, loginWithGoogle}) => {
       });
   };
 
-  const onSubmitEditing = async () => {
+  const onSubmitEditing = () => {
+    if (isLoading) return;
     setLoading(true);
     loginUser({payload: {data: input}})
       .then(_resultSignIn)
@@ -125,8 +126,4 @@ const SignIn = ({themeStyle, goToMain, loginUser, loginWithGoogle}) => {
   );
 };
 
-const mapDispatchToProps = {
-  loginUser: _loginUser,
-  loginWithGoogle: _loginWithGoogle,
-};
-export default WithActions(mapDispatchToProps)(observer(SignIn));
+export default observer(SignIn);

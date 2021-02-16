@@ -1,6 +1,6 @@
-import {btnContainerStyle, btnTextStyle} from '../../constants/styles';
+import {btnContainerStyle, btnTextStyle} from '~/constants/styles';
 
-export {Row, Column, mt10} from '../../constants/styles';
+export {Row, Column, mt10, mx0} from '~/constants/styles';
 
 export const btnSaveStyles = {
   containerStyle: btnContainerStyle,

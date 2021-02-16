@@ -1,3 +1,1 @@
-import VirtualizedList from './VirtualizedList';
-
-export default VirtualizedList;
+export {default as VirtualList} from './VirtualizedList';

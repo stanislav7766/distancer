@@ -1,28 +1,24 @@
 import React, {useState, useEffect} from 'react';
 import {Text} from 'react-native';
 import {CenterXY, Container, Row, Column, Styles, btnSaveStyles, mt20, mt30} from './styles';
-import RoundedIcon from '../../componets/rounded-icon/RoundedIcon';
-import useSpinner from '../../componets/spinner/useSpinner';
-import {useModalPicker as usePicker} from '../../stores/modal-picker';
-import useSvgFactory from '../../hooks/use-svg-factory';
-import {getLeftArrow} from '../../assets/svg-icons/left-arrow';
-import Btn from '../../componets/btn/Btn';
-import Avatar from '../../componets/avatar/Avatar';
+import {RoundedIcon} from '~/componets/rounded-icon';
+import useSpinner from '~/componets/spinner/useSpinner';
+import useSvgFactory from '~/hooks/use-svg-factory';
+import {getLeftArrow} from '~/assets/svg-icons/left-arrow';
+import {Btn} from '~/componets/btn';
+import {Avatar} from '~/componets/avatar';
 import Toast from 'react-native-simple-toast';
-import WithActions from '../../componets/with-actions/WithActions';
-import {updateProfile as _updateProfile} from '../../actions';
+import {updateProfile} from '~/actions';
 import ProfileInputs from './ProfileInputs';
 import ProfilePickers from './ProfilePickers';
 import {observer} from 'mobx-react-lite';
-import {useTheme} from '../../stores/theme';
-import {useAuth} from '../../stores/auth';
-import {useModalPicker} from '../../hooks/use-window-modal';
+import {useTheme} from '~/stores/theme';
+import {useAuth} from '~/stores/auth';
+import {useNavigation} from '~/stores/navigation';
 
-const EditProfile = ({navigator, updateProfile}) => {
+const EditProfile = ({withNewUser = false}) => {
   const {isLoading, setLoading, SpinnerComponent} = useSpinner({position: 'bottom'});
-  const pickerModal = usePicker();
-  const [ModalPicker] = useModalPicker(pickerModal);
-
+  const {popToMainScreen} = useNavigation();
   const [profile, setProfile] = useState({firstName: '', lastName: '', age: '', gender: '', height: '', weight: ''});
 
   const auth = useAuth();
@@ -36,11 +32,9 @@ const EditProfile = ({navigator, updateProfile}) => {
 
   const {arrowIconDims, headerStyle} = Styles(themeStyle);
 
-  const onSubmitEditing = async () => {
-    if (isLoading) {
-      return;
-    }
-    //validation
+  const onSubmitEditing = () => {
+    if (isLoading) return;
+
     setLoading(true);
     setTimeout(() => {
       updateProfile({payload: {profile}})
@@ -60,10 +54,10 @@ const EditProfile = ({navigator, updateProfile}) => {
   };
 
   const goToMain = () => {
-    navigator.popTo(navigator.stack[0].id, {animation: 'left'});
+    popToMainScreen();
   };
 
-  const avatarSource = auth.photoURL ? auth.photoURL : null;
+  const avatarSource = auth?.profile?.photoURL;
 
   const InputsProps = {
     themeStyle,
@@ -85,7 +79,7 @@ const EditProfile = ({navigator, updateProfile}) => {
       <Column alignItems="center">
         <Text style={headerStyle}>Profile settings</Text>
       </Column>
-      <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrow} onPress={goToMain} />
+      {!withNewUser && <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrow} onPress={goToMain} />}
     </Row>
   );
   const AvatarView = (
@@ -116,12 +110,8 @@ const EditProfile = ({navigator, updateProfile}) => {
           {SaveBtn}
         </CenterXY>
       </Container>
-      {ModalPicker}
     </>
   );
 };
 
-const mapDispatchToProps = {
-  updateProfile: _updateProfile,
-};
-export default WithActions(mapDispatchToProps)(observer(EditProfile));
+export default observer(EditProfile);

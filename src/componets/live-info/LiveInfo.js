@@ -1,12 +1,27 @@
-import React from 'react';
-import {Container, LiveInfoText, LiveInfoSubText} from './styles';
+import React, {memo} from 'react';
+import useLoopIterator from '~/hooks/use-loop-iterator';
+import {isEqualJson} from '~/utils/validation/helpers';
+import LiveInfoForm from './LiveInfoForm';
+import {styles} from './styles';
 
-const LiveInfo = ({onPress, containerStyle, textStyle, subTextStyle, title, subTitle}) => {
+const onUpdate = (prev, next) => isEqualJson(prev, next);
+
+const LiveInfo = ({onPressCb, items, titleProp, subTitleProp, titleValue, defaultValue}) => {
+  const [item, onNextItem] = useLoopIterator(items);
+
+  const onPress = () => {
+    onPressCb(onNextItem());
+  };
+
   return (
-    <Container {...containerStyle} onStartShouldSetResponder={onPress}>
-      <LiveInfoText {...textStyle}>{title}</LiveInfoText>
-      <LiveInfoSubText {...subTextStyle}>{subTitle}</LiveInfoSubText>
-    </Container>
+    <LiveInfoForm
+      containerStyle={styles.container}
+      textStyle={styles.text}
+      subTextStyle={styles.subText}
+      onPress={onPress}
+      title={`${titleValue ?? defaultValue}${item[titleProp]}`}
+      subTitle={item[subTitleProp]}
+    />
   );
 };
-export default LiveInfo;
+export default memo(LiveInfo, onUpdate);

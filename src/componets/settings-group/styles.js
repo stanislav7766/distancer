@@ -1,6 +1,6 @@
-export {Row, Column, Form, mx0, mt10} from '../../constants/styles';
-import {ACCENT_GREEN, ACCENT_ORANGE, ACCENT_RED} from '../../constants/constants';
-import {btnContainerStyle, btnTextStyle} from '../../constants/styles';
+export {Row, Column, Form, mx0, mt10} from '~/constants/styles';
+import {ACCENT_GREEN, ACCENT_ORANGE, ACCENT_RED} from '~/constants/constants';
+import {btnContainerStyle, btnTextStyle} from '~/constants/styles';
 
 export const Styles = themeStyle => {
   const avatarTitleStyle = {

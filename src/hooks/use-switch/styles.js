@@ -1,4 +1,4 @@
-import {ACCENT_ORANGE, ACCENT_RED, THEMES} from '../../constants/constants';
+import {ACCENT_ORANGE, ACCENT_RED, THEMES} from '~/constants/constants';
 
 export const switchThemeSize = {
   width: 45,

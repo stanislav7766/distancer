@@ -1,9 +1,13 @@
+import {WINDOW_WIDTH, WINDOW_HEIGHT} from '~/constants/constants';
+
 export const styleContainer = {
-  height: 300,
-  width: 300,
+  height: WINDOW_HEIGHT,
+  width: WINDOW_WIDTH,
 };
-export const styleMap = {
-  flex: 1,
+
+export const mapStyle = {
+  width: WINDOW_WIDTH,
+  height: WINDOW_HEIGHT,
 };
 
 export const Styles = (themeStyle, height) => {

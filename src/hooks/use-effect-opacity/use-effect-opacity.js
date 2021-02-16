@@ -1,5 +1,5 @@
 import {useEffect} from 'react';
-import useAnimated from '../use-animated';
+import useAnimated from '~/hooks/use-animated';
 
 const useEffectOpacity = (time, cb) => {
   const [anim, compositeOpacity] = useAnimated({from: 0, to: 1});

@@ -1,6 +1,7 @@
 import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
-import {DEFAULT_DRAG_HINTS} from '../../constants/constants';
+import {DEFAULT_DRAG_HINTS} from '~/constants/constants';
+import {isExist} from '~/utils/validation/helpers';
 
 export class RouteSettingsStore {
   constructor() {
@@ -14,8 +15,7 @@ export class RouteSettingsStore {
   };
 
   setRouteSettings = ({dragHints}) => {
-    //valid
-    dragHints && this.setDragHints(dragHints);
+    isExist(dragHints) && this.setDragHints(dragHints);
   };
 }
 

@@ -2,28 +2,38 @@ import React, {useState, useEffect} from 'react';
 import {Text, View} from 'react-native';
 import SavedRoutes from './SavedRoutes';
 import SavedActivities from './SavedActivities';
-import Section from '../section/Section';
-import Touchable from '../touchable/Touchable';
+import {Section} from '~/componets/section';
+import {Touchable} from '~/componets/touchable';
 import {Row, Column, Styles, mt20, mt10} from './styles';
-import {ROUTE_TYPES} from '../../constants/constants';
-import {useAuth} from '../../stores/auth';
+import {ROUTE_TYPES} from '~/constants/constants';
+import {useAuth} from '~/stores/auth';
+import {useOnDefaultRoutes, useOnDefaultActivities, useOnShowMapIcons} from '~/hooks/use-on-effect';
+import {useAppMode} from '~/stores/app-mode';
 import {observer} from 'mobx-react-lite';
+import {useNavigation} from '~/stores/navigation';
 
 const {ROUTE, ACTIVITY} = ROUTE_TYPES;
 
 const SavedMode = ({themeStyle}) => {
-  const [tabType, setTabType] = useState(ROUTE);
+  const {viewRouteMode, setViewRouteMode, isViewRouteMode} = useAppMode();
   const [buttonsHeight, setButtonsHeight] = useState(0);
-  const isRoute = tabType === ROUTE;
-  const {authorized, setAuthorized} = useAuth();
+  const {authorized} = useAuth();
+  const {pushScreen} = useNavigation();
+  useOnDefaultActivities({unmount: true});
+  useOnDefaultRoutes({unmount: true});
+  useOnShowMapIcons({mount: false});
 
   useEffect(() => {
     !authorized && setButtonsHeight(0);
   }, [authorized]);
 
+  const goToRoute = () => {
+    pushScreen({screenId: 'ViewRoute'});
+  };
+
   const {styleSection} = Styles(themeStyle);
-  const routeTypeBorder = type => (type === tabType ? themeStyle.accentColor : themeStyle.sectionColor);
-  const changeRouteType = _routeType => setTabType(_routeType);
+  const routeTypeBorder = type => (type === viewRouteMode ? themeStyle.accentColor : themeStyle.sectionColor);
+  const changeRouteType = _routeType => setViewRouteMode(_routeType);
 
   const renderButton = ({title, type}) => (
     <>
@@ -46,21 +56,18 @@ const SavedMode = ({themeStyle}) => {
           />
         </Column>
         <Column>
-          <Touchable
-            onPress={() => {
-              changeRouteType(ROUTE);
-              setAuthorized(false);
-            }}
-            Child={renderButton({title: 'Routes', type: ROUTE})}
-          />
+          <Touchable onPress={changeRouteType.bind(null, ROUTE)} Child={renderButton({title: 'Routes', type: ROUTE})} />
         </Column>
       </Row>
     </View>
   );
-
   const List = (
-    <Row paddingBottom={buttonsHeight} {...mt10}>
-      {isRoute ? <SavedRoutes themeStyle={themeStyle} /> : <SavedActivities themeStyle={themeStyle} />}
+    <Row paddingBottom={buttonsHeight * 2} {...mt10}>
+      {isViewRouteMode ? (
+        <SavedRoutes goToRoute={goToRoute} themeStyle={themeStyle} />
+      ) : (
+        <SavedActivities goToRoute={goToRoute} themeStyle={themeStyle} />
+      )}
     </Row>
   );
 

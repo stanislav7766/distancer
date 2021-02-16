@@ -7,12 +7,14 @@ import {
   ERROR_NETWORK_FAILED,
   USER_NOT_FOUND,
   EMAIL_ALREADY_USED,
-} from '../constants/constants';
-import {isNetworkAvailable} from '../utils/NetworkUtils';
-import {setItem, getItem, removeItem, updateItem} from '../utils/asyncStorage';
+} from '~/constants/constants';
+import {isNetworkAvailable} from '~/utils/network-helpers';
+import {setItem, getItem, removeItem, updateItem} from '~/utils/fs/asyncStorage';
 import {GoogleSignin} from '@react-native-community/google-signin';
-import {isFilledArr} from '../utils/isFilledArr';
-import {validateData} from '../utils/validation/validation';
+import {isFilledArr} from '~/utils/validation/helpers';
+import {validateData} from '~/utils/validation/validation';
+import {mapForDBProfile, mapForStoreProfile} from '~/utils/profile-helpers';
+
 GoogleSignin.configure({
   offlineAccess: false,
   webClientId: WEB_CLIENT_ID,
@@ -56,30 +58,27 @@ const _signInWithGoogleCredential = async () => {
   } = await _signWithGoogle();
 
   const exist = await _checkUserExistByEmail(email);
-  if (!exist) {
-    return {success: false, reason: USER_NOT_FOUND};
-  }
+  if (!exist) return {success: false, reason: USER_NOT_FOUND};
+
   const googleCredential = auth.GoogleAuthProvider.credential(idToken);
   const {user} = await auth().signInWithCredential(googleCredential);
   return {success: true, data: {user}};
 };
 
-const _saveProfile = async (uid, profile) =>
+const _saveProfile = (uid, profile) =>
   Promise.all([firestore().collection('users').doc(uid).set(profile), setItem(uid, profile)]);
 
 export const updateProfile = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) {
-        return resolve({success: false, reason: ERROR_NETWORK_FAILED});
-      }
+      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+
       const {profile} = payload;
       const {isValid, reason} = validateData(profile);
-      if (!isValid) {
-        return resolve({success: false, reason});
-      }
-      const {userId, ...restProfile} = profile;
+      if (!isValid) return resolve({success: false, reason});
+      const mappedProfile = mapForDBProfile(profile);
+      const {userId, ...restProfile} = mappedProfile;
       await Promise.all([
         firestore().collection('users').doc(userId).update(restProfile),
         updateItem(userId, restProfile),
@@ -94,13 +93,11 @@ export const loginWithGoogle = () =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) {
-        return resolve({success: false, reason: ERROR_NETWORK_FAILED});
-      }
+      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+
       const {success, reason, data} = await _signInWithGoogleCredential();
-      if (!success) {
-        return resolve({success: false, reason});
-      }
+      if (!success) return resolve({success: false, reason});
+
       const {
         user: {uid},
       } = data;
@@ -120,13 +117,11 @@ export const registerWithGoogle = () =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) {
-        return resolve({success: false, reason: ERROR_NETWORK_FAILED});
-      }
+      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+
       const {success, reason, data} = await _signUpWithGoogleCredential();
-      if (!success) {
-        resolve({success: false, reason});
-      }
+      if (!success) resolve({success: false, reason});
+
       const {profile, user} = data;
       const {email, family_name: lastName, given_name: firstName} = profile;
       const {photoURL, uid} = user;
@@ -148,13 +143,12 @@ export const getCurrentUser = () =>
   new Promise((resolve, reject) => {
     try {
       auth().onAuthStateChanged(async user => {
-        if (!user) {
-          return resolve({success: false, reason: '', data: {user: null}});
-        }
+        if (!user) return resolve({success: false, reason: '', data: {user: null}});
+
         const {uid} = user;
         const doc = await firestore().collection('users').doc(uid).get();
         const data = doc.exists ? doc.data() : await getItem(uid);
-        resolve({success: true, reason: '', data: {user: data}});
+        resolve({success: true, reason: '', data: {user: mapForStoreProfile(data)}});
       });
     } catch (err) {
       const {code} = err;
@@ -167,16 +161,14 @@ export const registerUser = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) {
-        return resolve({success: false, reason: ERROR_NETWORK_FAILED});
-      }
+      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+
       const {
         data: {email, password},
       } = payload;
       const {isValid, reason} = validateData({email, password});
-      if (!isValid) {
-        return resolve({success: false, reason});
-      }
+      if (!isValid) return resolve({success: false, reason});
+
       const response = await auth().createUserWithEmailAndPassword(email, password);
       const {uid} = response.user;
       const profile = {
@@ -196,16 +188,14 @@ export const loginUser = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) {
-        return resolve({success: false, reason: ERROR_NETWORK_FAILED});
-      }
+      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+
       const {
         data: {email, password},
       } = payload;
       const {isValid, reason} = validateData({email, password});
-      if (!isValid) {
-        return resolve({success: false, reason});
-      }
+      if (!isValid) return resolve({success: false, reason});
+
       const response = await auth().signInWithEmailAndPassword(email, password);
       const {uid} = response.user;
       const doc = await firestore().collection('users').doc(uid).get();
@@ -225,9 +215,7 @@ export const deleteAccount = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) {
-        return resolve({success: false, reason: ERROR_NETWORK_FAILED});
-      }
+      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
 
       const {userId} = payload;
       const isSignedIn = await isSignedGoogle();
@@ -253,9 +241,7 @@ export const logoutUser = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) {
-        return resolve({success: false, reason: ERROR_NETWORK_FAILED});
-      }
+      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
 
       const {userId} = payload;
       const isSignedIn = await isSignedGoogle();
@@ -274,7 +260,7 @@ const getActivitiesColRef = ({userId, directionsMode}) =>
 const deleteIfExist = ({directionsMode, userId}) =>
   new Promise(async resolve => {
     const snapshot = await getActivitiesColRef({directionsMode, userId}).get();
-    const docs = snapshot.docs;
+    const {docs} = snapshot;
     docs.length > 0 &&
       (await docs.forEach(doc => {
         const {id} = doc.data();

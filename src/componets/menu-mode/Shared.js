@@ -1,10 +1,10 @@
 import React from 'react';
-import {AppGroup, RouteGroup} from '../settings-group';
+import {AppGroup, RouteGroup} from '~/componets/settings-group';
 import {observer} from 'mobx-react-lite';
 
-const Shared = ({themeStyle}) => {
-  const AppSettingsGroup = <AppGroup themeStyle={themeStyle} />;
-  const RouteSettingsGroup = <RouteGroup themeStyle={themeStyle} />;
+const Shared = () => {
+  const AppSettingsGroup = <AppGroup />;
+  const RouteSettingsGroup = <RouteGroup />;
 
   return (
     <>

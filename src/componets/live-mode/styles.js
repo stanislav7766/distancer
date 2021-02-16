@@ -1,7 +1,7 @@
-import {ACCENT_GREEN, ACCENT_ORANGE} from '../../constants/constants';
-import {btnContainerStyle, btnTextStyle} from '../../constants/styles';
+import {ACCENT_GREEN, ACCENT_ORANGE} from '~/constants/constants';
+import {btnContainerStyle, btnTextStyle} from '~/constants/styles';
 
-export {Row, Column, mt10} from '../../constants/styles';
+export {Row, Column, mt10} from '~/constants/styles';
 
 export const Styles = themeStyle => {
   const liveInfoContainer = {

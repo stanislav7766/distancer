@@ -1,9 +1,9 @@
-import {writeActivity, removeActivity, readActivities} from '../utils/fs';
-import {ERROR_NETWORK_FAILED, ERROR_OCCURRED, ACTIVITIES_LIST_EMPTY} from '../constants/constants';
-import {isNetworkAvailable} from '../utils/NetworkUtils';
-import {isFilledArr} from '../utils/isFilledArr';
+import {writeActivity, removeActivity, readActivities} from '~/utils/fs/storage';
+import {ERROR_NETWORK_FAILED, ERROR_OCCURRED, ACTIVITIES_LIST_EMPTY} from '~/constants/constants';
+import {isNetworkAvailable} from '~/utils/network-helpers';
+import {isFilledArr} from '~/utils/validation/helpers';
 import firestore from '@react-native-firebase/firestore';
-import {arrsToObjsCoords, objsToArrsCoords} from '../utils/arrToObj';
+import {mapperCoordsArrToObj, mapperCoordsObjToArr} from '~/utils/coordinate-helpers';
 
 const getActivitiesColRef = ({userId, directionsMode}) =>
   firestore().collection('activities').doc(directionsMode).collection(userId);
@@ -12,9 +12,8 @@ export const deleteActivity = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) {
-        return resolve({success: false, reason: ERROR_NETWORK_FAILED});
-      }
+      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+
       const {activityId, userId, directionsMode} = payload;
       await getActivitiesColRef({userId, directionsMode}).doc(activityId).update({
         points1: firestore.FieldValue.delete(),
@@ -34,12 +33,12 @@ export const getActivities = ({payload}) =>
     try {
       const {direction, userId} = payload;
       const snaphot = await getActivitiesColRef({directionsMode: direction, userId}).get();
-      const docs = snaphot.docs;
+      const {docs} = snaphot;
       const activities =
         docs.length > 0
           ? docs.map(doc => {
               const {points1, ...rest} = doc.data();
-              rest.points1 = objsToArrsCoords(points1);
+              rest.points1 = mapperCoordsObjToArr(points1);
               return rest;
             })
           : await readActivities(direction, userId);
@@ -62,7 +61,7 @@ export const saveActivity = ({payload}) =>
           ...rest,
           directionsMode,
           id,
-          points1: arrsToObjsCoords(points1),
+          points1: mapperCoordsArrToObj(points1),
         });
       const written = await writeActivity(directionsMode, userId, id, activity);
       resolve({success: written, reason: written ? '' : ERROR_OCCURRED});

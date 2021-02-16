@@ -1,4 +1,4 @@
-import {WINDOW_HEIGHT} from '../../constants/constants';
+import {WINDOW_HEIGHT} from '~/constants/constants';
 
 const bottom = {
   left: 0,

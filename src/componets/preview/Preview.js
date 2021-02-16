@@ -1,8 +1,8 @@
 import React, {useRef} from 'react';
 import {Animated, View} from 'react-native';
 import CanvasNative from 'react-native-canvas';
-import {fromLatLngToPoint, getPointsDimenssions} from '../../utils/fromLatLngToPoint';
-import {getAnimation, runAnimation} from '../../utils/animations';
+import {fromLatLngToPoint, getPointsDimenssions} from '~/utils/point-helpers';
+import {getAnimation, runAnimation} from '~/utils/animations';
 import {stylePreview} from './styles';
 
 const Preview = ({coords}) => {

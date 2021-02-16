@@ -1,6 +1,6 @@
 import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
-import {DIRECTIONS_MODE} from '../../constants/constants';
+import {DIRECTIONS_MODE} from '~/constants/constants';
 
 export class DirectionsModeStore {
   constructor() {

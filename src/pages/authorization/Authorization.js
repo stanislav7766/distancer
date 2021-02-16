@@ -1,25 +1,25 @@
 import React from 'react';
-import SignIn from '../../componets/sign/SignIn';
-import SignUp from '../../componets/sign/SignUp';
+import {SignIn, SignUp} from '~/componets/sign';
 import {CenterXY, Container} from './styles';
-import {useTheme} from '../../stores/theme';
+import {useTheme} from '~/stores/theme';
+import {useNavigation} from '~/stores/navigation';
 import {observer} from 'mobx-react-lite';
 
-const Authorization = ({navigator, type}) => {
+const Authorization = ({type}) => {
   const {themeStyle} = useTheme();
+  const {pushScreen, popScreen} = useNavigation();
 
   const goToMain = () => {
-    navigator.pop({animation: 'left'});
+    popScreen();
   };
   const goToProfile = () => {
-    navigator.push('EditProfile', {}, {animation: 'right'});
+    pushScreen({screenId: 'EditProfile', screenProps: {withNewUser: true}});
   };
-  const SignInComponent = <SignIn goToMain={goToMain} themeStyle={themeStyle} />;
-  const SignUpComponent = <SignUp goToMain={goToProfile} goBack={goToMain} themeStyle={themeStyle} />;
+
   const signModeCall = mode =>
     ({
-      ['signIn']: SignInComponent,
-      ['signUp']: SignUpComponent,
+      ['signIn']: <SignIn goToMain={goToMain} themeStyle={themeStyle} />,
+      ['signUp']: <SignUp goToProfile={goToProfile} goBack={goToMain} themeStyle={themeStyle} />,
     }[mode]);
   const Sign = signModeCall(type);
   return (

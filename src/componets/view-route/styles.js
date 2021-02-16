@@ -1,7 +1,7 @@
-import {ACCENT_RED} from '../../constants/constants';
-import {btnContainerStyle, btnTextStyle} from '../../constants/styles';
+import {ACCENT_RED} from '~/constants/constants';
+import {btnContainerStyle, btnTextStyle} from '~/constants/styles';
 
-export {Row, Column, mt10} from '../../constants/styles';
+export {Row, Column, mt10, mx0} from '~/constants/styles';
 
 export const stylesTextKM = {
   color: '#fff',

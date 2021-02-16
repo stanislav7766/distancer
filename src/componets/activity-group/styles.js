@@ -1,4 +1,4 @@
-export {Row, Column, mt10, mx0} from '../../constants/styles';
+export {Row, Column, mt10, mx0} from '~/constants/styles';
 
 export const Styles = themeStyle => {
   const styleItemActivity = {

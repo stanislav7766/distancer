@@ -1,13 +1,13 @@
-import {removeRoute} from '../utils/removeRoute';
-import {writeRoutes, readRoutes} from '../utils/fs';
-import {ERROR_TRY_AGAIN, ROUTES_LIST_EMPTY, ERROR_OCCURRED} from '../constants/constants';
-import {isFilledArr} from '../utils/isFilledArr';
+import {filterByKey} from '~/utils/common-helpers/arr-helpers';
+import {writeRoutes, readRoutes} from '~/utils/fs/storage';
+import {ERROR_TRY_AGAIN, ROUTES_LIST_EMPTY, ERROR_OCCURRED} from '~/constants/constants';
+import {isFilledArr} from '~/utils/validation/helpers';
 
 export const deleteRoute = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const {routeId, routes} = payload;
-      const _routes = removeRoute(routes, routeId);
+      const _routes = filterByKey(routes, 'id', routeId);
       const written = await writeRoutes(_routes);
       resolve({success: written, reason: written ? '' : ERROR_TRY_AGAIN});
     } catch (err) {

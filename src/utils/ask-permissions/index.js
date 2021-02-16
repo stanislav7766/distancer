@@ -4,7 +4,7 @@ import {
   GIVE_GPS_PERMISSIONS_DETAILED,
   GPS_PERMS_ACCESS_COARSE,
   GPS_PERMS_ACCESS_FINE,
-} from '../../constants/constants';
+} from '~/constants/constants';
 
 export const askGpsPermissions = () =>
   new Promise(resolve => {

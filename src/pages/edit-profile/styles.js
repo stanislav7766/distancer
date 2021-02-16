@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import {btnContainerStyle, btnTextStyle} from '../../constants/styles';
-export {Row, Column, Form, mt10} from '../../constants/styles';
+import {btnContainerStyle, btnTextStyle} from '~/constants/styles';
+import {filterByKey} from '~/utils/common-helpers/obj-helpers';
+export {Row, Column, Form, mt10} from '~/constants/styles';
 
 export const mt20 = {
   marginTop: 20,
@@ -27,11 +28,11 @@ export const CenterXY = styled.View`
   justify-content: center;
   align-items: center;
 `;
-const {width: _, ...btnContStyle} = btnContainerStyle;
+const btnContStyle = filterByKey('width', btnContainerStyle);
 
 export const Styles = themeStyle => {
   const inputStyle = {
-    textColor: themeStyle.textColor,
+    textColor: themeStyle.textColorThird,
     underlineFocusedColor: themeStyle.accentColor,
     underlineBluredColor: themeStyle.textColorSecondary,
     placeholderColor: themeStyle.textColorSecondary,

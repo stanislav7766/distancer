@@ -1,24 +1,16 @@
 import React, {useEffect} from 'react';
 import Toast from 'react-native-simple-toast';
-import Map from '../../componets/map/Map';
-import Modal from '../../componets/modal/Modal';
-import useListenSettings from '../../hooks/use-listen-settings';
-import useGpsPermissions from '../../hooks/use-gps-permissions';
-import WithActions from '../../componets/with-actions/WithActions';
-import {getCurrentUser as _getCurrentUser} from '../../actions';
+import {MainMap} from '~/componets/map';
+import {AppModeModal} from '~/componets/app-mode-modal';
+import useListenSettings from '~/hooks/use-listen-settings';
+import useGpsPermissions from '~/hooks/use-gps-permissions';
+import {getCurrentUser} from '~/actions';
 import {observer} from 'mobx-react-lite';
-import {useAuth} from '../../stores/auth';
-import {useModalPicker as usePicker} from '../../stores/modal-picker';
-import {useModalConfirm as useConfirm} from '../../stores/modal-confirm';
-import {useModalPicker} from '../../hooks/use-window-modal';
-import {useModalFooter as useModalConfirm} from '../../hooks/use-window-modal/useModalFooter';
+import {Navbar} from '~/componets/navbar';
+import {useAuth} from '~/stores/auth';
 
-const Landing = ({navigator, getCurrentUser}) => {
+const Landing = () => {
   const {setProfile, setAuthorized} = useAuth();
-  const pickerModal = usePicker();
-  const confirmModal = useConfirm();
-  const [ModalPicker] = useModalPicker(pickerModal);
-  const [ModalConfirm] = useModalConfirm(confirmModal);
 
   useGpsPermissions();
   useListenSettings();
@@ -37,18 +29,15 @@ const Landing = ({navigator, getCurrentUser}) => {
         }
       })
       .catch(err => Toast.show(err));
-  }, [getCurrentUser, setAuthorized, setProfile]);
+  }, [setAuthorized, setProfile]);
 
   return (
     <>
-      <Map />
-      <Modal navigator={navigator} />
-      {ModalPicker}
-      {ModalConfirm}
+      <MainMap />
+      <AppModeModal />
+      <Navbar />
     </>
   );
 };
-const mapDispatchToProps = {
-  getCurrentUser: _getCurrentUser,
-};
-export default WithActions(mapDispatchToProps)(observer(Landing));
+
+export default observer(Landing);

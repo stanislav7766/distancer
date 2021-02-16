@@ -1,3 +1,4 @@
-export {useModalHeader} from './useModalHeader';
-export {useModalFooter} from './useModalFooter';
-export {useModalPicker} from './useModalPicker';
+export {useModalHeader} from './modals/useModalHeader';
+export {useModalFooter} from './modals/useModalFooter';
+export {useModalPicker} from './modals/useModalPicker';
+export {useModalTimer} from './modals/useModalTimer';

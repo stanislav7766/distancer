@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text} from 'react-native';
-import {isFilledArr} from '../../utils/isFilledArr';
+import {isFilledArr} from '~/utils/validation/helpers';
 import {Row, Column, mx0, mb30, mt10, Form, Styles} from './styles';
 
 const Item = ({item}) => (

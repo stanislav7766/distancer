@@ -1,19 +1,20 @@
 import React from 'react';
-import RoundedIcon from '../rounded-icon/RoundedIcon';
+import {RoundedIcon} from '~/componets/rounded-icon';
 import SelectDirection from './SelectDirection';
-import {Styles} from './styles';
-import {WINDOW_HEIGHT, DIRECTIONS_MODE} from '../../constants/constants';
+import {Styles, styles} from './styles';
+import {WINDOW_HEIGHT, DIRECTIONS_MODE} from '~/constants/constants';
 import {observer} from 'mobx-react-lite';
-import {useDirectionsMode} from '../../stores/directions-mode';
+import {useDirectionsMode} from '~/stores/directions-mode';
 const {WALKING, CYCLING, DRIVING} = DIRECTIONS_MODE;
 
 const DirectionsBar = ({themeStyle}) => {
   const {setDirectionsMode, directionsMode, isDirectionsMode} = useDirectionsMode();
-  const {styleDirections, styleCarIcon, styleBikeIcon, styleManIcon} = Styles(themeStyle, WINDOW_HEIGHT);
+  const {styleDirections} = Styles(themeStyle, WINDOW_HEIGHT);
+  const defineColor = curr => (directionsMode === curr ? themeStyle.accentColor : themeStyle.textColorSecondary);
 
-  const IconDrivingWrap = <SelectDirection themeStyle={themeStyle} mode={DRIVING} currentMode={directionsMode} />;
-  const IconCyclingWrap = <SelectDirection themeStyle={themeStyle} mode={CYCLING} currentMode={directionsMode} />;
-  const IconWalkingWrap = <SelectDirection themeStyle={themeStyle} mode={WALKING} currentMode={directionsMode} />;
+  const IconDrivingWrap = <SelectDirection mode={DRIVING} color={defineColor(DRIVING)} />;
+  const IconCyclingWrap = <SelectDirection mode={CYCLING} color={defineColor(CYCLING)} />;
+  const IconWalkingWrap = <SelectDirection mode={WALKING} color={defineColor(WALKING)} />;
 
   const onPressDriving = () => setDirectionsMode(DRIVING);
   const onPressWalking = () => setDirectionsMode(WALKING);
@@ -21,9 +22,9 @@ const DirectionsBar = ({themeStyle}) => {
 
   const Directions = (
     <>
-      <RoundedIcon style={styleCarIcon} IconComponent={IconDrivingWrap} onPress={onPressDriving} />
-      <RoundedIcon style={styleManIcon} IconComponent={IconWalkingWrap} onPress={onPressWalking} />
-      <RoundedIcon style={styleBikeIcon} IconComponent={IconCyclingWrap} onPress={onPressCycling} />
+      <RoundedIcon style={styles.carIcon} IconComponent={IconDrivingWrap} onPress={onPressDriving} />
+      <RoundedIcon style={styles.manIcon} IconComponent={IconWalkingWrap} onPress={onPressWalking} />
+      <RoundedIcon style={styles.bikeIcon} IconComponent={IconCyclingWrap} onPress={onPressCycling} />
     </>
   );
 

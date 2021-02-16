@@ -1,30 +1,29 @@
-import React, {useEffect, useContext, useCallback} from 'react';
-import VirtualList from '../virtualized-list';
-import {mapContext, appModeContext, routeContext} from '../../contexts/contexts';
-import {Groove} from '../../contexts/Groove';
+import React, {useEffect, useCallback, useState} from 'react';
+import {InteractionManager} from 'react-native';
+import {VirtualList} from '~/componets/virtualized-list';
 import Toast from 'react-native-simple-toast';
-import Item from '../item/Item';
-import Preview from '../preview/Preview';
+import {Item} from '~/componets/item';
+import {Preview} from '~/componets/preview';
 import {Row, Styles, mt20, mb20} from './styles';
-import {APP_MODE, ERROR_OCCURRED, ROUTE_TYPES} from '../../constants/constants';
-import WithActions from '../with-actions/WithActions';
-import {getRoutes as _getRoutes} from '../../actions';
-import useSpinner from '../spinner/useSpinner';
-import {useOnIsDirectionsMode} from '../../hooks/use-directions-mode';
+import {ERROR_OCCURRED} from '~/constants/constants';
+import {getRoutes} from '~/actions';
+import useSpinner from '~/componets/spinner/useSpinner';
+import {useOnIsDirectionsMode} from '~/hooks/use-on-effect';
+import {useCurrentRoute} from '~/stores/current-route';
+import {useRoutes} from '~/stores/routes';
 import {observer} from 'mobx-react-lite';
-import {useDirectionsMode} from '../../stores/directions-mode';
 
-const {VIEW_ROUTE} = APP_MODE;
-const {ROUTE} = ROUTE_TYPES;
-
-const SavedRoutes = ({themeStyle, getRoutes}) => {
+const SavedRoutes = ({themeStyle, goToRoute}) => {
   const {setLoading, isLoading} = useSpinner({position: 'top'});
-  const {zoomLevel, cameraRef} = useContext(mapContext);
-  const {setAppMode, setViewMode} = useContext(appModeContext);
-  const {setDirectionsMode} = useDirectionsMode();
-  const {moveCamera} = Groove(cameraRef);
-  const {routes, setCurrentRoute, setRoutes, setDefaultRoutes} = useContext(routeContext);
+  const {setCurrentRoute} = useCurrentRoute();
+  const {routes, setRoutes} = useRoutes();
+  const [mappedRoutes, setMappedRoutes] = useState([]);
+
   useOnIsDirectionsMode({mount: false});
+
+  useEffect(() => {
+    setMappedRoutes(routes);
+  }, [routes]);
 
   const onRefresh = useCallback(() => {
     setLoading(true);
@@ -39,26 +38,19 @@ const SavedRoutes = ({themeStyle, getRoutes}) => {
       .finally(_ => {
         setLoading(false);
       });
-  }, [getRoutes, setLoading, setRoutes]);
+  }, [setLoading, setRoutes]);
 
   useEffect(() => {
-    setTimeout(onRefresh, 700);
+    const interactionPromise = InteractionManager.runAfterInteractions(() => onRefresh());
+    return () => interactionPromise.cancel();
   }, [onRefresh]);
 
-  useEffect(() => {
-    setDefaultRoutes();
-  }, [setDefaultRoutes]);
-
   const {styleItemRoute} = Styles(themeStyle);
-  const routeWihoutDirections = ({directionsMode, ...route}) => route;
   const IconWrap = coords => <Preview coords={coords} />;
 
   const onPressItem = route => {
-    setAppMode(VIEW_ROUTE);
-    setViewMode(ROUTE);
-    setDirectionsMode(route.directionsMode);
-    setCurrentRoute(routeWihoutDirections(route));
-    moveCamera({zoomLevel, centerCoordinate: route.points[0]});
+    setCurrentRoute(route);
+    goToRoute();
   };
 
   const Footer = <Row {...mb20} />;
@@ -79,14 +71,11 @@ const SavedRoutes = ({themeStyle, getRoutes}) => {
       refresh={{refreshing: isLoading, onRefresh}}
       renderItem={renderItem}
       Footer={Footer}
-      items={routes}
+      items={mappedRoutes}
       initialNumToRender={10}
       keyExtractor={item => item.id}
     />
   );
 };
 
-const mapDispatchToProps = {
-  getRoutes: _getRoutes,
-};
-export default WithActions(mapDispatchToProps)(observer(SavedRoutes));
+export default observer(SavedRoutes);

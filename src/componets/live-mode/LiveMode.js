@@ -1,126 +1,117 @@
-import React, {Fragment, useState, useContext, useEffect, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {Vibration} from 'react-native';
-import {Row, Column, Styles, btnStartStyles, btnPauseStyles, btnContinueStyles, mt10} from './styles';
-import Btn from '../btn/Btn';
-import LiveInfo from '../live-info/LiveInfo';
-import {liveRouteContext} from '../../contexts/contexts';
-import {randomID} from '../../utils/randomID';
-import {LIVE_TYPES, LIVE_MODDING, LIVE_SPECS_DEFAULT, ERROR_OCCURRED, DIRECTIONS_MODE} from '../../constants/constants';
-import {yyyymmddNow} from '../../utils/timeToSec';
-import {makeIterator} from '../../utils/makeIterator';
-import {useOnDirectionsMode, useOnIsDirectionsMode} from '../../hooks/use-directions-mode';
-import {useActivitySettings} from '../../stores/activity-settings';
+import {Row, Column, btnStartStyles, btnPauseStyles, btnContinueStyles, mt10} from './styles';
+import {Btn} from '~/componets/btn';
+import {randomID} from '~/utils/random-id';
+import {
+  LIVE_TYPES,
+  LIVE_SPECS_DEFAULT,
+  ERROR_OCCURRED,
+  LIVE_STATIONARY_FILTER_M,
+  FINISH_LIVE_ROUTE_CONFIRM,
+} from '~/constants/constants';
+import {yyyymmddNow} from '~/utils/time-helpers';
+import {
+  useOnIsDirectionsMode,
+  useOnLiveWithRoute,
+  useOnWatchLivePoints,
+  useOnShowMapIcons,
+} from '~/hooks/use-on-effect';
+import {useActivitySettings} from '~/stores/activity-settings';
 import Toast from 'react-native-simple-toast';
-import useBackgroundLocation from '../../hooks/use-background-location';
-import useBackgroundStopWatch from '../../hooks/use-background-stopwatch';
-import {saveActivity as _saveActivity} from '../../actions';
-import WithActions from '../with-actions/WithActions';
-import {useDirectionsMode} from '../../stores/directions-mode';
-import {useAuth} from '../../stores/auth';
+import useBackgroundLocation from '~/hooks/use-background-location';
+import useBackgroundStopWatch from '~/hooks/use-background-stopwatch';
+import {saveActivity} from '~/actions';
+import {useDirectionsMode} from '~/stores/directions-mode';
+import {useModalTimer as useTimer} from '~/stores/modal-timer';
+import {useModalConfirm as useConfirm} from '~/stores/modal-confirm';
+import {useAuth} from '~/stores/auth';
+import {useAppMode} from '~/stores/app-mode';
+import {useLiveRoute} from '~/stores/live-route';
+import LiveProps from './LiveProps';
 import {observer} from 'mobx-react-lite';
+import {isFilledArr} from '~/utils/validation/helpers';
+import {measureDistanceM} from '~/utils/route-helpers';
+import {getLastItem} from '~/utils/common-helpers/arr-helpers';
+import {formatSpeed} from '~/utils/activity-helpers';
 
 const {STOP, GO, PAUSE} = LIVE_TYPES;
-const {WALKING} = DIRECTIONS_MODE;
 
-const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
-  const {vibrateOnStart} = useActivitySettings();
+const LiveMode = ({closeModal, openModal}) => {
+  const {vibrateOnStart, autoPause, timerOnStart} = useActivitySettings();
+  const {liveWithRoute, setLiveWithRoute} = useAppMode();
+  const {setInit: setInitTimer, onShowTimer} = useTimer();
+  const {setInit: setInitConfirm, onShowConfirm, onHideConfirm} = useConfirm();
 
-  const [cSpeeds, setCSpeed] = useState(0.0);
-  const [aSpeed, setASpeed] = useState(0.0);
-
-  const {liveRoute, setLiveRoute, setLivePoints, setDefaultLiveRoute} = useContext(liveRouteContext);
+  const {
+    liveRoute,
+    specs,
+    setLiveRoute,
+    setMovingTime,
+    pushPoints,
+    setDefaultLiveRoute,
+    setCurrentSpeed,
+    setStatus,
+  } = useLiveRoute();
   const allowLocationUpdate = useRef(false);
+  const lastCoordRef = useRef([]);
 
-  const onUpdateLocation = (lnglat, currSpeed = 0) => {
-    if (allowLocationUpdate.current) {
-      setLivePoints(lnglat);
-      setLiveRoute({
-        currentSpeed: +(3.6 * currSpeed).toFixed(1),
-      });
-    }
+  const needPause = lnglat => {
+    if (!autoPause || !isFilledArr(lastCoordRef.current)) return false;
+    const res = measureDistanceM([lastCoordRef.current, lnglat]) <= LIVE_STATIONARY_FILTER_M;
+    res && allowLocationUpdate.current && onPressPause();
+    return res;
   };
 
-  const {start, stop} = useBackgroundLocation(onUpdateLocation);
+  const needContinue = () => {
+    autoPause && !allowLocationUpdate.current && onPressContinue();
+  };
 
-  const {profile} = useAuth();
-  const {directionsMode} = useDirectionsMode();
+  const onUpdateLocation = (lnglat, currSpeed = 0) => {
+    if (needPause(lnglat)) return;
 
-  const {currentSpeed, status, pace, distance, avgSpeed, movingTime} = liveRoute;
-  const isGo = status === GO;
-  const isStop = status === STOP;
-  const {onStartWatch, onContinueWatch, onTimeWatch, onResetWatch, onStopWatch, hhmmss} = useBackgroundStopWatch(isGo);
-
-  useOnIsDirectionsMode({mount: true});
-  useEffect(() => {
-    isStop && openModal();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const [aIt] = useState(makeIterator(LIVE_MODDING));
-  const [A, setA] = useState(aIt.next().value);
-
-  const {liveInfoContainer, liveInfoText, liveInfoSubText} = Styles(themeStyle);
-
-  const setStatus = _status => setLiveRoute({status: _status});
-  const setMovingTime = _movingTime => setLiveRoute({movingTime: _movingTime});
-
+    needContinue();
+    const speed = allowLocationUpdate.current ? formatSpeed(currSpeed) : LIVE_SPECS_DEFAULT.currentSpeed;
+    setCurrentSpeed(speed);
+    allowLocationUpdate.current && pushPoints([lnglat]);
+  };
+  const clearLiveWithRoute = () => {
+    liveWithRoute && setLiveWithRoute(false);
+  };
   const onVibro = () => {
     vibrateOnStart && Vibration.vibrate();
   };
 
-  useEffect(() => {
-    status === GO && start();
-    (status === PAUSE || status === STOP) && stop();
-    status === PAUSE && setLiveRoute({currentSpeed: LIVE_SPECS_DEFAULT.currSpeed});
-    allowLocationUpdate.current = status === GO ? true : false;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  const {start: startBgLocation, stop: stopBgLocation} = useBackgroundLocation(onUpdateLocation);
+
+  const {profile} = useAuth();
+  const {directionsMode} = useDirectionsMode();
+
+  const {points1} = liveRoute;
+  const {status} = specs;
+  const isGo = status === GO;
+  const isStop = status === STOP;
+  const {onStartWatch, onContinueWatch, onTimeWatch, onResetWatch, onStopWatch, hhmmss} = useBackgroundStopWatch(isGo);
 
   useEffect(() => {
-    setCSpeed(currentSpeed);
-  }, [currentSpeed]);
-
-  useEffect(() => {
-    setASpeed(avgSpeed);
-  }, [avgSpeed]);
+    allowLocationUpdate.current = isGo;
+  }, [isGo]);
 
   useEffect(() => {
     setMovingTime(hhmmss);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hhmmss]);
+  }, [hhmmss, setMovingTime]);
 
-  const onPressStart = () => {
-    onVibro();
-    onStartWatch();
-    const date = yyyymmddNow();
-    openModal();
-    setLiveRoute({id: randomID(), status: GO, date});
-  };
-  const onPressPause = () => {
-    onVibro();
-    onStopWatch();
-    setStatus(PAUSE);
-  };
-  const onPressContinue = () => {
-    onVibro();
-    onContinueWatch();
-    setStatus(GO);
-  };
+  useEffect(() => {
+    isFilledArr(points1) && (lastCoordRef.current = getLastItem(points1));
+  }, [points1]);
 
-  const onPressCancel = () => {
-    closeModal();
-    onResetWatch();
-    setStatus(STOP);
-    setDefaultLiveRoute();
-  };
+  useOnWatchLivePoints({mount: true, unmount: false});
+  useOnIsDirectionsMode({mount: true});
+  useOnShowMapIcons({mount: true});
+  useOnLiveWithRoute({unmount: false});
 
-  const onPressStop = async () => {
-    onVibro();
-    const totalTime = onTimeWatch();
-    const {currentSpeed, status, distance, ...rest} = liveRoute;
-    const _distance = Number(distance);
-    const activity = {...rest, distance: _distance, totalTime, directionsMode};
-    saveActivity({payload: {activity, userId: profile.userId}})
+  const onSaveActivity = payload => {
+    saveActivity({payload})
       .then(res => {
         const {success, reason} = res;
         Toast.show(success ? 'Saved' : reason);
@@ -133,71 +124,87 @@ const LiveMode = ({themeStyle, closeModal, openModal, saveActivity}) => {
       });
   };
 
-  const routeModeCall = type =>
-    ({
-      pace: pace || LIVE_SPECS_DEFAULT[type],
-      distance: distance || LIVE_SPECS_DEFAULT[type],
-      avgSpeed: aSpeed || LIVE_SPECS_DEFAULT[type],
-      time: movingTime,
-      currSpeed: cSpeeds || LIVE_SPECS_DEFAULT.currSpeed,
-    }[type]);
+  useEffect(() => {
+    isStop ? closeModal() : openModal();
+  }, [closeModal, isStop, openModal]);
 
-  const StopButton = <Btn {...btnStartStyles} title={"Let's go!"} onPress={onPressStart} />;
-  const GoButton = <Btn {...btnPauseStyles} title={'Pause'} onLongPress={onPressStop} onPress={onPressPause} />;
-  const PauseButton = (
-    <Btn {...btnContinueStyles} title={'Continue'} onLongPress={onPressStop} onPress={onPressContinue} />
-  );
+  const needTimer = timerOnStart > 0;
 
-  const appModeCall = mode =>
+  function preOnPressStart() {
+    setInitTimer({
+      secs: timerOnStart,
+      onFinish: onPressStart,
+    });
+    onShowTimer();
+  }
+  const postOnPressStart = () => {
+    setStatus(GO);
+    startBgLocation();
+    onStartWatch();
+    onVibro();
+    setLiveRoute({id: randomID(), date: yyyymmddNow()});
+  };
+
+  function onPressStart() {
+    openModal();
+    setTimeout(postOnPressStart, 300);
+  }
+  function onPressPause() {
+    onStopWatch();
+    setStatus(PAUSE);
+    onVibro();
+  }
+  function onPressContinue() {
+    onContinueWatch();
+    setStatus(GO);
+    onVibro();
+  }
+  const postOnPressCancel = () => {
+    onResetWatch();
+    setStatus(STOP);
+    setDefaultLiveRoute();
+    clearLiveWithRoute();
+  };
+  const onPressCancel = () => {
+    closeModal();
+    postOnPressCancel();
+  };
+  const onRequestStop = () => {
+    setInitConfirm({
+      text: FINISH_LIVE_ROUTE_CONFIRM,
+      onNo: onHideConfirm,
+      onYes: onPressStop,
+    });
+    onShowConfirm();
+  };
+
+  function onPressStop() {
+    stopBgLocation();
+    const totalTime = onTimeWatch();
+    const {movingTime} = specs;
+    const activity = {...liveRoute, totalTime, movingTime, directionsMode};
+    onVibro();
+    onSaveActivity({activity, userId: profile.userId});
+  }
+
+  const statusBtnCall = mode =>
     ({
-      [STOP]: StopButton,
-      [GO]: GoButton,
-      [PAUSE]: PauseButton,
+      [STOP]: <Btn {...btnStartStyles} title={"Let's go!"} onPress={needTimer ? preOnPressStart : onPressStart} />,
+      [GO]: <Btn {...btnPauseStyles} title={'Pause'} onLongPress={onRequestStop} onPress={onPressPause} />,
+      [PAUSE]: <Btn {...btnContinueStyles} title={'Continue'} onLongPress={onRequestStop} onPress={onPressContinue} />,
     }[mode]);
 
-  const CurrentSpeed = (
-    <Column alignItems={'flex-start'}>
-      <LiveInfo
-        containerStyle={liveInfoContainer}
-        textStyle={liveInfoText}
-        subTextStyle={liveInfoSubText}
-        title={`${routeModeCall('currSpeed')} km/h`}
-        subTitle={'Current speed'}
-        onPress={() => {}}
-      />
-    </Column>
+  const ActionButton = (
+    <Row {...mt10}>
+      <Column alignItems={'center'}>{statusBtnCall(status)}</Column>
+    </Row>
   );
-
-  const LiveProps = (
-    <Column alignItems={'flex-end'}>
-      <LiveInfo
-        containerStyle={liveInfoContainer}
-        textStyle={liveInfoText}
-        subTextStyle={liveInfoSubText}
-        title={`${routeModeCall(A.type)}${A.title}`}
-        subTitle={A.subTitle}
-        onPress={() => setA(aIt.next().value)}
-      />
-    </Column>
-  );
-
-  const Button = appModeCall(status);
   return (
-    <Fragment>
-      {status !== STOP && (
-        <Row {...mt10}>
-          {CurrentSpeed}
-          {LiveProps}
-        </Row>
-      )}
-      <Row {...mt10}>
-        <Column alignItems={'center'}>{Button}</Column>
-      </Row>
-    </Fragment>
+    <>
+      {status !== STOP && <LiveProps />}
+      {ActionButton}
+    </>
   );
 };
 
-const mapDispatchToProps = {
-  saveActivity: _saveActivity,
-};
-export default WithActions(mapDispatchToProps)(observer(LiveMode));
+export default observer(LiveMode);

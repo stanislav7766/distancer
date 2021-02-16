@@ -1,8 +1,14 @@
 import React from 'react';
-import {SignGroup} from '../settings-group';
+import {SignGroup} from '~/componets/settings-group';
+import {useNavigation} from '~/stores/navigation';
 
-const NotAuthorized = ({navigator}) => {
-  const SignGroupSettings = <SignGroup navigator={navigator} />;
+const NotAuthorized = () => {
+  const {pushScreen} = useNavigation();
+
+  const goToAuthorization = type => {
+    pushScreen({screenId: 'Authorization', screenProps: {type}});
+  };
+  const SignGroupSettings = <SignGroup goToAuthorization={goToAuthorization} />;
 
   return <>{SignGroupSettings}</>;
 };

@@ -1,7 +1,7 @@
 import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
-import {THEMES} from '../../constants/constants';
-import {ThemeStyle} from '../../constants/styles';
+import {THEMES} from '~/constants/constants';
+import {ThemeStyle} from '~/constants/styles';
 
 export class ThemeStore {
   constructor() {

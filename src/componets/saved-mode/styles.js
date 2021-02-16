@@ -1,4 +1,4 @@
-export {Row, Column, mt10} from '../../constants/styles';
+export {Row, Column, mt10} from '~/constants/styles';
 
 export const Styles = themeStyle => {
   const styleItem = {
@@ -14,7 +14,7 @@ export const Styles = themeStyle => {
 
   const styleSection = {
     color: themeStyle.textColorSecondary,
-    fontSize: 18,
+    fontSize: 20,
     textAlign: 'center',
   };
 
