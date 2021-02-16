@@ -14,7 +14,7 @@ const MAP_SETTINGS_PATH = `${RNFS.DocumentDirectoryPath}/map_settings${EXT_JSON}
 const ACTIVITY_SETTINGS_PATH = `${RNFS.DocumentDirectoryPath}/activity_settings${EXT_JSON}`;
 const ROUTE_SETTINGS_PATH = `${RNFS.DocumentDirectoryPath}/route_settings${EXT_JSON}`;
 
-const ROUTES_PATH = `${RNFS.DocumentDirectoryPath}/routes${EXT_JSON}`;
+const ROUTES_PATH = `${RNFS.DocumentDirectoryPath}/routes`;
 
 const ACTIVITIES_WALKING_PATH = `${RNFS.DocumentDirectoryPath}/activities/walking`;
 const ACTIVITIES_CYCLING_PATH = `${RNFS.DocumentDirectoryPath}/activities/cycling`;
@@ -92,11 +92,14 @@ const _readFileParsed = filePath =>
       .catch(err => reject(err));
   });
 
-export const readRoutes = () =>
+export const readRoutes = userId =>
   new Promise(async (resolve, reject) => {
     try {
-      const data = await _readFile(ROUTES_PATH);
-      resolve(JSON.parse(data));
+      const folderPath = `${ROUTES_PATH}/${userId}`;
+      const exist = await _exists(folderPath);
+      !exist && (await _mkdir(folderPath));
+      const data = await _readDir(folderPath);
+      resolve(data);
     } catch (error) {
       reject(error);
     }
@@ -138,11 +141,14 @@ export const writeSettings = (obj, type) =>
     }
   });
 
-export const writeRoutes = arrRoutes =>
+export const writeRoutes = (userId, id, data) =>
   new Promise(async (resolve, reject) => {
     try {
-      const deleted = await _deleteFile(ROUTES_PATH);
-      const written = deleted && (await _writeFile(ROUTES_PATH, JSON.stringify(arrRoutes)));
+      const folderPath = `${ROUTES_PATH}/${userId}`;
+      const filePath = `${folderPath}/${id}${EXT_JSON}`;
+      const exist = await _exists(folderPath);
+      !exist && (await _mkdir(folderPath));
+      const written = await _writeFile(filePath, JSON.stringify(data));
       resolve(written);
     } catch (err) {
       reject(err);
@@ -171,15 +177,25 @@ export const removeActivity = (direction, userId, id) =>
       reject(err);
     }
   });
+export const removeRoute = (userId, id) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const path = `${ROUTES_PATH}/${userId}/${id}${EXT_JSON}`;
+      const removed = await _deleteFile(path);
+      resolve(removed);
+    } catch (err) {
+      reject(err);
+    }
+  });
 
 export const initialLoad = () =>
   Promise.all([
     _mkdir(ACTIVITIES_DRIVING_PATH),
     _mkdir(ACTIVITIES_WALKING_PATH),
     _mkdir(ACTIVITIES_CYCLING_PATH),
+    _mkdir(ROUTES_PATH),
     _writeFile(APP_SETTINGS_PATH, JSON.stringify(DEFAULT_APP_SETTINGS)),
     _writeFile(MAP_SETTINGS_PATH, JSON.stringify(DEFAULT_MAP_SETTINGS)),
     _writeFile(ACTIVITY_SETTINGS_PATH, JSON.stringify(DEFAULT_ACTIVITY_SETTINGS)),
     _writeFile(ROUTE_SETTINGS_PATH, JSON.stringify(DEFAULT_ROUTE_SETTINGS)),
-    _writeFile(ROUTES_PATH, JSON.stringify([])),
   ]);

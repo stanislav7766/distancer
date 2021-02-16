@@ -27,6 +27,7 @@ import {useMap} from '~/stores/map';
 import {useCurrentRoute} from '~/stores/current-route';
 import {useAppMode} from '~/stores/app-mode';
 import {observer} from 'mobx-react-lite';
+import {useAuth} from '~/stores/auth';
 
 const {WALKING} = DIRECTIONS_MODE;
 
@@ -39,6 +40,7 @@ const DrawMode = ({themeStyle}) => {
   const {directionsMode} = useDirectionsMode();
   const {moveCamera} = useLocationPosition(cameraRef);
   const {points, distance} = currentRoute;
+  const {profile} = useAuth();
 
   const {arrowIconDims, dragIconDims, stylesTextKM} = Styles(themeStyle);
 
@@ -76,17 +78,23 @@ const DrawMode = ({themeStyle}) => {
     setDragMode(!dragMode);
   };
 
+  const onSaveRoute = payload => {
+    saveRoute({payload})
+      .then(res => {
+        const {success, reason} = res;
+        success && onPressCancel();
+        Toast.show(success ? 'Saved' : reason);
+      })
+      .catch(_ => {
+        Toast.show(ERROR_OCCURRED);
+      });
+  };
+
   const onPressSave = () => {
-    distance > 0 &&
-      saveRoute({payload: {route: {...currentRoute, directionsMode, id: randomID()}}})
-        .then(res => {
-          const {success, reason} = res;
-          success && onPressCancel();
-          Toast.show(success ? 'Saved' : reason);
-        })
-        .catch(_ => {
-          Toast.show(ERROR_OCCURRED);
-        });
+    if (distance <= 0) return;
+
+    const payload = {userId: profile.userId, route: {...currentRoute, directionsMode, id: randomID()}};
+    onSaveRoute(payload);
   };
 
   return (

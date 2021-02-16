@@ -7,12 +7,14 @@ import {Touchable} from '~/componets/touchable';
 import {FormGroup, GroupText} from '~/componets/form-group';
 import {GET_SCREEN_PICKER_ITEMS} from '~/constants/constants';
 import {useTheme} from '~/stores/theme';
+import {useAuth} from '~/stores/auth';
 import {observer} from 'mobx-react-lite';
 
 const GroupApp = () => {
   const {themeStyle} = useTheme();
   const {defaultScreen, setDefaultScreen} = useAppSettings();
   const {setInit, onShowPicker} = usePicker();
+  const {authorized} = useAuth();
 
   const [ThemeSwith] = useSwitchTheme();
 
@@ -35,12 +37,12 @@ const GroupApp = () => {
 
   const DefaultScreenPicker = <Touchable Child={DefaultScreenValue} onPress={onSelectDefaultScreen} />;
 
-  const appSettingsItems = [
-    {Left: ThemeText, Right: ThemeSwith},
-    {Left: DefaultScreenText, Right: DefaultScreenPicker},
-  ];
+  const authItems = authorized ? [{Left: DefaultScreenText, Right: DefaultScreenPicker}] : [];
+  const sharedItems = [{Left: ThemeText, Right: ThemeSwith}];
 
-  const AppSettingsGroup = <FormGroup items={appSettingsItems} themeStyle={themeStyle} title="App settings" />;
+  const AppSettingsGroup = (
+    <FormGroup items={[...sharedItems, ...authItems]} themeStyle={themeStyle} title="App settings" />
+  );
 
   return <>{AppSettingsGroup}</>;
 };

@@ -28,6 +28,8 @@ export const APP_MODE = {
   SAVED_MODE: 'Saved',
 };
 
+export const SHARED_APP_MODES = ['View', 'Menu'];
+
 export const MODAL_HEIGHTS = {
   LIVE_HEIGHT: 70,
   LIVE_EXP_HEIGHT: 180,

@@ -24,12 +24,12 @@ const {LIVE_MODE} = APP_MODE;
 const Route = ({themeStyle, goToMain}) => {
   const {setDefaultRoute, currentRoute} = useCurrentRoute();
   const {distance, points, directionsMode, id: routeId} = currentRoute;
-  const {setDefaultRoutes, routes, removeById} = useRoutes();
+  const {setDefaultRoutes, removeById} = useRoutes();
 
   const {setAppMode, setLiveWithRoute} = useAppMode();
   const {zoomLevel, cameraRef} = useMap();
   const {moveCamera} = useLocationPosition(cameraRef);
-  const {authorized} = useAuth();
+  const {profile} = useAuth();
   const {liveIconDims} = Styles(themeStyle);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const Route = ({themeStyle, goToMain}) => {
   };
 
   const onPressDelete = () => {
-    const payload = {routeId, routes};
+    const payload = {routeId, userId: profile.userId};
     deleteRoute({payload})
       .then(res => {
         const {success, reason} = res;
@@ -87,9 +87,7 @@ const Route = ({themeStyle, goToMain}) => {
               <SelectDirection mode={directionsMode} color={ACCENT_BLUE} />
             </Column>
             <Column flex={0.3} alignItems={'flex-end'}>
-              {authorized && (
-                <RoundedIcon style={liveIconDims} IconComponent={IconMarker} onPress={onStartLiveWithRoute} />
-              )}
+              <RoundedIcon style={liveIconDims} IconComponent={IconMarker} onPress={onStartLiveWithRoute} />
             </Column>
           </Row>
         </Column>

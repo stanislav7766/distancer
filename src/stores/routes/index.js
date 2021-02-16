@@ -16,7 +16,7 @@ export class RoutesStore {
   removeById = id => {
     const index = findIndexByKey(this.routes, 'id', id);
     if (index < 0) return;
-    this.routes = filterByIndex(this.routes);
+    this.routes = filterByIndex(this.routes, index);
   };
   setDefaultRoutes = () => {
     this.routes = DEFAULT_ROUTES;

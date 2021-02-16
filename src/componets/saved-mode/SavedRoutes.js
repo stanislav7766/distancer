@@ -12,12 +12,14 @@ import {useOnIsDirectionsMode} from '~/hooks/use-on-effect';
 import {useCurrentRoute} from '~/stores/current-route';
 import {useRoutes} from '~/stores/routes';
 import {observer} from 'mobx-react-lite';
+import {useAuth} from '~/stores/auth';
 
 const SavedRoutes = ({themeStyle, goToRoute}) => {
   const {setLoading, isLoading} = useSpinner({position: 'top'});
   const {setCurrentRoute} = useCurrentRoute();
   const {routes, setRoutes} = useRoutes();
   const [mappedRoutes, setMappedRoutes] = useState([]);
+  const {profile} = useAuth();
 
   useOnIsDirectionsMode({mount: false});
 
@@ -27,7 +29,7 @@ const SavedRoutes = ({themeStyle, goToRoute}) => {
 
   const onRefresh = useCallback(() => {
     setLoading(true);
-    getRoutes()
+    getRoutes({payload: {userId: profile.userId}})
       .then(res => {
         const {success, reason, data} = res;
         success ? setRoutes(data.routes) : Toast.show(reason);
@@ -38,7 +40,7 @@ const SavedRoutes = ({themeStyle, goToRoute}) => {
       .finally(_ => {
         setLoading(false);
       });
-  }, [setLoading, setRoutes]);
+  }, [setLoading, setRoutes, profile.userId]);
 
   useEffect(() => {
     const interactionPromise = InteractionManager.runAfterInteractions(() => onRefresh());

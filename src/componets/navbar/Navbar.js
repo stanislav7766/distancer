@@ -9,7 +9,7 @@ import {getSaved} from '~/assets/svg-icons/saved';
 import {getMenu} from '~/assets/svg-icons/menu';
 import {getDraw} from '~/assets/svg-icons/draw';
 import {getMarker} from '~/assets/svg-icons/marker';
-import {APP_MODE, LIVE_TYPES, PLEASE_FINISH_ACTIVITY} from '~/constants/constants';
+import {APP_MODE, LIVE_TYPES, PLEASE_FINISH_ACTIVITY, SHARED_APP_MODES} from '~/constants/constants';
 import Toast from 'react-native-simple-toast';
 import NavbarIcon from './NavbarIcon';
 import {observer} from 'mobx-react-lite';
@@ -37,7 +37,7 @@ const Navbar = () => {
   };
 
   const NavbarItems = Object.keys(navbarItems).map(mode => {
-    if (APP_MODE[mode] === LIVE_MODE && !authorized) return null;
+    if (!authorized && !SHARED_APP_MODES.includes(APP_MODE[mode])) return null;
 
     const fill = appMode === APP_MODE[mode] ? themeStyle.accentColor : themeStyle.textColorSecondary;
     const onPress = onPressItem.bind(null, APP_MODE[mode]);
