@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTheme} from '~/stores/theme';
 import {useAuth} from '~/stores/auth';
 import {useAppMode} from '~/stores/app-mode';
@@ -9,7 +9,7 @@ import {getSaved} from '~/assets/svg-icons/saved';
 import {getMenu} from '~/assets/svg-icons/menu';
 import {getDraw} from '~/assets/svg-icons/draw';
 import {getMarker} from '~/assets/svg-icons/marker';
-import {APP_MODE, LIVE_TYPES, PLEASE_FINISH_ACTIVITY, SHARED_APP_MODES} from '~/constants/constants';
+import {APP_MODE, LIVE_TYPES, PLEASE_FINISH_ACTIVITY} from '~/constants/constants';
 import Toast from 'react-native-simple-toast';
 import NavbarIcon from './NavbarIcon';
 import {observer} from 'mobx-react-lite';
@@ -19,11 +19,16 @@ const {STOP} = LIVE_TYPES;
 const {VIEW_MODE, DRAW_MODE, SAVED_MODE, MENU_MODE, LIVE_MODE} = APP_MODE;
 
 const Navbar = () => {
+  const [navbarItems, setNavbarItems] = useState(guestItems);
   const {themeStyle} = useTheme();
   const {specs} = useLiveRoute();
   const {appMode, setAppMode} = useAppMode();
   const {authorized} = useAuth();
   const {status} = specs;
+
+  useEffect(() => {
+    setNavbarItems(authorized ? authedItems : guestItems);
+  }, [authorized]);
 
   const toastFinishLive = () => {
     Toast.show(PLEASE_FINISH_ACTIVITY);
@@ -37,8 +42,6 @@ const Navbar = () => {
   };
 
   const NavbarItems = Object.keys(navbarItems).map(mode => {
-    if (!authorized && !SHARED_APP_MODES.includes(APP_MODE[mode])) return null;
-
     const fill = appMode === APP_MODE[mode] ? themeStyle.accentColor : themeStyle.textColorSecondary;
     const onPress = onPressItem.bind(null, APP_MODE[mode]);
     return <Column key={randomID()}>{navbarItems[mode](fill, onPress)}</Column>;
@@ -52,12 +55,17 @@ const Navbar = () => {
 };
 export default observer(Navbar);
 
-const navbarItems = {
+const authedItems = {
   LIVE_MODE: (fill, onPress) => <NavbarIcon getXml={getMarker} fillAccent={fill} onPress={onPress} title={LIVE_MODE} />,
   VIEW_MODE: (fill, onPress) => <NavbarIcon getXml={getView} fillAccent={fill} onPress={onPress} title={VIEW_MODE} />,
   DRAW_MODE: (fill, onPress) => <NavbarIcon getXml={getDraw} fillAccent={fill} onPress={onPress} title={DRAW_MODE} />,
   SAVED_MODE: (fill, onPress) => (
     <NavbarIcon getXml={getSaved} fillAccent={fill} onPress={onPress} title={SAVED_MODE} />
   ),
+  MENU_MODE: (fill, onPress) => <NavbarIcon getXml={getMenu} fillAccent={fill} onPress={onPress} title={MENU_MODE} />,
+};
+
+const guestItems = {
+  VIEW_MODE: (fill, onPress) => <NavbarIcon getXml={getView} fillAccent={fill} onPress={onPress} title={VIEW_MODE} />,
   MENU_MODE: (fill, onPress) => <NavbarIcon getXml={getMenu} fillAccent={fill} onPress={onPress} title={MENU_MODE} />,
 };
