@@ -31,6 +31,10 @@ export class NavigationStore {
   popToMainScreen = ({transitionProps = DEFAULT_TRANSITION_PROPS} = DEFAULT_POP) => {
     this._validPopToMain({transitionProps}) && this.navigation.popTo(this.navigation.stack[0].id, transitionProps);
   };
+  resetScreen = ({screenId = '', screenProps = {}, transitionProps = DEFAULT_TRANSITION_PROPS} = DEFAULT_PUSH) => {
+    this._validPush({transitionProps, screenId, screenProps}) &&
+      this.navigation.reset(screenId, screenProps, transitionProps);
+  };
   popScreen = ({transitionProps = DEFAULT_TRANSITION_PROPS} = DEFAULT_POP) => {
     this._validPop({transitionProps}) && this.navigation.pop(transitionProps);
   };

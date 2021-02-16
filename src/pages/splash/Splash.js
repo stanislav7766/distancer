@@ -21,11 +21,11 @@ const logoParams = {
 };
 
 const Splash = () => {
-  const {pushScreen} = useNavigation();
+  const {resetScreen} = useNavigation();
 
   const toLanding = useCallback(() => {
-    pushScreen({screenId: 'Landing'});
-  }, [pushScreen]);
+    resetScreen({screenId: 'Landing', transitionProps: {animation: 'fade'}});
+  }, [resetScreen]);
 
   useCurrentUser(toLanding);
 
