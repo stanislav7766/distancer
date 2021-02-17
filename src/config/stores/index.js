@@ -4,6 +4,7 @@ import {ActivitySettingsStore, ActivitySettingsContext} from '~/stores/activity-
 import {RouteSettingsStore, RouteSettingsContext} from '~/stores/route-settings';
 import {ModalPickerStore, ModalPickerContext} from '~/stores/modal-picker';
 import {ModalConfirmStore, ModalConfirmContext} from '~/stores/modal-confirm';
+import {ModalInputConfirmStore, ModalInputConfirmContext} from '~/stores/modal-input-confirm';
 import {ModalTimerStore, ModalTimerContext} from '~/stores/modal-timer';
 import {MappedRouteStore, MappedRouteContext} from '~/stores/mapped-route';
 import {DirectionsModeStore, DirectionsModeContext} from '~/stores/directions-mode';
@@ -24,6 +25,7 @@ const activitySettingsStore = new ActivitySettingsStore();
 const routeSettingsStore = new RouteSettingsStore();
 const modalPickerStore = new ModalPickerStore();
 const modalConfirmStore = new ModalConfirmStore();
+const modalInputConfirmStore = new ModalInputConfirmStore();
 const modalTimerStore = new ModalTimerStore();
 const mappedRouteStore = new MappedRouteStore();
 const directionsModeStore = new DirectionsModeStore();
@@ -42,6 +44,7 @@ const entities = [
   {Context: RouteSettingsContext, value: routeSettingsStore},
   {Context: ModalPickerContext, value: modalPickerStore},
   {Context: ModalConfirmContext, value: modalConfirmStore},
+  {Context: ModalInputConfirmContext, value: modalInputConfirmStore},
   {Context: ModalTimerContext, value: modalTimerStore},
   {Context: MappedRouteContext, value: mappedRouteStore},
   {Context: DirectionsModeContext, value: directionsModeStore},

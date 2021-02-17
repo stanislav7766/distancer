@@ -7,6 +7,9 @@ import {
   ERROR_NETWORK_FAILED,
   USER_NOT_FOUND,
   EMAIL_ALREADY_USED,
+  NEED_AUTHORIZATION,
+  NOT_CHANGE_EMAIL_G_ACCOUNT,
+  NEEED_RE_LOGIN,
 } from '~/constants/constants';
 import {isNetworkAvailable} from '~/utils/network-helpers';
 import {setItem, getItem, removeItem, updateItem} from '~/utils/fs/asyncStorage';
@@ -68,6 +71,9 @@ const _signInWithGoogleCredential = async () => {
 const _saveProfile = (uid, profile) =>
   Promise.all([firestore().collection('users').doc(uid).set(profile), setItem(uid, profile)]);
 
+const _updateProfile = (uid, profile) =>
+  Promise.all([firestore().collection('users').doc(uid).update(profile), updateItem(uid, profile)]);
+
 export const updateProfile = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -113,6 +119,48 @@ export const loginWithGoogle = () =>
     }
   });
 
+export const requestChangeEmail = ({payload}) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const isConnected = await isNetworkAvailable();
+      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+
+      const {authorized} = payload;
+      if (!authorized) return resolve({success: false, reason: NEED_AUTHORIZATION});
+
+      const signed = await isSignedGoogle();
+      if (signed) return resolve({success: false, reason: NOT_CHANGE_EMAIL_G_ACCOUNT});
+
+      return resolve({success: true});
+    } catch (err) {
+      reject(err.message);
+    }
+  });
+
+export const changeEmail = ({payload}) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const isConnected = await isNetworkAvailable();
+      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+
+      const {email} = payload;
+      const {isValid, reason} = validateData({email});
+      if (!isValid) return resolve({success: false, reason});
+
+      const user = auth().currentUser;
+      if (!user) return resolve({success: false, reason: NEEED_RE_LOGIN});
+
+      const {uid} = user;
+      await user.updateEmail(email);
+      await _updateProfile(uid, {email});
+
+      return resolve({success: true});
+    } catch (err) {
+      const {code} = err;
+      const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
+      reject(mes);
+    }
+  });
 export const registerWithGoogle = () =>
   new Promise(async (resolve, reject) => {
     try {

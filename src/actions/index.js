@@ -9,4 +9,6 @@ export {
   loginWithGoogle,
   updateProfile,
   deleteAccount,
+  changeEmail,
+  requestChangeEmail,
 } from './authActions';
