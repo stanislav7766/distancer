@@ -194,3 +194,4 @@ export const NOT_FOUND_CITY = 'City Not Found';
 export const NEED_AUTHORIZATION = 'Log in first';
 export const NEEED_RE_LOGIN = 'Please re-log in for changing email/password';
 export const NOT_CHANGE_EMAIL_G_ACCOUNT = 'Sorry, you can not change email with Google account';
+export const NOT_CHANGE_PASSWORD_G_ACCOUNT = 'Sorry, you can not change password with Google account';

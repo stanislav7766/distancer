@@ -11,4 +11,6 @@ export {
   deleteAccount,
   changeEmail,
   requestChangeEmail,
+  changePassword,
+  requestChangePassword,
 } from './authActions';

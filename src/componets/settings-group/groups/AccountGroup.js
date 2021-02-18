@@ -1,11 +1,16 @@
 import React from 'react';
 import {useModalConfirm as useConfirm} from '~/stores/modal-confirm';
 import {useModalInputConfirm as useInputConfirm} from '~/stores/modal-input-confirm';
-import {changeEmail, requestChangeEmail, deleteAccount} from '~/actions';
+import {changeEmail, requestChangeEmail, deleteAccount, requestChangePassword, changePassword} from '~/actions';
 import {FormGroup, GroupText} from '~/componets/form-group';
 import Toast from 'react-native-simple-toast';
 import {Touchable} from '~/componets/touchable';
-import {NO_CURRENT_USER, DELETE_ACCOUNT_CONFIRM, UPDATE_EMAIL_CONFIRM} from '~/constants/constants';
+import {
+  NO_CURRENT_USER,
+  DELETE_ACCOUNT_CONFIRM,
+  UPDATE_EMAIL_CONFIRM,
+  UPDATE_PASSWORD_CONFIRM,
+} from '~/constants/constants';
 import {observer} from 'mobx-react-lite';
 import {useTheme} from '~/stores/theme';
 import {useAuth} from '~/stores/auth';
@@ -54,8 +59,26 @@ const GroupAccount = ({loading}) => {
         Toast.show(err);
       });
   };
+
+  const onChangePassword = ({payload}) => {
+    changePassword({payload})
+      .then(({success, reason}) => {
+        if (!success) {
+          Toast.show(reason);
+          return;
+        }
+        Toast.show('Password updated');
+      })
+      .catch(err => {
+        Toast.show(err);
+      });
+  };
   const updateEmailConfirmed = email => {
     onChangeEmail({payload: {email}});
+  };
+
+  const updatePasswordConfirmed = password => {
+    onChangePassword({payload: {password}});
   };
 
   const onRequestChangeEmail = ({payload}) => {
@@ -82,10 +105,36 @@ const GroupAccount = ({loading}) => {
       });
   };
 
+  const onRequestChangePassword = ({payload}) => {
+    setLoading(true);
+    requestChangePassword({payload})
+      .then(({success, reason}) => {
+        if (!success) {
+          Toast.show(reason);
+          return;
+        }
+        onRequestInputConfirm({
+          headerText: UPDATE_PASSWORD_CONFIRM,
+          onYes: updatePasswordConfirmed,
+          input: {
+            placeholder: 'New Password',
+          },
+        });
+      })
+      .catch(err => {
+        Toast.show(err);
+      })
+      .finally(_ => {
+        setLoading(false);
+      });
+  };
+
   const onPressChangeEmail = () => {
     onRequestChangeEmail({payload: {authorized}});
   };
-  const onPressChangePassword = () => {};
+  const onPressChangePassword = () => {
+    onRequestChangePassword({payload: {authorized}});
+  };
   const onPressDeleteAccount = () => {
     if (isLoading) return;
 

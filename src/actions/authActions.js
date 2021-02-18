@@ -10,6 +10,7 @@ import {
   NEED_AUTHORIZATION,
   NOT_CHANGE_EMAIL_G_ACCOUNT,
   NEEED_RE_LOGIN,
+  NOT_CHANGE_PASSWORD_G_ACCOUNT,
 } from '~/constants/constants';
 import {isNetworkAvailable} from '~/utils/network-helpers';
 import {setItem, getItem, removeItem, updateItem} from '~/utils/fs/asyncStorage';
@@ -134,6 +135,47 @@ export const requestChangeEmail = ({payload}) =>
       return resolve({success: true});
     } catch (err) {
       reject(err.message);
+    }
+  });
+
+export const requestChangePassword = ({payload}) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const isConnected = await isNetworkAvailable();
+      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+
+      const {authorized} = payload;
+      if (!authorized) return resolve({success: false, reason: NEED_AUTHORIZATION});
+
+      const signed = await isSignedGoogle();
+      if (signed) return resolve({success: false, reason: NOT_CHANGE_PASSWORD_G_ACCOUNT});
+
+      return resolve({success: true});
+    } catch (err) {
+      reject(err.message);
+    }
+  });
+
+export const changePassword = ({payload}) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const isConnected = await isNetworkAvailable();
+      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+
+      const {password} = payload;
+      const {isValid, reason} = validateData({password});
+      if (!isValid) return resolve({success: false, reason});
+
+      const user = auth().currentUser;
+      if (!user) return resolve({success: false, reason: NEEED_RE_LOGIN});
+
+      await user.updatePassword(password);
+
+      return resolve({success: true});
+    } catch (err) {
+      const {code} = err;
+      const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
+      reject(mes);
     }
   });
 
