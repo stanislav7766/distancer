@@ -8,10 +8,9 @@ export const isEmpty = value =>
   (value instanceof Error && value.message === '');
 
 export const isNumber = text => !isNaN(text) && /^[-]?\d+$/.test(text);
-export const isEmail = email =>
-  /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-    email,
-  );
+
+export const isEmail = email => /^[a-z0-9_\.\+-]+@[a-z0-9-]+\.[a-z0-9-\.]+$/.test(email);
+
 export const isLength = (text, {min, max = Number.MAX_SAFE_INTEGER}) => text.length >= min && text.length <= max;
 
 export const isNumLength = (num, {min, max = Number.MAX_SAFE_INTEGER}) => num >= min && num <= max;
