@@ -23,6 +23,7 @@ export const isFilledObj = obj =>
   !!(obj instanceof Object && obj.constructor === Object && Object.keys(obj).length > 0);
 
 export const isExist = value => value !== undefined;
+export const isNull = value => value === null;
 
 export const isFunction = f => typeof f === 'function';
 
