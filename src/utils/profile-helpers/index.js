@@ -1,3 +1,4 @@
+import {PART_KEY_FILLED_PROFILE} from '~/constants/constants';
 import {isExist} from '../validation/helpers';
 
 export const mapForDBProfile = ({age, height, weight, ...profile}) => ({
@@ -13,3 +14,5 @@ export const mapForStoreProfile = ({age, height, weight, ...profile}) => ({
   weight: isExist(weight) ? `${weight}` : '',
   height: isExist(height) ? `${height}` : '',
 });
+
+export const getProfileFilledKey = userId => `${userId}${PART_KEY_FILLED_PROFILE}`;

@@ -14,3 +14,4 @@ export {
   changePassword,
   requestChangePassword,
 } from './authActions';
+export {checkProfileFilled, markProfileFilled} from './profileActions';

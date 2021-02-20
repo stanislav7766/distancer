@@ -6,7 +6,7 @@ import useSvgFactory from '~/hooks/use-svg-factory';
 import {getLeftArrow} from '~/assets/svg-icons/left-arrow';
 import {RoundedIcon} from '~/componets/rounded-icon';
 import {Row, Column, Styles, btnGoogleStyles, btnSignUpStyles, mt30, mt10, mb30} from './styles';
-import {registerUser, registerWithGoogle} from '~/actions';
+import {registerUser, registerWithGoogle, markProfileFilled} from '~/actions';
 import Toast from 'react-native-simple-toast';
 import {GoogleSignBtn} from '~/componets/google-sign-btn';
 import useSpinner from '~/componets/spinner/useSpinner';
@@ -28,12 +28,20 @@ const SignUp = ({themeStyle, goToProfile, goBack}) => {
       [type]: text,
     }));
 
+  const onMarkFilledProfile = ({payload}) => {
+    markProfileFilled({payload})
+      .then()
+      .catch(err => Toast.show(err));
+  };
+
   const _resultSignUp = ({success, reason, data}) => {
     if (!success) {
       Toast.show(reason);
       return;
     }
-    setProfile(data.user);
+    const {user} = data;
+    onMarkFilledProfile({payload: {userId: user.userId, filled: false}});
+    setProfile(user);
     setAuthorized(true);
     goToProfile();
   };

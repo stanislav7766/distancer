@@ -8,7 +8,7 @@ import {getLeftArrow} from '~/assets/svg-icons/left-arrow';
 import {Btn} from '~/componets/btn';
 import {Avatar} from '~/componets/avatar';
 import Toast from 'react-native-simple-toast';
-import {updateProfile} from '~/actions';
+import {markProfileFilled, updateProfile} from '~/actions';
 import ProfileInputs from './ProfileInputs';
 import ProfilePickers from './ProfilePickers';
 import {observer} from 'mobx-react-lite';
@@ -18,7 +18,7 @@ import {useNavigation} from '~/stores/navigation';
 
 const EditProfile = ({withNewUser = false}) => {
   const {isLoading, setLoading, SpinnerComponent} = useSpinner({position: 'bottom'});
-  const {popToMainScreen} = useNavigation();
+  const {resetScreen, popToMainScreen} = useNavigation();
   const [profile, setProfile] = useState({firstName: '', lastName: '', age: '', gender: '', height: '', weight: ''});
 
   const auth = useAuth();
@@ -32,6 +32,12 @@ const EditProfile = ({withNewUser = false}) => {
 
   const {arrowIconDims, headerStyle} = Styles(themeStyle);
 
+  const onMarkFilledProfile = ({payload}) => {
+    markProfileFilled({payload})
+      .then()
+      .catch(err => Toast.show(err));
+  };
+
   const onSubmitEditing = () => {
     if (isLoading) return;
 
@@ -44,6 +50,7 @@ const EditProfile = ({withNewUser = false}) => {
             return;
           }
           auth.setProfile(profile);
+          onMarkFilledProfile({payload: {filled: true, userId: auth.profile.userId}});
           goToMain();
         })
         .catch(err => Toast.show(err))
@@ -54,7 +61,7 @@ const EditProfile = ({withNewUser = false}) => {
   };
 
   const goToMain = () => {
-    popToMainScreen();
+    withNewUser ? resetScreen({screenId: 'Landing'}) : popToMainScreen();
   };
 
   const avatarSource = auth?.profile?.photoURL;

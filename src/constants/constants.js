@@ -190,8 +190,11 @@ export const NOT_IN_DRAG_MODE = 'Drag mode not active. Press drag button';
 export const SELECT_NEEDED_POINT = "Press on point that you'll drag";
 export const DRAG_POINT_NOW = 'Drag selected point now';
 export const FINISH_LIVE_ROUTE_CONFIRM = 'Are you sure you want to finish this activity?';
+export const PROFILE_FILLING_CONFIRM = 'Your profile is not fully completed.\n Do you want to fill it up?';
 export const NOT_FOUND_CITY = 'City Not Found';
 export const NEED_AUTHORIZATION = 'Log in first';
 export const NEEED_RE_LOGIN = 'Please re-log in for changing email/password';
 export const NOT_CHANGE_EMAIL_G_ACCOUNT = 'Sorry, you can not change email with Google account';
 export const NOT_CHANGE_PASSWORD_G_ACCOUNT = 'Sorry, you can not change password with Google account';
+
+export const PART_KEY_FILLED_PROFILE = '-filled-profile';

@@ -7,13 +7,13 @@ import {observer} from 'mobx-react-lite';
 
 const Authorization = ({type}) => {
   const {themeStyle} = useTheme();
-  const {pushScreen, popScreen} = useNavigation();
+  const {popScreen, resetScreen} = useNavigation();
 
   const goToMain = () => {
     popScreen();
   };
   const goToProfile = () => {
-    pushScreen({screenId: 'EditProfile', screenProps: {withNewUser: true}});
+    resetScreen({screenId: 'EditProfile', screenProps: {withNewUser: true}});
   };
 
   const signModeCall = mode =>
