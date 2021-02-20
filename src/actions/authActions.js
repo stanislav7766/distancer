@@ -310,8 +310,9 @@ export const deleteAccount = ({payload}) =>
       const {userId} = payload;
       const isSignedIn = await isSignedGoogle();
       isSignedIn && (await _signOutGoogle());
+      await auth().currentUser.delete();
+
       await Promise.all([
-        auth().currentUser.delete(),
         firestore().collection('users').doc(userId).delete(),
         deleteIfExist({directionsMode: 'walking', userId}),
         deleteIfExist({directionsMode: 'cycling', userId}),
