@@ -25,7 +25,6 @@ export const checkProfileFilled = ({payload}) =>
         await setItem(key, false);
         return resolve({success: true, reason: '', data: {filled: false}});
       }
-      console.log({filled});
       resolve({success: true, reason: '', data: {filled}});
     } catch (err) {
       reject(ERROR_OCCURRED);

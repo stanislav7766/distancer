@@ -320,7 +320,6 @@ export const deleteAccount = ({payload}) =>
       ]);
       resolve({success: true, reason: ''});
     } catch (err) {
-      console.log(err);
       const {code} = err;
       const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
       reject(mes);
