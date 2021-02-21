@@ -1,4 +1,5 @@
-import {useCallback, useEffect, useRef} from 'react';
+import {useCallback} from 'react';
+import {useMounted} from '../use-mounted';
 import {useModalConfirm as useConfirm} from '~/stores/modal-confirm';
 import {useAuth} from '~/stores/auth';
 import {useNavigation} from '~/stores/navigation';
@@ -7,8 +8,6 @@ import {checkProfileFilled} from '~/actions';
 import Toast from 'react-native-simple-toast';
 
 export const useRemindFillProfile = () => {
-  const mountedRef = useRef(false);
-
   const {pushScreen} = useNavigation();
   const {
     authorized,
@@ -51,12 +50,7 @@ export const useRemindFillProfile = () => {
       .catch(err => Toast.show(err));
   }, [authorized, goToEditProfile, onRequestConfirm, userId]);
 
-  useEffect(() => {
-    if (mountedRef.current) return;
-    mountedRef.current = true;
-
-    onCheckProfileFilled();
-  }, [onCheckProfileFilled]);
+  useMounted(onCheckProfileFilled);
 
   return null;
 };
