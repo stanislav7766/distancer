@@ -4,11 +4,13 @@ import {useNavigation} from '~/stores/navigation';
 import {getPages} from '~/config/pages';
 
 const useNavigator = () => {
-  const {setNavigation} = useNavigation();
+  const {setNavigation, onStackUpdate} = useNavigation();
 
   const {initial, pages} = getPages();
 
-  const RoleNavigator = <Navigator navigatorRef={setNavigation} screens={pages} initialStack={initial} />;
+  const RoleNavigator = (
+    <Navigator navigatorRef={setNavigation} onStackUpdate={onStackUpdate} screens={pages} initialStack={initial} />
+  );
 
   return [RoleNavigator];
 };

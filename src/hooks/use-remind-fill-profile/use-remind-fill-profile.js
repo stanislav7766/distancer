@@ -8,7 +8,7 @@ import {checkProfileFilled} from '~/actions';
 import Toast from 'react-native-simple-toast';
 
 export const useRemindFillProfile = () => {
-  const {pushScreen} = useNavigation();
+  const {pushScreen, currentScreenId} = useNavigation();
   const {authorized, profile} = useAuth();
 
   const {setInit: setInitConfirm, onShowConfirm, onHideConfirm} = useConfirm();
@@ -37,7 +37,7 @@ export const useRemindFillProfile = () => {
           Toast.show(reason);
           return;
         }
-        if (data.filled) return;
+        if (data.filled || currentScreenId !== 'Landing') return;
 
         onRequestConfirm({
           text: PROFILE_FILLING_CONFIRM,
@@ -45,7 +45,7 @@ export const useRemindFillProfile = () => {
         });
       })
       .catch(err => Toast.show(err));
-  }, [authorized, goToEditProfile, onRequestConfirm, profile]);
+  }, [authorized, currentScreenId, goToEditProfile, onRequestConfirm, profile]);
 
   useMounted(onCheckProfileFilled);
 

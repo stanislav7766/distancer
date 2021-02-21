@@ -20,23 +20,40 @@ export class NavigationStore {
   }
 
   navigation = null;
+  currentScreenId = '';
 
   setNavigation = navigation => {
     this.navigation = navigation;
   };
-  pushScreen = ({screenId = '', screenProps = {}, transitionProps = DEFAULT_TRANSITION_PROPS} = DEFAULT_PUSH) => {
+  onStackUpdate = (newStack, prevStack) => {
+    const len = newStack.length;
+    this.setCurrentScreenId(newStack[len - 1].screen);
+  };
+
+  setCurrentScreenId = screenId => {
+    const newScreenId = screenId ?? this.navigation.stack[this.navigation.stack.length - 1].screen;
+    if (newScreenId === this.currentScreenId) return;
+    this.currentScreenId = newScreenId;
+  };
+
+  pushScreen = async ({screenId = '', screenProps = {}, transitionProps = DEFAULT_TRANSITION_PROPS} = DEFAULT_PUSH) => {
     this._validPush({screenId, screenProps, transitionProps}) &&
-      this.navigation.push(screenId, screenProps, transitionProps);
+      (await this.navigation.push(screenId, screenProps, transitionProps));
   };
-  popToMainScreen = ({transitionProps = DEFAULT_TRANSITION_PROPS} = DEFAULT_POP) => {
-    this._validPopToMain({transitionProps}) && this.navigation.popTo(this.navigation.stack[0].id, transitionProps);
+  popToMainScreen = async ({transitionProps = DEFAULT_TRANSITION_PROPS} = DEFAULT_POP) => {
+    this._validPopToMain({transitionProps}) &&
+      (await this.navigation.popTo(this.navigation.stack[0].id, transitionProps));
   };
-  resetScreen = ({screenId = '', screenProps = {}, transitionProps = DEFAULT_TRANSITION_PROPS} = DEFAULT_PUSH) => {
+  resetScreen = async ({
+    screenId = '',
+    screenProps = {},
+    transitionProps = DEFAULT_TRANSITION_PROPS,
+  } = DEFAULT_PUSH) => {
     this._validPush({transitionProps, screenId, screenProps}) &&
-      this.navigation.reset(screenId, screenProps, transitionProps);
+      (await this.navigation.reset(screenId, screenProps, transitionProps));
   };
-  popScreen = ({transitionProps = DEFAULT_TRANSITION_PROPS} = DEFAULT_POP) => {
-    this._validPop({transitionProps}) && this.navigation.pop(transitionProps);
+  popScreen = async ({transitionProps = DEFAULT_TRANSITION_PROPS} = DEFAULT_POP) => {
+    this._validPop({transitionProps}) && (await this.navigation.pop(transitionProps));
   };
 
   _validPush = ({screenId, screenProps, transitionProps}) => {
