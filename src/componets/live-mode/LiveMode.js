@@ -10,7 +10,7 @@ import {
   LIVE_STATIONARY_FILTER_M,
   FINISH_LIVE_ROUTE_CONFIRM,
 } from '~/constants/constants';
-import {yyyymmddNow} from '~/utils/time-helpers';
+import {getTimestamp, yyyymmddNow} from '~/utils/time-helpers';
 import {
   useOnIsDirectionsMode,
   useOnLiveWithRoute,
@@ -142,7 +142,7 @@ const LiveMode = ({closeModal, openModal}) => {
     startBgLocation();
     onStartWatch();
     onVibro();
-    setLiveRoute({id: randomID(), date: yyyymmddNow()});
+    setLiveRoute({id: randomID(), date: yyyymmddNow(), timestamp: getTimestamp()});
   };
 
   function onPressStart() {

@@ -28,7 +28,7 @@ export const getRoutes = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const {userId} = payload;
-      const snaphot = await getRoutesColRef({userId}).get();
+      const snaphot = await getRoutesColRef({userId}).orderBy('timestamp', 'desc').get();
       const {docs} = snaphot;
       const routes =
         docs.length > 0

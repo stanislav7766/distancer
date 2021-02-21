@@ -27,3 +27,5 @@ export const hhmmssSum = (hhmmss1, hhmmss2) => {
   const ms2 = hhmmssToSec(hhmmss2) * 1000;
   return msTohhmmss(ms1 + ms2);
 };
+
+export const getTimestamp = () => Date.now();

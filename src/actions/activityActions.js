@@ -32,7 +32,7 @@ export const getActivities = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const {direction, userId} = payload;
-      const snaphot = await getActivitiesColRef({directionsMode: direction, userId}).get();
+      const snaphot = await getActivitiesColRef({directionsMode: direction, userId}).orderBy('timestamp', 'desc').get();
       const {docs} = snaphot;
       const activities =
         docs.length > 0

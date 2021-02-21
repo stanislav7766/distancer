@@ -1,6 +1,6 @@
 import {calcFromMonth} from './index';
 import {randomID} from '~/utils/random-id';
-import {mapMonth, sortByDate} from './helps';
+import {mapMonth} from './helps';
 import {isFilledArr, isFilledObj} from '../validation/helpers';
 
 const splitByMonth = arr =>
@@ -42,8 +42,7 @@ const mapSortedEntries = obj =>
 
 export const mapper = arr => {
   if (arr.length === 0) return [];
-  const sortedDate = sortByDate(arr);
-  const splitted = splitByMonth(sortedDate);
+  const splitted = splitByMonth(arr);
   const entries = mapSortedEntries(splitted);
   return splitByGroups(entries);
 };

@@ -28,6 +28,7 @@ import {useCurrentRoute} from '~/stores/current-route';
 import {useAppMode} from '~/stores/app-mode';
 import {observer} from 'mobx-react-lite';
 import {useAuth} from '~/stores/auth';
+import {getTimestamp} from '~/utils/time-helpers';
 
 const {WALKING} = DIRECTIONS_MODE;
 
@@ -93,7 +94,10 @@ const DrawMode = ({themeStyle}) => {
   const onPressSave = () => {
     if (distance <= 0) return;
 
-    const payload = {userId: profile.userId, route: {...currentRoute, directionsMode, id: randomID()}};
+    const payload = {
+      userId: profile.userId,
+      route: {...currentRoute, directionsMode, id: randomID(), timestamp: getTimestamp()},
+    };
     onSaveRoute(payload);
   };
 

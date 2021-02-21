@@ -120,12 +120,14 @@ export const DEFAULT_ROUTE = {
   distance: 0,
   id: '',
   directionsMode: '',
+  timestamp: 0,
   points: [],
 };
 export const DEFAULT_LIVE_ROUTE = {
   distance: 0,
   pace: '0\'0"',
   date: '',
+  timestamp: 0,
   movingTime: '00:00:00',
   totalTime: '00:00:00',
   avgSpeed: 0.0,
