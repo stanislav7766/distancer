@@ -36,24 +36,22 @@ const GroupUser = ({loading, goToEditProfile}) => {
 
     setLoading(true);
 
-    setTimeout(() => {
-      makeCancelable(logoutUser({payload: {userId: profile.userId}}), () => {
-        setLoading(false);
+    makeCancelable(logoutUser({payload: {userId: profile.userId}}), () => {
+      setLoading(false);
+    })
+      .then(({success, reason}) => {
+        if (!success) {
+          Toast.show(reason);
+          return;
+        }
+        setAuthorized(false);
       })
-        .then(({success, reason}) => {
-          if (!success) {
-            Toast.show(reason);
-            return;
-          }
-          setAuthorized(false);
-        })
-        .catch(err => {
-          err === NO_CURRENT_USER ? setAuthorized(false) : Toast.show(err);
-        })
-        .finally(_ => {
-          setLoading(false);
-        });
-    }, 200);
+      .catch(err => {
+        err === NO_CURRENT_USER ? setAuthorized(false) : Toast.show(err);
+      })
+      .finally(_ => {
+        setLoading(false);
+      });
   };
 
   const onRequestLogout = () => {

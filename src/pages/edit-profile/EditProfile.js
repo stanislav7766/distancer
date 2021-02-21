@@ -15,8 +15,11 @@ import {observer} from 'mobx-react-lite';
 import {useTheme} from '~/stores/theme';
 import {useAuth} from '~/stores/auth';
 import {useNavigation} from '~/stores/navigation';
+import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
 
 const EditProfile = ({withNewUser = false}) => {
+  const makeCancelable = useCancelablePromise();
+
   const {isLoading, setLoading, SpinnerComponent} = useSpinner({position: 'bottom'});
   const {resetScreen, popToMainScreen} = useNavigation();
   const [profile, setProfile] = useState({firstName: '', lastName: '', age: '', gender: '', height: '', weight: ''});
@@ -25,7 +28,7 @@ const EditProfile = ({withNewUser = false}) => {
 
   useEffect(() => {
     setProfile(auth.profile);
-  }, [auth]);
+  }, [auth.profile]);
 
   const {themeStyle} = useTheme();
   const IconLeftArrow = useSvgFactory(getLeftArrow, {width: 30, height: 33, fillAccent: themeStyle.accentColor});
@@ -42,22 +45,22 @@ const EditProfile = ({withNewUser = false}) => {
     if (isLoading) return;
 
     setLoading(true);
-    setTimeout(() => {
-      updateProfile({payload: {profile}})
-        .then(({success, reason}) => {
-          if (!success) {
-            Toast.show(reason);
-            return;
-          }
-          auth.setProfile(profile);
-          onMarkFilledProfile({payload: {filled: true, userId: auth.profile.userId}});
-          goToMain();
-        })
-        .catch(err => Toast.show(err))
-        .finally(_ => {
-          setLoading(false);
-        });
-    }, 200);
+    makeCancelable(updateProfile({payload: {profile}}), () => {
+      setLoading(false);
+    })
+      .then(({success, reason}) => {
+        if (!success) {
+          Toast.show(reason);
+          return;
+        }
+        auth.setProfile(profile);
+        onMarkFilledProfile({payload: {filled: true, userId: auth.profile.userId}});
+        goToMain();
+      })
+      .catch(err => Toast.show(err))
+      .finally(_ => {
+        setLoading(false);
+      });
   };
 
   const goToMain = () => {

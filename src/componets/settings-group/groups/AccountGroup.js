@@ -14,8 +14,11 @@ import {
 import {observer} from 'mobx-react-lite';
 import {useTheme} from '~/stores/theme';
 import {useAuth} from '~/stores/auth';
+import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
 
 const GroupAccount = ({loading}) => {
+  const makeCancelable = useCancelablePromise();
+
   const {themeStyle} = useTheme();
   const {setLoading, isLoading} = loading;
   const {profile, setAuthorized, authorized} = useAuth();
@@ -83,7 +86,9 @@ const GroupAccount = ({loading}) => {
 
   const onRequestChangeEmail = ({payload}) => {
     setLoading(true);
-    requestChangeEmail({payload})
+    makeCancelable(requestChangeEmail({payload}), () => {
+      setLoading(false);
+    })
       .then(({success, reason}) => {
         if (!success) {
           Toast.show(reason);
@@ -107,7 +112,9 @@ const GroupAccount = ({loading}) => {
 
   const onRequestChangePassword = ({payload}) => {
     setLoading(true);
-    requestChangePassword({payload})
+    makeCancelable(requestChangePassword({payload}), () => {
+      setLoading(false);
+    })
       .then(({success, reason}) => {
         if (!success) {
           Toast.show(reason);
@@ -139,22 +146,22 @@ const GroupAccount = ({loading}) => {
     if (isLoading) return;
 
     setLoading(true);
-    setTimeout(() => {
-      deleteAccount({payload: {userId: profile.userId}})
-        .then(({success, reason}) => {
-          if (!success) {
-            Toast.show(reason);
-            return;
-          }
-          setAuthorized(false);
-        })
-        .catch(err => {
-          err === NO_CURRENT_USER ? setAuthorized(false) : Toast.show(err);
-        })
-        .finally(_ => {
-          setLoading(false);
-        });
-    }, 200);
+    makeCancelable(deleteAccount({payload: {userId: profile.userId}}), () => {
+      setLoading(false);
+    })
+      .then(({success, reason}) => {
+        if (!success) {
+          Toast.show(reason);
+          return;
+        }
+        setAuthorized(false);
+      })
+      .catch(err => {
+        err === NO_CURRENT_USER ? setAuthorized(false) : Toast.show(err);
+      })
+      .finally(_ => {
+        setLoading(false);
+      });
   };
 
   const ChangeEmailText = <GroupText title="Change Email" themeStyle={themeStyle} />;
