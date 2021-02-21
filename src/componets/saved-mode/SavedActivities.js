@@ -1,9 +1,9 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {InteractionManager} from 'react-native';
 import {VirtualList} from '~/componets/virtualized-list';
 import Toast from 'react-native-simple-toast';
 import {ERROR_OCCURRED, DIRECTIONS_MODE} from '~/constants/constants';
 import {useOnDirectionsMode, useOnIsDirectionsMode} from '~/hooks/use-on-effect';
+import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
 import {getActivities} from '~/actions';
 import useSpinner from '~/componets/spinner/useSpinner';
 import {mapper} from '~/utils/activity-helpers/mapper';
@@ -13,6 +13,7 @@ import {useAuth} from '~/stores/auth';
 import {useDirectionsMode} from '~/stores/directions-mode';
 import {useLiveRoute} from '~/stores/live-route';
 import {useActivities} from '~/stores/activities';
+import {useRunAfterInteractions} from '~/hooks/use-interaction-manager';
 
 const {WALKING} = DIRECTIONS_MODE;
 
@@ -20,6 +21,7 @@ const SavedActivities = ({themeStyle, goToRoute}) => {
   const mounted = useRef(false);
   const [preparedData, setPrepared] = useState([]);
   const {setLoading, isLoading} = useSpinner({position: 'top'});
+  const makeCancelable = useCancelablePromise();
 
   const {profile} = useAuth();
   const {directionsMode, setDirectionsMode} = useDirectionsMode();
@@ -30,7 +32,9 @@ const SavedActivities = ({themeStyle, goToRoute}) => {
   const onRefresh = useCallback(() => {
     setLoading(true);
     const direction = localDirections.current || WALKING;
-    getActivities({payload: {direction, userId: profile.userId}})
+    makeCancelable(getActivities({payload: {direction, userId: profile.userId}}), () => {
+      setLoading(false);
+    })
       .then(res => {
         const {success, reason, data} = res;
         if (!success) {
@@ -47,27 +51,25 @@ const SavedActivities = ({themeStyle, goToRoute}) => {
       .finally(_ => {
         setLoading(false);
       });
-  }, [profile.userId, setActivities, setDefaultActivities, setLoading]);
+  }, [makeCancelable, profile.userId, setActivities, setDefaultActivities, setLoading]);
 
   useOnIsDirectionsMode({mount: true});
   useOnDirectionsMode({mount: WALKING});
 
-  useEffect(() => {
-    const interactionPromise = InteractionManager.runAfterInteractions(() => {
+  const onRefreshAgain = useRunAfterInteractions(
+    useCallback(() => {
       onRefresh();
       mounted.current = true;
-    });
-    return () => interactionPromise.cancel();
-  }, [onRefresh]);
+    }, [onRefresh]),
+  );
 
   useEffect(() => {
     if (localDirections.current === directionsMode) return;
     localDirections.current = directionsMode;
 
     if (!mounted.current) return;
-    const interactionPromise = InteractionManager.runAfterInteractions(() => onRefresh());
-    return () => interactionPromise.cancel();
-  }, [directionsMode, onRefresh]);
+    onRefreshAgain();
+  }, [directionsMode, onRefreshAgain]);
 
   useEffect(() => {
     setPrepared(mapper(activities));

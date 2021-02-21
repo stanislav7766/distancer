@@ -1,5 +1,4 @@
 import React, {useEffect, useCallback, useState} from 'react';
-import {InteractionManager} from 'react-native';
 import {VirtualList} from '~/componets/virtualized-list';
 import Toast from 'react-native-simple-toast';
 import {Item} from '~/componets/item';
@@ -8,6 +7,8 @@ import {Row, Styles, mt20, mb20} from './styles';
 import {ERROR_OCCURRED} from '~/constants/constants';
 import {getRoutes} from '~/actions';
 import useSpinner from '~/componets/spinner/useSpinner';
+import {useRunAfterInteractions} from '~/hooks/use-interaction-manager';
+import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
 import {useOnIsDirectionsMode} from '~/hooks/use-on-effect';
 import {useCurrentRoute} from '~/stores/current-route';
 import {useRoutes} from '~/stores/routes';
@@ -15,6 +16,8 @@ import {observer} from 'mobx-react-lite';
 import {useAuth} from '~/stores/auth';
 
 const SavedRoutes = ({themeStyle, goToRoute}) => {
+  const makeCancelable = useCancelablePromise();
+
   const {setLoading, isLoading} = useSpinner({position: 'top'});
   const {setCurrentRoute} = useCurrentRoute();
   const {routes, setRoutes} = useRoutes();
@@ -29,7 +32,9 @@ const SavedRoutes = ({themeStyle, goToRoute}) => {
 
   const onRefresh = useCallback(() => {
     setLoading(true);
-    getRoutes({payload: {userId: profile.userId}})
+    makeCancelable(getRoutes({payload: {userId: profile.userId}}), () => {
+      setLoading(false);
+    })
       .then(res => {
         const {success, reason, data} = res;
         success ? setRoutes(data.routes) : Toast.show(reason);
@@ -40,12 +45,9 @@ const SavedRoutes = ({themeStyle, goToRoute}) => {
       .finally(_ => {
         setLoading(false);
       });
-  }, [setLoading, setRoutes, profile.userId]);
+  }, [setLoading, makeCancelable, profile.userId, setRoutes]);
 
-  useEffect(() => {
-    const interactionPromise = InteractionManager.runAfterInteractions(() => onRefresh());
-    return () => interactionPromise.cancel();
-  }, [onRefresh]);
+  useRunAfterInteractions(onRefresh);
 
   const {styleItemRoute} = Styles(themeStyle);
   const IconWrap = coords => <Preview coords={coords} />;
