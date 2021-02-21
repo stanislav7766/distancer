@@ -9,10 +9,7 @@ import Toast from 'react-native-simple-toast';
 
 export const useRemindFillProfile = () => {
   const {pushScreen} = useNavigation();
-  const {
-    authorized,
-    profile: {userId},
-  } = useAuth();
+  const {authorized, profile} = useAuth();
 
   const {setInit: setInitConfirm, onShowConfirm, onHideConfirm} = useConfirm();
 
@@ -34,7 +31,7 @@ export const useRemindFillProfile = () => {
 
   const onCheckProfileFilled = useCallback(() => {
     if (!authorized) return;
-    checkProfileFilled({payload: {userId}})
+    checkProfileFilled({payload: {profile}})
       .then(({data, success, reason}) => {
         if (!success) {
           Toast.show(reason);
@@ -48,7 +45,7 @@ export const useRemindFillProfile = () => {
         });
       })
       .catch(err => Toast.show(err));
-  }, [authorized, goToEditProfile, onRequestConfirm, userId]);
+  }, [authorized, goToEditProfile, onRequestConfirm, profile]);
 
   useMounted(onCheckProfileFilled);
 

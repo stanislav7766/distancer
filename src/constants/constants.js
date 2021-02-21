@@ -146,6 +146,7 @@ export const DEFAULT_PROFILE = {
   lastName: '',
   photoURL: '',
 };
+export const VIEWED_PROFILE_KEYS = ['age', 'height', 'weight', 'gender', 'firstName', 'lastName'];
 export const DEFAULT_ACTIVITIES = [];
 export const DEFAULT_ROUTES = [];
 export const DEFAULT_PLACES = [];

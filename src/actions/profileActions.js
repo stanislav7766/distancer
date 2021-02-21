@@ -1,6 +1,6 @@
 import {ERROR_OCCURRED} from '~/constants/constants';
 import {getItem, setItem} from '~/utils/fs/asyncStorage';
-import {getProfileFilledKey} from '~/utils/profile-helpers';
+import {getProfileFilledKey, validateViewedProfile} from '~/utils/profile-helpers';
 import {isNull} from '~/utils/validation/helpers';
 
 export const markProfileFilled = ({payload}) =>
@@ -17,15 +17,19 @@ export const markProfileFilled = ({payload}) =>
 
 export const checkProfileFilled = ({payload}) =>
   new Promise(async (resolve, reject) => {
-    const {userId} = payload;
+    const {profile} = payload;
+    const {userId} = profile;
     const key = getProfileFilledKey(userId);
     try {
+      const validProfile = validateViewedProfile(profile);
       const filled = await getItem(key);
+
       if (isNull(filled)) {
-        await setItem(key, false);
-        return resolve({success: true, reason: '', data: {filled: false}});
+        await setItem(key, validProfile);
+        return resolve({success: true, reason: '', data: {filled: validProfile}});
       }
-      resolve({success: true, reason: '', data: {filled}});
+      !validProfile && (await setItem(key, false));
+      resolve({success: true, reason: '', data: {filled: validProfile && filled}});
     } catch (err) {
       reject(ERROR_OCCURRED);
     }
