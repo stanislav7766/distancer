@@ -9,8 +9,11 @@ import {Avatar} from '~/componets/avatar';
 import {observer} from 'mobx-react-lite';
 import {useTheme} from '~/stores/theme';
 import {useAuth} from '~/stores/auth';
+import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
 
 const GroupUser = ({loading, goToEditProfile}) => {
+  const makeCancelable = useCancelablePromise();
+
   const {themeStyle} = useTheme();
   const {profile, setAuthorized} = useAuth();
   const {setInit: setInitConfirm, onShowConfirm, onHideConfirm} = useConfirm();
@@ -34,7 +37,9 @@ const GroupUser = ({loading, goToEditProfile}) => {
     setLoading(true);
 
     setTimeout(() => {
-      logoutUser({payload: {userId: profile.userId}})
+      makeCancelable(logoutUser({payload: {userId: profile.userId}}), () => {
+        setLoading(false);
+      })
         .then(({success, reason}) => {
           if (!success) {
             Toast.show(reason);
