@@ -1,9 +1,16 @@
-import {writeRoutes, readRoutes, removeRoute} from '~/utils/fs/storage';
-import {ROUTES_LIST_EMPTY, ERROR_OCCURRED, ERROR_NETWORK_FAILED} from '~/constants/constants';
+import {writeRoutes, removeRoute} from '~/utils/fs/storage';
+import {
+  ROUTES_LIST_ENDED,
+  ROUTES_LIST_EMPTY,
+  ERROR_OCCURRED,
+  ERROR_NETWORK_FAILED,
+  ROUTES_BATCH_LIMIT,
+} from '~/constants/constants';
 import {isFilledArr} from '~/utils/validation/helpers';
 import firestore from '@react-native-firebase/firestore';
 import {mapperCoordsArrToObj, mapperCoordsObjToArr} from '~/utils/coordinate-helpers';
 import {isNetworkAvailable} from '~/utils/network-helpers';
+import {getLastItem} from '~/utils/common-helpers/arr-helpers';
 
 const getRoutesColRef = ({userId}) => firestore().collection('routes').doc('users').collection(userId);
 
@@ -24,21 +31,49 @@ export const deleteRoute = ({payload}) =>
     }
   });
 
-export const getRoutes = ({payload}) =>
+const _mapRouteDocs = docs =>
+  docs.map(doc => {
+    const {points, ...rest} = doc.data();
+    rest.points = mapperCoordsObjToArr(points);
+    return rest;
+  });
+
+export const getFirstRoutes = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const {userId} = payload;
-      const snaphot = await getRoutesColRef({userId}).orderBy('timestamp', 'desc').get();
+
+      const snaphot = await getRoutesColRef({userId}).orderBy('timestamp', 'desc').limit(ROUTES_BATCH_LIMIT).get();
       const {docs} = snaphot;
-      const routes =
-        docs.length > 0
-          ? docs.map(doc => {
-              const {points, ...rest} = doc.data();
-              rest.points = mapperCoordsObjToArr(points);
-              return rest;
-            })
-          : await readRoutes(userId);
-      resolve(isFilledArr(routes) ? {success: true, data: {routes}} : {success: false, reason: ROUTES_LIST_EMPTY});
+      const routes = _mapRouteDocs(docs);
+      if (!isFilledArr(routes)) return resolve({success: false, reason: ROUTES_LIST_EMPTY});
+
+      const {timestamp} = getLastItem(routes);
+
+      resolve({success: true, data: {routes, nextKey: timestamp}});
+    } catch (err) {
+      reject(err);
+    }
+  });
+
+export const getNextRoutes = ({payload}) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const {userId, nextKey} = payload;
+
+      const snaphot = await getRoutesColRef({userId})
+        .orderBy('timestamp', 'desc')
+        .startAfter(nextKey)
+        .limit(ROUTES_BATCH_LIMIT)
+        .get();
+
+      const {docs} = snaphot;
+      const routes = _mapRouteDocs(docs);
+      if (!isFilledArr(routes)) return resolve({success: false, reason: ROUTES_LIST_ENDED});
+
+      const {timestamp} = getLastItem(routes);
+
+      resolve({success: true, data: {routes, nextKey: timestamp}});
     } catch (err) {
       reject(err);
     }

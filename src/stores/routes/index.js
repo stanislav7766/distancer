@@ -9,9 +9,16 @@ export class RoutesStore {
   }
 
   routes = DEFAULT_ROUTES;
+  nextKey = 0;
 
   setRoutes = routes => {
     this.routes = routes;
+  };
+  concatRoutes = routes => {
+    this.routes = this.routes.concat(routes);
+  };
+  setNextKey = nextKey => {
+    this.nextKey = nextKey;
   };
   removeById = id => {
     const index = findIndexByKey(this.routes, 'id', id);
