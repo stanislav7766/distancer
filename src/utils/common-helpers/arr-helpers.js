@@ -4,6 +4,16 @@ export const filterByKey = (arrOfObj, key, value) => arrOfObj.filter(obj => obj[
 export const filterByIndex = (arr, index) => arr.filter((_, i) => i !== index);
 
 export const findIndexByKey = (arrOfObj, key, value) => arrOfObj.findIndex(obj => obj[key] === value);
+export const isExistObjByKey = (arrOfObj, key, value) => arrOfObj.some(obj => obj[key] === value);
+
+export const uniquifyByKey = (arrOfObj, key) => [
+  ...arrOfObj
+    .reduce((accum, obj) => {
+      accum.set(obj[key], obj);
+      return accum;
+    }, new Map())
+    .values(),
+];
 
 export const getDiff = (arr1, arr2) => arr2.filter(val => !arr1.some(val2 => isEqualJson(val, val2)));
 
