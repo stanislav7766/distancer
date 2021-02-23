@@ -1,7 +1,7 @@
 import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
 import {DEFAULT_ROUTES} from '~/constants/constants';
-import {findIndexByKey, filterByIndex} from '~/utils/common-helpers/arr-helpers';
+import {findIndexByKey, filterByIndex, uniquifyByKey} from '~/utils/common-helpers/arr-helpers';
 
 export class RoutesStore {
   constructor() {
@@ -15,7 +15,7 @@ export class RoutesStore {
     this.routes = routes;
   };
   concatRoutes = routes => {
-    this.routes = this.routes.concat(routes);
+    this.routes = uniquifyByKey([...this.routes, ...routes], 'id');
   };
   setNextKey = nextKey => {
     this.nextKey = nextKey;

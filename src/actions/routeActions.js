@@ -1,4 +1,3 @@
-import {writeRoutes, removeRoute} from '~/utils/fs/storage';
 import {
   ROUTES_LIST_ENDED,
   ROUTES_LIST_EMPTY,
@@ -24,7 +23,7 @@ export const deleteRoute = ({payload}) =>
       await getRoutesColRef({userId}).doc(routeId).update({
         points: firestore.FieldValue.delete(),
       });
-      await Promise.all([getRoutesColRef({userId}).doc(routeId).delete(), removeRoute(userId, routeId)]);
+      await Promise.all([getRoutesColRef({userId}).doc(routeId).delete()]);
       resolve({success: true});
     } catch (err) {
       reject(err);
@@ -84,14 +83,13 @@ export const saveRoute = ({payload}) =>
     try {
       const {route, userId} = payload;
       const {id, points, ...rest} = route;
-      getRoutesColRef({userId})
+      const written = await getRoutesColRef({userId})
         .doc(id)
         .set({
           ...rest,
           id,
           points: mapperCoordsArrToObj(points),
         });
-      const written = await writeRoutes(userId, id, route);
       resolve({success: written, reason: written ? '' : ERROR_OCCURRED});
     } catch (err) {
       reject(err);

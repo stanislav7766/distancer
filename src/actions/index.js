@@ -1,5 +1,5 @@
 export {deleteRoute, getFirstRoutes, getNextRoutes, saveRoute} from './routeActions';
-export {deleteActivity, getActivities, saveActivity} from './activityActions';
+export {deleteActivity, getFirstActivities, getNextActivities, saveActivity} from './activityActions';
 export {
   registerUser,
   loginUser,

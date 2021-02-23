@@ -26,3 +26,7 @@ export const mapMonth = {
 };
 
 export const sortByDate = arr => arr.sort((a, b) => new Date(b.date) - new Date(a.date));
+export const sortByTimestamp = arr => arr.sort((a, b) => b.timestamp - a.timestamp);
+export const isExistGroup = ({year, month, items}) => items.some(item => item.year === year && item.month === month);
+export const findGroupIndex = ({year, month, items}) =>
+  items.findIndex(item => item.year === year && item.month === month);

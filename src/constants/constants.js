@@ -151,7 +151,8 @@ export const DEFAULT_ACTIVITIES = [];
 export const DEFAULT_ROUTES = [];
 export const DEFAULT_PLACES = [];
 
-export const ROUTES_BATCH_LIMIT = 20;
+export const ROUTES_BATCH_LIMIT = 30;
+export const ACTIVITIES_BATCH_LIMIT = 30;
 
 export const MAX_HEIGHT = 220;
 export const MAX_WEIGHT = 230;
@@ -172,6 +173,7 @@ export const GPS_PERMISSIONS_GRANTED = 'Location permissions granted';
 export const GPS_ALLOW_PERMISSIONS = 'Allow permissions in settings';
 export const ROUTES_LIST_EMPTY = 'Routes list is empty';
 export const ROUTES_LIST_ENDED = 'Routes list is ended';
+export const ACTIVITIES_LIST_ENDED = 'Activities list is ended';
 export const ACTIVITIES_LIST_EMPTY = 'Activities list is empty';
 export const GIVE_GPS_PERMISSIONS = 'Give Location Permission';
 export const GIVE_GPS_PERMISSIONS_DETAILED = 'App needs location permission to find your position';

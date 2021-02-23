@@ -1,7 +1,9 @@
 import {hhmmssSum, hhmmssToSec} from '~/utils/time-helpers';
 import {filterByKey} from '~/utils/common-helpers/obj-helpers';
 import {DEFAULT_MONTH_PROPS, DEFAULT_PACE, DEFAULT_AVG_SPEED, sumNum} from './helps';
-import {isAvgPace, isAvgSpeed} from '../validation/helpers';
+import {isAvgPace, isAvgSpeed, isFilledArr} from '../validation/helpers';
+import {getFirstItem} from '../common-helpers/arr-helpers';
+import {ACTIVITIES_BATCH_LIMIT} from '~/constants/constants';
 
 export const calcFromMonth = arr => {
   const monthCount = arr.length;
@@ -44,3 +46,6 @@ export const calcAvgSpeed = (km, hhmmss) => {
   const sec = hhmmssToSec(hhmmss);
   return sec === 0 ? DEFAULT_AVG_SPEED : +(3.6 * (kmToM(km) / sec)).toFixed(1);
 };
+
+export const countInitialGroupsToRender = groups =>
+  !isFilledArr(groups) ? 0 : getFirstItem(groups)?.items?.length < ACTIVITIES_BATCH_LIMIT ? 2 : 1;

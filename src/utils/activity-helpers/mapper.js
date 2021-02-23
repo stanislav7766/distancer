@@ -1,7 +1,8 @@
 import {calcFromMonth} from './index';
 import {randomID} from '~/utils/random-id';
-import {mapMonth} from './helps';
+import {findGroupIndex, isExistGroup, mapMonth} from './helps';
 import {isFilledArr, isFilledObj} from '../validation/helpers';
+import {filterByIndex, findIndexByKey, isExistObjByKey, uniquifyByKey} from '../common-helpers/arr-helpers';
 
 const splitByMonth = arr =>
   arr.reduce((acc, activity) => {
@@ -46,3 +47,35 @@ export const mapper = arr => {
   const entries = mapSortedEntries(splitted);
   return splitByGroups(entries);
 };
+
+export const groupsMerger = (oldGroups, newGroups) => {
+  newGroups.forEach(group => {
+    const {year, month} = group;
+    if (!isExistGroup({year, month, items: oldGroups})) {
+      oldGroups.push(group);
+      return;
+    }
+    const index = findGroupIndex({year, month, items: oldGroups});
+    if (index < 0) return;
+
+    const oldGroup = oldGroups[index];
+    oldGroup.items = uniquifyByKey([...oldGroup.items, ...group.items], 'id');
+    oldGroups[index] = oldGroup;
+  });
+
+  return oldGroups;
+};
+
+export const removeItemFromGroups = (groups, id) =>
+  groups.reduce((accum, group) => {
+    const {items} = group;
+
+    const itemExists = isExistObjByKey(items, 'id', id);
+    if (!itemExists) return [...accum, group];
+
+    const itemInd = findIndexByKey(items, 'id', id);
+    if (itemInd < 0) return [...accum, group];
+
+    group.items = filterByIndex(group.items, itemInd);
+    return [...accum, group];
+  }, []);

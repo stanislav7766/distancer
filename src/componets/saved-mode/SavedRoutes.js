@@ -3,10 +3,9 @@ import {VirtualList} from '~/componets/virtualized-list';
 import Toast from 'react-native-simple-toast';
 import {Item} from '~/componets/item';
 import {Preview} from '~/componets/preview';
-import {Row, Styles, mt20, mb20, spinnerStyle} from './styles';
+import {Row, Styles, mt20, mb20} from './styles';
 import {ERROR_OCCURRED, ROUTES_BATCH_LIMIT} from '~/constants/constants';
 import {getFirstRoutes, getNextRoutes} from '~/actions';
-import useSpinner from '~/componets/spinner/useSpinner';
 import {useRunAfterInteractions} from '~/hooks/use-interaction-manager';
 import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
 import {useOnIsDirectionsMode} from '~/hooks/use-on-effect';
@@ -15,14 +14,13 @@ import {useRoutes} from '~/stores/routes';
 import {observer} from 'mobx-react-lite';
 import {useAuth} from '~/stores/auth';
 import {isEqualJson} from '~/utils/validation/helpers';
-import {View} from 'react-native';
 import {useMakeRef} from '~/hooks/use-make-ref';
+import {useSpinner} from '~/stores/spinner';
 
 const SavedRoutes = ({themeStyle, goToRoute}) => {
   const makeCancelable = useCancelablePromise();
 
-  const {setLoading, isLoading} = useSpinner({position: 'top'});
-  const {setLoading: setMoreLoading, isLoading: isMoreLoading, SpinnerComponent} = useSpinner({position: 'top'});
+  const {startLoading, isLoading, stopLoading, startMoreLoading, isMoreLoading, stopMoreLoading} = useSpinner();
 
   const isLoadingRef = useMakeRef(isLoading);
   const isMoreLoadingRef = useMakeRef(isMoreLoading);
@@ -40,9 +38,9 @@ const SavedRoutes = ({themeStyle, goToRoute}) => {
 
   const onRefresh = useCallback(() => {
     if (isLoadingRef.current || isMoreLoadingRef.current) return;
-    setLoading(true);
+    startLoading({show: false});
     makeCancelable(getFirstRoutes({payload: {userId: profile.userId}}), () => {
-      setLoading(false);
+      stopLoading();
     })
       .then(res => {
         const {success, reason, data} = res;
@@ -57,15 +55,24 @@ const SavedRoutes = ({themeStyle, goToRoute}) => {
         Toast.show(ERROR_OCCURRED);
       })
       .finally(_ => {
-        setLoading(false);
+        stopLoading();
       });
-  }, [isLoadingRef, isMoreLoadingRef, setLoading, makeCancelable, profile.userId, setRoutes, setNextKey]);
+  }, [
+    isLoadingRef,
+    isMoreLoadingRef,
+    startLoading,
+    makeCancelable,
+    profile.userId,
+    stopLoading,
+    setRoutes,
+    setNextKey,
+  ]);
 
   const onNextRoutes = useCallback(() => {
     if (isLoadingRef.current || isMoreLoadingRef.current) return;
-    setMoreLoading(true);
+    startMoreLoading({show: true});
     makeCancelable(getNextRoutes({payload: {userId: profile.userId, nextKey}}), () => {
-      setMoreLoading(false);
+      stopMoreLoading();
     })
       .then(res => {
         const {success, data} = res;
@@ -78,15 +85,16 @@ const SavedRoutes = ({themeStyle, goToRoute}) => {
         Toast.show(ERROR_OCCURRED);
       })
       .finally(_ => {
-        setMoreLoading(false);
+        stopMoreLoading();
       });
   }, [
     isLoadingRef,
     isMoreLoadingRef,
-    setMoreLoading,
+    startMoreLoading,
     makeCancelable,
     profile.userId,
     nextKey,
+    stopMoreLoading,
     concatRoutes,
     setNextKey,
   ]);
@@ -98,12 +106,7 @@ const SavedRoutes = ({themeStyle, goToRoute}) => {
     goToRoute();
   };
 
-  const Footer = (
-    <>
-      {isMoreLoading && <View style={spinnerStyle}>{SpinnerComponent}</View>}
-      <Row {...mb20} />
-    </>
-  );
+  const Footer = <Row {...mb20} />;
 
   const renderItem = ({item}) => <Route themeStyle={themeStyle} item={item} onPressItem={onPressItem} />;
 
