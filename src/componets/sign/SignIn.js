@@ -9,12 +9,12 @@ import {Row, Column, Styles, btnSignInStyles, btnGoogleStyles, mt10, mt30, mb30}
 import {loginUser, loginWithGoogle} from '~/actions';
 import Toast from 'react-native-simple-toast';
 import {GoogleSignBtn} from '~/componets/google-sign-btn';
-import useSpinner from '~/componets/spinner/useSpinner';
 import {observer} from 'mobx-react-lite';
 import {useAuth} from '~/stores/auth';
+import {useSpinner} from '~/stores/spinner';
 
 const SignIn = ({themeStyle, goToMain}) => {
-  const {setLoading, isLoading, SpinnerComponent} = useSpinner({position: 'bottom'});
+  const {startLoading, stopLoading, isLoading} = useSpinner();
   const [input, setInput] = useState({email: '', password: ''});
   const {setAuthorized, setProfile} = useAuth();
 
@@ -41,23 +41,23 @@ const SignIn = ({themeStyle, goToMain}) => {
 
   const onPressSignInGoogle = () => {
     if (isLoading) return;
-    setLoading(true);
+    startLoading();
     loginWithGoogle()
       .then(_resultSignIn)
       .catch(err => Toast.show(err))
       .finally(_ => {
-        setLoading(false);
+        stopLoading();
       });
   };
 
   const onSubmitEditing = () => {
     if (isLoading) return;
-    setLoading(true);
+    startLoading();
     loginUser({payload: {data: input}})
       .then(_resultSignIn)
       .catch(err => Toast.show(err))
       .finally(_ => {
-        setLoading(false);
+        stopLoading();
       });
   };
   const Greeting = (
@@ -105,7 +105,6 @@ const SignIn = ({themeStyle, goToMain}) => {
 
   return (
     <>
-      {SpinnerComponent}
       <Row alignItems="center" {...mb30} {...mt10}>
         <Column flex={0.2} alignItems={'flex-start'}>
           <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrow} onPress={goToMain} />

@@ -9,12 +9,12 @@ import {Row, Column, Styles, btnGoogleStyles, btnSignUpStyles, mt30, mt10, mb30}
 import {registerUser, registerWithGoogle, markProfileFilled} from '~/actions';
 import Toast from 'react-native-simple-toast';
 import {GoogleSignBtn} from '~/componets/google-sign-btn';
-import useSpinner from '~/componets/spinner/useSpinner';
 import {observer} from 'mobx-react-lite';
 import {useAuth} from '~/stores/auth';
+import {useSpinner} from '~/stores/spinner';
 
 const SignUp = ({themeStyle, goToProfile, goBack}) => {
-  const {setLoading, isLoading, SpinnerComponent} = useSpinner({position: 'bottom'});
+  const {startLoading, isLoading, stopLoading} = useSpinner();
   const [input, setInput] = useState({username: '', email: '', password: ''});
   const {setAuthorized, setProfile} = useAuth();
 
@@ -48,23 +48,23 @@ const SignUp = ({themeStyle, goToProfile, goBack}) => {
 
   const onSubmitEditing = () => {
     if (isLoading) return;
-    setLoading(true);
+    startLoading();
     registerUser({payload: {data: input}})
       .then(_resultSignUp)
       .catch(err => Toast.show(err))
       .finally(_ => {
-        setLoading(false);
+        stopLoading();
       });
   };
 
   const onPressSignUpGoogle = () => {
     if (isLoading) return;
-    setLoading(true);
+    startLoading();
     registerWithGoogle()
       .then(_resultSignUp)
       .catch(err => Toast.show(err))
       .finally(_ => {
-        setLoading(false);
+        stopLoading();
       });
   };
 
@@ -113,7 +113,6 @@ const SignUp = ({themeStyle, goToProfile, goBack}) => {
 
   return (
     <>
-      {SpinnerComponent}
       <Row alignItems="center" {...mb30} {...mt10}>
         <Column flex={0.2} alignItems={'flex-start'}>
           <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrow} onPress={goBack} />

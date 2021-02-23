@@ -15,12 +15,13 @@ import {observer} from 'mobx-react-lite';
 import {useTheme} from '~/stores/theme';
 import {useAuth} from '~/stores/auth';
 import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
+import {useSpinner} from '~/stores/spinner';
 
-const GroupAccount = ({loading}) => {
+const GroupAccount = () => {
   const makeCancelable = useCancelablePromise();
 
   const {themeStyle} = useTheme();
-  const {setLoading, isLoading} = loading;
+  const {startLoading, stopLoading, isLoading} = useSpinner();
   const {profile, setAuthorized, authorized} = useAuth();
 
   const {setInit: setInitConfirm, onShowConfirm, onHideConfirm} = useConfirm();
@@ -85,9 +86,9 @@ const GroupAccount = ({loading}) => {
   };
 
   const onRequestChangeEmail = ({payload}) => {
-    setLoading(true);
+    startLoading({show: false});
     makeCancelable(requestChangeEmail({payload}), () => {
-      setLoading(false);
+      stopLoading();
     })
       .then(({success, reason}) => {
         if (!success) {
@@ -106,14 +107,14 @@ const GroupAccount = ({loading}) => {
         Toast.show(err);
       })
       .finally(_ => {
-        setLoading(false);
+        stopLoading();
       });
   };
 
   const onRequestChangePassword = ({payload}) => {
-    setLoading(true);
+    startLoading({show: false});
     makeCancelable(requestChangePassword({payload}), () => {
-      setLoading(false);
+      stopLoading();
     })
       .then(({success, reason}) => {
         if (!success) {
@@ -132,7 +133,7 @@ const GroupAccount = ({loading}) => {
         Toast.show(err);
       })
       .finally(_ => {
-        setLoading(false);
+        stopLoading();
       });
   };
 
@@ -145,9 +146,9 @@ const GroupAccount = ({loading}) => {
   const onPressDeleteAccount = () => {
     if (isLoading) return;
 
-    setLoading(true);
+    startLoading({show: false});
     makeCancelable(deleteAccount({payload: {userId: profile.userId}}), () => {
-      setLoading(false);
+      stopLoading();
     })
       .then(({success, reason}) => {
         if (!success) {
@@ -160,7 +161,7 @@ const GroupAccount = ({loading}) => {
         err === NO_CURRENT_USER ? setAuthorized(false) : Toast.show(err);
       })
       .finally(_ => {
-        setLoading(false);
+        stopLoading();
       });
   };
 
