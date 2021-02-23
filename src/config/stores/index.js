@@ -16,6 +16,7 @@ import {RoutesStore, RoutesContext} from '~/stores/routes';
 import {LiveRouteStore, LiveRouteContext} from '~/stores/live-route';
 import {ActivitiesStore, ActivitiesContext} from '~/stores/activities';
 import {NavigationStore, NavigationContext} from '~/stores/navigation';
+import {SpinnerStore, SpinnerContext} from '~/stores/spinner';
 
 const themeStore = new ThemeStore();
 const appModeStore = new AppModeStore();
@@ -35,6 +36,7 @@ const currentRouteStore = new CurrentRouteStore();
 const activitiesStore = new ActivitiesStore();
 const liveRouteStore = new LiveRouteStore();
 const navigationStore = new NavigationStore();
+const spinnerStore = new SpinnerStore();
 
 const entities = [
   {Context: NavigationContext, value: navigationStore},
@@ -55,5 +57,6 @@ const entities = [
   {Context: CurrentRouteContext, value: currentRouteStore},
   {Context: ActivitiesContext, value: activitiesStore},
   {Context: LiveRouteContext, value: liveRouteStore},
+  {Context: SpinnerContext, value: spinnerStore},
 ];
 export default entities;

@@ -10,17 +10,18 @@ import {observer} from 'mobx-react-lite';
 import {useTheme} from '~/stores/theme';
 import {useAuth} from '~/stores/auth';
 import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
+import {useSpinner} from '~/stores/spinner';
 
-const GroupUser = ({loading, goToEditProfile}) => {
+const GroupUser = ({goToEditProfile}) => {
   const makeCancelable = useCancelablePromise();
 
   const {themeStyle} = useTheme();
+  const {isLoading, startLoading, stopLoading} = useSpinner();
   const {profile, setAuthorized} = useAuth();
   const {setInit: setInitConfirm, onShowConfirm, onHideConfirm} = useConfirm();
 
   const {photoURL, email, firstName} = profile;
   const {avatarTitleStyle} = Styles(themeStyle);
-  const {setLoading, isLoading, SpinnerComponent} = loading;
 
   const onRequestConfirm = (text, onYes, onNo = onHideConfirm) => {
     setInitConfirm({
@@ -34,10 +35,10 @@ const GroupUser = ({loading, goToEditProfile}) => {
   const onPressLogout = () => {
     if (isLoading) return;
 
-    setLoading(true);
+    startLoading();
 
     makeCancelable(logoutUser({payload: {userId: profile.userId}}), () => {
-      setLoading(false);
+      stopLoading();
     })
       .then(({success, reason}) => {
         if (!success) {
@@ -50,7 +51,7 @@ const GroupUser = ({loading, goToEditProfile}) => {
         err === NO_CURRENT_USER ? setAuthorized(false) : Toast.show(err);
       })
       .finally(_ => {
-        setLoading(false);
+        stopLoading();
       });
   };
 
@@ -67,7 +68,6 @@ const GroupUser = ({loading, goToEditProfile}) => {
   const avatarSource = photoURL ? photoURL : null;
   const UserInfoGroup = (
     <Row {...mt10} {...mb30}>
-      {SpinnerComponent}
       <Column justifyContent={'center'} alignItems={'flex-start'}>
         <Avatar size={80} title={firstName || email} titleStyle={avatarTitleStyle} src={avatarSource} />
       </Column>

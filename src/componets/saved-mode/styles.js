@@ -32,9 +32,3 @@ export const mt20 = {
 export const mb20 = {
   marginTop: 20,
 };
-
-export const spinnerStyle = {
-  height: 80,
-  width: 80,
-  alignSelf: 'center',
-};

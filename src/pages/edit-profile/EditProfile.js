@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {Text} from 'react-native';
 import {CenterXY, Container, Row, Column, Styles, btnSaveStyles, mt20, mt30} from './styles';
 import {RoundedIcon} from '~/componets/rounded-icon';
-import useSpinner from '~/componets/spinner/useSpinner';
 import useSvgFactory from '~/hooks/use-svg-factory';
 import {getLeftArrow} from '~/assets/svg-icons/left-arrow';
 import {Btn} from '~/componets/btn';
@@ -16,11 +15,12 @@ import {useTheme} from '~/stores/theme';
 import {useAuth} from '~/stores/auth';
 import {useNavigation} from '~/stores/navigation';
 import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
+import {useSpinner} from '~/stores/spinner';
 
 const EditProfile = ({withNewUser = false}) => {
   const makeCancelable = useCancelablePromise();
 
-  const {isLoading, setLoading, SpinnerComponent} = useSpinner({position: 'bottom'});
+  const {isLoading, startLoading, stopLoading} = useSpinner();
   const {resetScreen, popToMainScreen} = useNavigation();
   const [profile, setProfile] = useState({firstName: '', lastName: '', age: '', gender: '', height: '', weight: ''});
 
@@ -44,9 +44,9 @@ const EditProfile = ({withNewUser = false}) => {
   const onSubmitEditing = () => {
     if (isLoading) return;
 
-    setLoading(true);
+    startLoading();
     makeCancelable(updateProfile({payload: {profile}}), () => {
-      setLoading(false);
+      stopLoading();
     })
       .then(({success, reason}) => {
         if (!success) {
@@ -59,7 +59,7 @@ const EditProfile = ({withNewUser = false}) => {
       })
       .catch(err => Toast.show(err))
       .finally(_ => {
-        setLoading(false);
+        stopLoading();
       });
   };
 
@@ -112,7 +112,6 @@ const EditProfile = ({withNewUser = false}) => {
     <>
       <Container backgroundColor={themeStyle.backgroundColor}>
         <CenterXY>
-          {SpinnerComponent}
           {Header}
           {AvatarView}
           {Inputs}

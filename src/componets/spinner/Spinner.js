@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {View, Image} from 'react-native';
 import gif from '~/assets/spinner.gif';
+import {isEqualJson} from '~/utils/validation/helpers';
 import {Styles} from './styles';
 
-const Spinner = ({position}) => {
-  const {containerStyle, wrapperStyle, spinnerStyle} = Styles(position);
+const Spinner = ({position, themeStyle}) => {
+  const {containerStyle, wrapperStyle, spinnerStyle} = Styles({position, themeStyle});
   return (
     <View style={containerStyle}>
       <View style={wrapperStyle}>
@@ -13,5 +14,6 @@ const Spinner = ({position}) => {
     </View>
   );
 };
+const onUpdate = (prev, next) => isEqualJson(prev, next);
 
-export default Spinner;
+export default memo(Spinner, onUpdate);
