@@ -12,6 +12,8 @@ const VirtualList = ({
   keyExtractor,
   showsVerticalScrollIndicator,
   refresh,
+  onEndReached,
+  onEndReachedThreshold,
 }) => {
   const getItemCount = _ => items.length;
 
@@ -24,6 +26,8 @@ const VirtualList = ({
       nestedScrollEnabled
       showsVerticalScrollIndicator={showsVerticalScrollIndicator}
       ListHeaderComponent={Header}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={onEndReachedThreshold}
       ListFooterComponent={Footer}
       data={[]}
       initialNumToRender={initialNumToRender}

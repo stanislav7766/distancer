@@ -4,7 +4,7 @@ import {VirtualList} from '~/componets/virtualized-list';
 import {Item} from '~/componets/item';
 import {Preview} from '~/componets/preview';
 import {Row, Column, Styles, mt10, mb20, mx0} from './styles';
-import {DIRECTIONS_MODE} from '~/constants/constants';
+import {ACTIVITIES_BATCH_LIMIT, DIRECTIONS_MODE} from '~/constants/constants';
 import {Section} from '~/componets/section';
 import {buildActivityString, buildRunString, buildItemString} from './papyrus';
 import {isEqualJson} from '~/utils/validation/helpers';
@@ -26,10 +26,10 @@ const ActivityItem = memo(({themeStyle, item, onPresItem, isRun}) => {
   );
 }, onUpdate);
 
-const ActivityGroup = ({items, header, direction, onPresItem, themeStyle}) => {
+const ActivityGroup = ({items, header, direction, onPresItem, themeStyle, onNext}) => {
   const {styleFormHeaderDate, styleFormHeaderInfo} = Styles(themeStyle);
   const isRun = direction === WALKING;
-  const initNumToRender = items.length <= 15 ? items.length : 15;
+
   const Footer = <Row {...mb20} />;
 
   const renderItem = ({item}) => (
@@ -62,7 +62,9 @@ const ActivityGroup = ({items, header, direction, onPresItem, themeStyle}) => {
         items={items}
         Header={renderGroupHeader(header)}
         Footer={Footer}
-        initialNumToRender={initNumToRender}
+        initialNumToRender={ACTIVITIES_BATCH_LIMIT}
+        onEndReached={onNext}
+        onEndReachedThreshold={0.3}
         keyExtractor={_item => _item.id}
       />
     </View>
