@@ -58,7 +58,7 @@ const SavedActivities = ({themeStyle, goToRoute}) => {
           setDefaultActivities();
           return;
         }
-        setActivities(data.activities);
+        setActivities(data.activities, data.groupsTotals);
         setNextKey(data.nextKey);
       })
       .catch(_ => {
@@ -93,7 +93,7 @@ const SavedActivities = ({themeStyle, goToRoute}) => {
         const {success, data} = res;
         if (!success) return;
 
-        concatActivities(data.activities);
+        concatActivities(data.activities, data.groupsTotals);
         setNextKey(data.nextKey);
       })
       .catch(_ => {

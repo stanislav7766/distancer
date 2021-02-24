@@ -38,7 +38,7 @@ const Activity = ({themeStyle, goToMain}) => {
   }, [moveCamera, points1, zoomLevel]);
 
   const onPressDelete = () => {
-    const payload = {activityId: liveRoute.id, userId: profile.userId, directionsMode};
+    const payload = {activity: liveRoute, userId: profile.userId};
     deleteActivity({payload})
       .then(res => {
         const {success, reason} = res;

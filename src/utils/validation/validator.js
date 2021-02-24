@@ -1,5 +1,5 @@
 import {WEAK_PASSWORD, INVALID_EMAIL, WRONG_AGE} from '~/constants/constants';
-import {isEmail, isEmpty, isLength, isNumLength, isNumber} from './helpers';
+import {isEmail, isEmpty, isLength, isNumLength, isNumber, isAvgPace, ishhmmss, isAvgSpeed} from './helpers';
 isEmpty;
 const FIELD_REQUIRED = field => `The ${field} is required`;
 
@@ -15,8 +15,23 @@ const validateProp = (prop, value) =>
     height: (isEmpty(value) && FIELD_REQUIRED('Height')) || '',
   }[prop]);
 
+const validateActivityProp = (prop, value) =>
+  ({
+    distance: (!isAvgSpeed(value) && 0) || value,
+    pace: (!isAvgPace(value) && '0\'0"') || value,
+    movingTime: (!ishhmmss(value) && '00:00:00') || value,
+    totalTime: (!ishhmmss(value) && '00:00:00') || value,
+    avgSpeed: (!isAvgSpeed(value) && 0) || value,
+  }[prop]);
+
 export const validateFields = fields =>
   Object.keys(fields).reduce((accum, prop) => {
     const res = validateProp(prop, fields[prop]);
     return res ? {...accum, [prop]: res} : accum;
+  }, {});
+
+export const validateActivityFields = fields =>
+  Object.keys(fields).reduce((accum, prop) => {
+    const res = validateActivityProp(prop, fields[prop]);
+    return res ? {...accum, [prop]: res} : {...accum, [prop]: fields[prop]};
   }, {});

@@ -16,13 +16,13 @@ export class ActivitiesStore {
   setNextKey = nextKey => {
     this.nextKey = nextKey;
   };
-  setActivities = activities => {
+  setActivities = (activities, groupsTotals = {}) => {
     this.activities = activities;
-    this._setGrouppedActivities(activities);
+    this._setGrouppedActivities(activities, groupsTotals);
   };
-  concatActivities = activities => {
+  concatActivities = (activities, groupsTotals) => {
     this.activities = uniquifyByKey([...this.activities, ...activities], 'id');
-    this._concatGrouppedActivities(activities);
+    this._concatGrouppedActivities(activities, groupsTotals);
   };
   removeById = id => {
     this._removeByIdActivity(id);
@@ -57,11 +57,11 @@ export class ActivitiesStore {
     this.grouppedActivities = DEFAULT_ACTIVITIES;
   };
 
-  _setGrouppedActivities = activities => {
-    this.grouppedActivities = mapper(activities);
+  _setGrouppedActivities = (activities, groupsTotals = {}) => {
+    this.grouppedActivities = mapper(activities, groupsTotals);
   };
-  _concatGrouppedActivities = activities => {
-    const moreGroups = mapper(activities);
+  _concatGrouppedActivities = (activities, groupsTotals) => {
+    const moreGroups = mapper(activities, groupsTotals);
     this.grouppedActivities = groupsMerger(this.grouppedActivities, moreGroups);
   };
 }

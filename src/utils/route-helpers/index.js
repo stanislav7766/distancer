@@ -1,6 +1,7 @@
 import {getDiff} from '~/utils/common-helpers/arr-helpers';
 import {randomID} from '~/utils/random-id';
 import {isEqualJson} from '~/utils/validation/helpers';
+import {fixedNum} from '../common-helpers/num-helpers';
 import {calcCrow} from './helps';
 
 export const isPushed = (prevRoute, nextRoute) =>
@@ -27,7 +28,7 @@ export const measureDistance = points => {
     i < points.length - 1 && (accum += calcCrow(point[0], point[1], points[i + 1][0], points[i + 1][1]));
     return accum;
   }, 0);
-  return +distance.toFixed(2);
+  return fixedNum(distance, 2);
 };
 
 export const measureDistanceM = points => measureDistance(points) * 1000;

@@ -16,6 +16,27 @@ export const msTohhmmss = ms => {
   return [pad(hours.toString(), 2), pad(minutes.toString(), 2), pad(seconds.toString(), 2)].join(':');
 };
 
+export const secTohhmmss = sec => msTohhmmss(sec * 1000);
+
+export const paceTommss = pace => pace.replace(/"/gi, '').split("'").join(':');
+export const mmssTopace = mmss =>
+  mmss
+    .split(':')
+    .map((val, ind) => `${parseInt(val, 10)}${ind === 0 ? "'" : '"'}`)
+    .join('');
+
+export const mmssTohhmmss = mmss => {
+  const arr = mmss.split(':');
+  if (arr.length === 3) return mmss;
+  return `00:${mmss}`;
+};
+export const hhmmssTommss = hhmmss => {
+  const arr = hhmmss.split(':');
+  if (arr.length === 2) return hhmmss;
+  const [, ...mmss] = arr;
+  return mmss.join(':');
+};
+
 export const yyyymmddNow = () => {
   const now = new Date();
   const todayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));

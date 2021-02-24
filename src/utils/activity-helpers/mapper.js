@@ -1,16 +1,13 @@
 import {calcFromMonth} from './index';
 import {randomID} from '~/utils/random-id';
-import {findGroupIndex, isExistGroup, mapMonth} from './helps';
-import {isFilledArr, isFilledObj} from '../validation/helpers';
+import {dateToYearMonth, findGroupIndex, isExistGroup} from './helps';
+import {isExist, isFilledArr, isFilledObj} from '../validation/helpers';
 import {filterByIndex, findIndexByKey, isExistObjByKey, uniquifyByKey} from '../common-helpers/arr-helpers';
 
 const splitByMonth = arr =>
   arr.reduce((acc, activity) => {
     const {date} = activity;
-    const d = new Date(date);
-    const monthNumber = d.getMonth() + 1;
-    const year = d.getFullYear();
-    const month = mapMonth[monthNumber];
+    const {year, month} = dateToYearMonth(date);
     return {
       ...acc,
       [year]: isFilledObj(acc[year])
@@ -19,7 +16,7 @@ const splitByMonth = arr =>
     };
   }, {});
 
-const splitByGroups = arr => {
+const splitByGroups = (arr, groupsTotals = {}) => {
   const groups = [];
 
   for (let i = 0; i < arr.length; i++) {
@@ -28,7 +25,10 @@ const splitByGroups = arr => {
     for (let index = 0; index < arr1.length; index++) {
       const month = arr1[index];
       const items = data[month];
-      const monthTotals = calcFromMonth(items);
+
+      const key = `${year}-${month}`;
+      const groupTotals = groupsTotals[key];
+      const monthTotals = isExist(groupTotals) ? groupTotals : calcFromMonth(items);
       groups.push({items, year, month, monthTotals, id: randomID()});
     }
   }
@@ -41,11 +41,11 @@ const mapSortedEntries = obj =>
     .sort((a, b) => b[0] - a[0])
     .map(arr => [...arr]);
 
-export const mapper = arr => {
+export const mapper = (arr, groupsTotals = {}) => {
   if (arr.length === 0) return [];
   const splitted = splitByMonth(arr);
   const entries = mapSortedEntries(splitted);
-  return splitByGroups(entries);
+  return splitByGroups(entries, groupsTotals);
 };
 
 export const groupsMerger = (oldGroups, newGroups) => {
@@ -79,3 +79,12 @@ export const removeItemFromGroups = (groups, id) =>
     group.items = filterByIndex(group.items, itemInd);
     return [...accum, group];
   }, []);
+
+export const filterActivitiesToTotalKeys = activities => {
+  const keys = activities.map(activity => {
+    const {date} = activity;
+    const {year, month} = dateToYearMonth(date);
+    return {id: `${year}-${month}`};
+  });
+  return uniquifyByKey(keys, 'id');
+};

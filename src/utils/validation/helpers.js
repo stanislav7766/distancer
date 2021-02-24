@@ -1,3 +1,5 @@
+import {sortObjByKey} from '../common-helpers/obj-helpers';
+
 export const isEmpty = value =>
   value === undefined ||
   value === null ||
@@ -16,6 +18,7 @@ export const isLength = (text, {min, max = Number.MAX_SAFE_INTEGER}) => text.len
 export const isNumLength = (num, {min, max = Number.MAX_SAFE_INTEGER}) => num >= min && num <= max;
 
 export const isEqualJson = (ent1, ent2) => JSON.stringify(ent1) === JSON.stringify(ent2);
+export const isEqualObjJson = (ent1, ent2) => JSON.stringify(sortObjByKey(ent1)) === JSON.stringify(sortObjByKey(ent2));
 
 export const isFilledArr = arr => Array.isArray(arr) && arr.length > 0;
 
@@ -33,3 +36,4 @@ export const isObject = obj => obj instanceof Object && obj.constructor === Obje
 
 export const isAvgSpeed = num => Number.isFinite(num);
 export const isAvgPace = pace => typeof pace === 'string' && /^[0-9]{1,3}\'[0-9]{1,3}\"$/.test(pace);
+export const ishhmmss = hhmmss => typeof hhmmss === 'string' && /^[0-9]{2}:[0-9]{2}:[0-9]{2}$/.test(hhmmss);
