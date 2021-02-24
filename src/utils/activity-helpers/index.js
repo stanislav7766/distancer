@@ -25,11 +25,19 @@ import {mapperCoordsObjToArr} from '../coordinate-helpers';
 
 export const calcFromMonth = arr => {
   const monthCount = arr.length;
-  const totals = arr.reduce((accum, act) => {
-    const monthAvgSpeed = sumNum(accum.monthAvgSpeed, act.avgSpeed / monthCount);
+  const totals = arr.reduce((accum, act, ind) => {
+    const monthAvgSpeed = mergeAvgsNums({
+      prevCount: ind,
+      prevAvg: accum.monthAvgSpeed,
+      nextAvg: act.avgSpeed,
+      nextCount: 1,
+    });
     const monthDistance = sumNum(act.distance, accum.monthDistance);
     const monthTime = hhmmssSum(accum.monthTime, act.movingTime);
-    const monthAvgPace = calcPace(monthDistance, monthTime);
+    const monthAvgPace = mergeAvgPaces(
+      {monthCount: ind, monthAvgPace: accum.monthAvgPace},
+      {monthCount: 1, monthAvgPace: act.pace},
+    );
     return {
       monthAvgPace: isAvgPace(monthAvgPace) ? monthAvgPace : DEFAULT_MONTH_PROPS.monthAvgPace,
       monthTime,
@@ -94,7 +102,7 @@ export const mergeMonthTotals = (prev = DEFAULT_MONTH_TOTALS, next = DEFAULT_MON
 export const substractMonthTotals = (prev = DEFAULT_MONTH_TOTALS, next = DEFAULT_MONTH_TOTALS) => {
   const monthCount = substactNum(prev.monthCount, next.monthCount);
   const monthDistance = substactNum(prev.monthDistance, next.monthDistance);
-  const monthAvgSpeed = mergeAvgsNums({
+  const monthAvgSpeed = substractAvgsNums({
     prevCount: prev.monthCount,
     prevAvg: prev.monthAvgSpeed,
     nextAvg: next.monthAvgSpeed,

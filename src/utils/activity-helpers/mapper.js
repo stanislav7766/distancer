@@ -75,8 +75,10 @@ export const removeItemFromGroups = (groups, id) =>
 
     const itemInd = findIndexByKey(items, 'id', id);
     if (itemInd < 0) return [...accum, group];
+    const filteredItems = filterByIndex(group.items, itemInd);
 
-    group.items = filterByIndex(group.items, itemInd);
+    group.items = filteredItems;
+    group.monthTotals = calcFromMonth(filteredItems);
     return [...accum, group];
   }, []);
 

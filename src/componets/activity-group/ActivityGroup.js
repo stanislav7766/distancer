@@ -7,7 +7,7 @@ import {Row, Column, Styles, mt10, mb20, mx0} from './styles';
 import {ACTIVITIES_BATCH_LIMIT, DIRECTIONS_MODE} from '~/constants/constants';
 import {Section} from '~/componets/section';
 import {buildActivityString, buildRunString, buildItemString} from './papyrus';
-import {isEqualJson} from '~/utils/validation/helpers';
+import {isEqualJson, isFilledArr} from '~/utils/validation/helpers';
 
 const {WALKING} = DIRECTIONS_MODE;
 const onUpdate = (prev, next) => isEqualJson(prev, next);
@@ -57,16 +57,18 @@ const ActivityGroup = ({items, header, direction, onPresItem, themeStyle, onNext
 
   return (
     <View>
-      <VirtualList
-        renderItem={renderItem}
-        items={items}
-        Header={renderGroupHeader(header)}
-        Footer={Footer}
-        initialNumToRender={ACTIVITIES_BATCH_LIMIT}
-        onEndReached={onNext}
-        onEndReachedThreshold={0.3}
-        keyExtractor={_item => _item.id}
-      />
+      {isFilledArr(items) && (
+        <VirtualList
+          renderItem={renderItem}
+          items={items}
+          Header={renderGroupHeader(header)}
+          Footer={Footer}
+          initialNumToRender={ACTIVITIES_BATCH_LIMIT}
+          onEndReached={onNext}
+          onEndReachedThreshold={0.3}
+          keyExtractor={_item => _item.id}
+        />
+      )}
     </View>
   );
 };
