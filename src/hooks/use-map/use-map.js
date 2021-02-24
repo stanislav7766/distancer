@@ -1,11 +1,20 @@
 import React, {useEffect} from 'react';
 import {View} from 'react-native';
-import MapboxGL, {MapView, UserLocation, Camera} from '@react-native-mapbox-gl/maps';
+import MapboxGL, {MapView, UserLocation, Camera, Logger} from '@react-native-mapbox-gl/maps';
 import {styles} from './styles';
 import {MAP_TOKEN} from 'react-native-dotenv';
 import {mapViewDefaultProps, cameraDefaultProps, userLocationDefaultProps} from './defaultProps';
 
 MapboxGL.setAccessToken(MAP_TOKEN);
+
+Logger.setLogCallback(log => {
+  const {message} = log;
+
+  return (
+    message.match('Request failed due to a permanent error: Canceled') ||
+    message.match('Request failed due to a permanent error: Socket Closed')
+  );
+});
 
 const useMap = ({mapViewProps, cameraProps, userLocationProps, mapStyle, mapViewChildren}) => {
   const _mapViewProps = {...mapViewDefaultProps, ...(mapViewProps ?? {})};
