@@ -4,7 +4,7 @@ import {useLiveRoute} from '~/stores/live-route';
 import {observer} from 'mobx-react-lite';
 import {LIVE_CURRENT_PROPS, LIVE_MODDING, LIVE_SPECS_DEFAULT} from '~/constants/constants';
 import {Column, Row, mt10} from './styles';
-import {isAvgPace, isAvgSpeed, ishhmmss} from '~/utils/validation/helpers';
+import {isAvgPace, isNum, ishhmmss} from '~/utils/validation/helpers';
 
 const LiveProps = () => {
   const {liveRoute, specs} = useLiveRoute();
@@ -24,10 +24,10 @@ const LiveProps = () => {
   const propValueCall = type =>
     ({
       pace: isAvgPace(pace) ? pace : LIVE_SPECS_DEFAULT.pace,
-      distance: isAvgSpeed(distance) ? distance : LIVE_SPECS_DEFAULT.distance,
-      avgSpeed: isAvgSpeed(avgSpeed) ? avgSpeed : LIVE_SPECS_DEFAULT.avgSpeed,
+      distance: isNum(distance) ? distance : LIVE_SPECS_DEFAULT.distance,
+      avgSpeed: isNum(avgSpeed) ? avgSpeed : LIVE_SPECS_DEFAULT.avgSpeed,
       time: ishhmmss(movingTime) ? movingTime : LIVE_SPECS_DEFAULT.time,
-      currentSpeed: isAvgSpeed(currentSpeed) ? currentSpeed : LIVE_SPECS_DEFAULT.currentSpeed,
+      currentSpeed: isNum(currentSpeed) ? currentSpeed : LIVE_SPECS_DEFAULT.currentSpeed,
       currentPace: isAvgPace(currentPace) ? currentPace : LIVE_SPECS_DEFAULT.currentPace,
     }[type]);
 

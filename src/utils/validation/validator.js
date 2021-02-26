@@ -1,5 +1,5 @@
 import {WEAK_PASSWORD, INVALID_EMAIL, WRONG_AGE} from '~/constants/constants';
-import {isEmail, isEmpty, isLength, isNumLength, isNumber, isAvgPace, ishhmmss, isAvgSpeed} from './helpers';
+import {isEmail, isEmpty, isLength, isNumLength, isNumber, isAvgPace, ishhmmss, isNum} from './helpers';
 isEmpty;
 const FIELD_REQUIRED = field => `The ${field} is required`;
 
@@ -17,11 +17,11 @@ const validateProp = (prop, value) =>
 
 const validateActivityProp = (prop, value) =>
   ({
-    distance: (!isAvgSpeed(value) && 0) || value,
+    distance: (!isNum(value) && 0) || value,
     pace: (!isAvgPace(value) && '0\'0"') || value,
     movingTime: (!ishhmmss(value) && '00:00:00') || value,
     totalTime: (!ishhmmss(value) && '00:00:00') || value,
-    avgSpeed: (!isAvgSpeed(value) && 0) || value,
+    avgSpeed: (!isNum(value) && 0) || value,
   }[prop]);
 
 export const validateFields = fields =>

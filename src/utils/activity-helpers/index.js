@@ -1,23 +1,14 @@
+import {hhmmssToSec, paceToSec, secToPace} from '~/utils/time-helpers';
 import {
-  hhmmssSum,
-  hhmmssToSec,
-  mmssTohhmmss,
-  paceTommss,
-  hhmmssTommss,
-  secTohhmmss,
-  mmssTopace,
-} from '~/utils/time-helpers';
-import {filterByKey} from '~/utils/common-helpers/obj-helpers';
-import {
-  DEFAULT_MONTH_PROPS,
   DEFAULT_PACE,
   DEFAULT_AVG_SPEED,
   dateToYearMonth,
   DEFAULT_MONTH_TOTALS,
   mergeAvgsNums,
   substractAvgsNums,
+  monthTotalOrDefault,
 } from './helps';
-import {isAvgPace, isAvgSpeed, isFilledArr} from '../validation/helpers';
+import {isAvgPace, isNum, isFilledArr} from '../validation/helpers';
 import {getFirstItem} from '../common-helpers/arr-helpers';
 import {ACTIVITIES_BATCH_LIMIT} from '~/constants/constants';
 import {fixedNum, substactNum, sumNum} from '../common-helpers/num-helpers';
@@ -33,51 +24,23 @@ export const calcFromMonth = arr => {
       nextCount: 1,
     });
     const monthDistance = sumNum(act.distance, accum.monthDistance);
-    const monthTime = hhmmssSum(accum.monthTime, act.movingTime);
-    const monthAvgPace = mergeAvgPaces(
-      {monthCount: ind, monthAvgPace: accum.monthAvgPace},
-      {monthCount: 1, monthAvgPace: act.pace},
-    );
+
+    const monthAvgSec = mergeAvgsNums({
+      prevCount: ind,
+      prevAvg: accum.monthAvgSec,
+      nextAvg: paceToSec(act.pace),
+      nextCount: 1,
+    });
+    const monthAvgPace = secToPace(monthAvgSec);
+
     return {
-      monthAvgPace: isAvgPace(monthAvgPace) ? monthAvgPace : DEFAULT_MONTH_PROPS.monthAvgPace,
-      monthTime,
-      monthAvgSpeed: isAvgSpeed(monthAvgSpeed) ? fixedNum(monthAvgSpeed, 2) : DEFAULT_MONTH_PROPS.monthAvgSpeed,
-      monthDistance: fixedNum(monthDistance, 2),
+      monthAvgPace: isAvgPace(monthAvgPace) ? monthAvgPace : DEFAULT_MONTH_TOTALS.monthAvgPace,
+      monthAvgSec: isNum(monthAvgSec) ? fixedNum(monthAvgSec, 3) : DEFAULT_MONTH_TOTALS.monthAvgSec,
+      monthAvgSpeed: isNum(monthAvgSpeed) ? fixedNum(monthAvgSpeed, 2) : DEFAULT_MONTH_TOTALS.monthAvgSpeed,
+      monthDistance: isNum(monthDistance) ? fixedNum(monthDistance, 2) : DEFAULT_MONTH_TOTALS.monthDistance,
     };
-  }, DEFAULT_MONTH_PROPS);
-  const filteredTotals = filterByKey('monthTime', totals);
-  return {monthCount, ...filteredTotals};
-};
-
-const mergeAvgPaces = (prev, next) => {
-  const hhmmssPrev = mmssTohhmmss(paceTommss(prev.monthAvgPace));
-  const hhmmssNext = mmssTohhmmss(paceTommss(next.monthAvgPace));
-
-  const secPrev = hhmmssToSec(hhmmssPrev);
-  const secNext = hhmmssToSec(hhmmssNext);
-  const sec = mergeAvgsNums({
-    prevCount: prev.monthCount,
-    prevAvg: secPrev,
-    nextAvg: secNext,
-    nextCount: next.monthCount,
-  });
-  return mmssTopace(hhmmssTommss(secTohhmmss(sec)));
-};
-
-const substractAvgPaces = (prev, next) => {
-  const hhmmssPrev = mmssTohhmmss(paceTommss(prev.monthAvgPace));
-  const hhmmssNext = mmssTohhmmss(paceTommss(next.monthAvgPace));
-
-  const secPrev = hhmmssToSec(hhmmssPrev);
-  const secNext = hhmmssToSec(hhmmssNext);
-  const sec = substractAvgsNums({
-    prevCount: prev.monthCount,
-    prevAvg: secPrev,
-    nextAvg: secNext,
-    nextCount: next.monthCount,
-  });
-
-  return mmssTopace(hhmmssTommss(secTohhmmss(sec)));
+  }, DEFAULT_MONTH_TOTALS);
+  return {...totals, monthCount};
 };
 
 export const mergeMonthTotals = (prev = DEFAULT_MONTH_TOTALS, next = DEFAULT_MONTH_TOTALS) => {
@@ -89,32 +52,58 @@ export const mergeMonthTotals = (prev = DEFAULT_MONTH_TOTALS, next = DEFAULT_MON
     nextAvg: next.monthAvgSpeed,
     nextCount: next.monthCount,
   });
+  const monthAvgSec = mergeAvgsNums({
+    prevCount: prev.monthCount,
+    prevAvg: prev.monthAvgSec,
+    nextAvg: next.monthAvgSec,
+    nextCount: next.monthCount,
+  });
 
-  const monthAvgPace = mergeAvgPaces(prev, next);
+  const monthAvgPace = secToPace(monthAvgSec);
   return {
     monthCount,
     monthDistance: fixedNum(monthDistance, 2),
     monthAvgPace,
     monthAvgSpeed: fixedNum(monthAvgSpeed, 2),
+    monthAvgSec: fixedNum(monthAvgSec, 3),
   };
 };
 
 export const substractMonthTotals = (prev = DEFAULT_MONTH_TOTALS, next = DEFAULT_MONTH_TOTALS) => {
-  const monthCount = substactNum(prev.monthCount, next.monthCount);
-  const monthDistance = substactNum(prev.monthDistance, next.monthDistance);
-  const monthAvgSpeed = substractAvgsNums({
-    prevCount: prev.monthCount,
-    prevAvg: prev.monthAvgSpeed,
-    nextAvg: next.monthAvgSpeed,
-    nextCount: next.monthCount,
-  });
+  const monthCount = monthTotalOrDefault(
+    substactNum(prev.monthCount, next.monthCount),
+    DEFAULT_MONTH_TOTALS.monthCount,
+  );
+  const monthDistance = monthTotalOrDefault(
+    substactNum(prev.monthDistance, next.monthDistance),
+    DEFAULT_MONTH_TOTALS.monthDistance,
+  );
+  const monthAvgSpeed = monthTotalOrDefault(
+    substractAvgsNums({
+      prevCount: prev.monthCount,
+      prevAvg: prev.monthAvgSpeed,
+      nextAvg: next.monthAvgSpeed,
+      nextCount: next.monthCount,
+    }),
+    DEFAULT_MONTH_TOTALS.monthAvgSpeed,
+  );
+  const monthAvgSec = monthTotalOrDefault(
+    substractAvgsNums({
+      prevCount: prev.monthCount,
+      prevAvg: prev.monthAvgSec,
+      nextAvg: next.monthAvgSec,
+      nextCount: next.monthCount,
+    }),
+    DEFAULT_MONTH_TOTALS.monthAvgSec,
+  );
 
-  const monthAvgPace = substractAvgPaces(prev, next);
+  const monthAvgPace = secToPace(monthAvgSec);
   return {
     monthCount,
     monthDistance: fixedNum(monthDistance, 2),
     monthAvgPace,
     monthAvgSpeed: fixedNum(monthAvgSpeed, 2),
+    monthAvgSec: fixedNum(monthAvgSec, 3),
   };
 };
 

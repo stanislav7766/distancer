@@ -1,17 +1,12 @@
 import {divNum, mulNum, substactNum, sumNum} from '../common-helpers/num-helpers';
-
-export const DEFAULT_MONTH_PROPS = {
-  monthTime: '00:00:00',
-  monthAvgSpeed: 0.0,
-  monthAvgPace: '0\'0"',
-  monthDistance: 0,
-};
+import {isNum} from '../validation/helpers';
 
 export const DEFAULT_MONTH_TOTALS = {
   monthAvgSpeed: 0,
   monthAvgPace: '0\'0"',
   monthDistance: 0,
   monthCount: 0,
+  monthAvgSec: 0,
 };
 
 export const DEFAULT_PACE = '0\'0"';
@@ -51,3 +46,6 @@ export const mergeAvgsNums = ({prevAvg, prevCount, nextAvg, nextCount}) =>
 
 export const substractAvgsNums = ({prevAvg, prevCount, nextAvg, nextCount}) =>
   divNum(substactNum(mulNum(prevAvg, prevCount), nextAvg), substactNum(prevCount, nextCount));
+
+export const monthTotalOrDefault = (res, defaultVaulue = 0) =>
+  isNum(res) && res >= defaultVaulue ? res : defaultVaulue;

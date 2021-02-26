@@ -1,3 +1,4 @@
+import {pipe} from '../common-helpers/fun-helpers';
 import {pad} from './helps';
 
 export const hhmmssToSec = hhmmss =>
@@ -50,3 +51,6 @@ export const hhmmssSum = (hhmmss1, hhmmss2) => {
 };
 
 export const getTimestamp = () => Date.now();
+
+export const secToPace = pipe(secTohhmmss, hhmmssTommss, mmssTopace);
+export const paceToSec = pipe(paceTommss, mmssTohhmmss, hhmmssToSec);

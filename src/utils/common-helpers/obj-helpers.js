@@ -6,4 +6,4 @@ export const filterByKeys = (keys = [], obj = {}) => keys.reduce((accum, key) =>
 export const sortObjByKey = obj =>
   Object.keys(obj)
     .sort()
-    .reduce((accum, val) => (accum[val] = obj[val]), {});
+    .reduce((accum, val) => ({...accum, [val]: obj[val]}), {});

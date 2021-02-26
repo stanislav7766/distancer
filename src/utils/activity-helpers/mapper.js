@@ -75,6 +75,8 @@ export const removeItemFromGroups = (groups, id) =>
 
     const itemInd = findIndexByKey(items, 'id', id);
     if (itemInd < 0) return [...accum, group];
+    if (group.items.length === 1) return accum;
+
     const filteredItems = filterByIndex(group.items, itemInd);
 
     group.items = filteredItems;
