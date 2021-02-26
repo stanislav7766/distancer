@@ -22,6 +22,14 @@ const getSettingsPath = type =>
     route: ROUTE_SETTINGS_PATH,
   }[type]);
 
+const getDefaultSettings = type =>
+  ({
+    map: DEFAULT_MAP_SETTINGS,
+    app: DEFAULT_APP_SETTINGS,
+    activity: DEFAULT_ACTIVITY_SETTINGS,
+    route: DEFAULT_ROUTE_SETTINGS,
+  }[type]);
+
 const _deleteFile = filePath =>
   new Promise((resolve, reject) => {
     _exists(filePath)
@@ -83,6 +91,12 @@ export const readSettings = type =>
   new Promise(async (resolve, reject) => {
     try {
       const path = getSettingsPath(type);
+      const exists = await _exists(path);
+      if (!exists) {
+        const settings = getDefaultSettings(type);
+        await _writeFile(path, JSON.stringify(settings));
+        return resolve(settings);
+      }
       const data = await _readFile(path);
       resolve(JSON.parse(data));
     } catch (error) {

@@ -90,7 +90,7 @@ export const updateProfile = ({payload}) =>
       if (!isValid) return resolve({success: false, reason});
       const mappedProfile = mapForDBProfile(profile);
       const {userId, ...restProfile} = mappedProfile;
-      await Promise.all([getUserDocRef({userId}).update(restProfile), updateItem(userId, restProfile)]);
+      await _updateProfile(userId, restProfile);
       resolve({success: true});
     } catch (err) {
       reject(err);
@@ -111,11 +111,11 @@ export const loginWithGoogle = () =>
       } = data;
 
       const doc = await getUserDocRef({userId: uid}).get();
+      if (!doc.exists) return resolve({success: false, reason: USER_NOT_FOUND});
 
-      doc.exists
-        ? resolve({success: true, reason: '', data: {user: {...doc.data(), userId: uid}}})
-        : resolve({success: false, reason: USER_NOT_FOUND});
-      doc.exists && (await setItem(uid, doc.data()));
+      const profile = doc.data();
+      resolve({success: true, reason: '', data: {user: {...mapForStoreProfile(profile), userId: uid}}});
+      doc.exists && (await setItem(uid, profile));
     } catch (err) {
       reject(err.message);
     }
@@ -223,7 +223,7 @@ export const registerWithGoogle = () =>
         photoURL,
         userId: uid,
       };
-      resolve({success: true, reason: '', data: {user: userProfile}});
+      resolve({success: true, reason: '', data: {user: mapForStoreProfile(userProfile)}});
       await _saveProfile(uid, userProfile);
     } catch (err) {
       reject(err.message);
@@ -267,7 +267,7 @@ export const registerUser = ({payload}) =>
         userId: uid,
         email,
       };
-      resolve({success: true, reason: '', data: {user: profile}});
+      resolve({success: true, reason: '', data: {user: mapForStoreProfile(profile)}});
       await _saveProfile(uid, profile);
     } catch (err) {
       const {code} = err;
@@ -292,10 +292,11 @@ export const loginUser = ({payload}) =>
       const {uid} = response.user;
       const doc = await getUserDocRef({userId: uid}).get();
 
-      doc.exists
-        ? resolve({success: true, reason: '', data: {user: {...doc.data(), userId: uid}}})
-        : resolve({success: false, reason: USER_NOT_FOUND});
-      doc.exists && (await setItem(uid, doc.data()));
+      if (!doc.exists) return resolve({success: false, reason: USER_NOT_FOUND});
+      const profile = doc.data();
+      resolve({success: true, reason: '', data: {user: {...mapForStoreProfile(profile), userId: uid}}});
+
+      doc.exists && (await setItem(uid, profile));
     } catch (err) {
       const {code} = err;
       const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
