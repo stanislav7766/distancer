@@ -152,3 +152,19 @@ export const substractTotalsPerKey = ({payload}) =>
       resolve({success: false, reason: err.message});
     }
   });
+
+export const deleteAllTotals = ({userId}) =>
+  new Promise(async resolve => {
+    const directionsModes = ['walking', 'cycling', 'driving'];
+    const promises = directionsModes.map(async directionsMode => {
+      const snapshot = await getTotalsColRef({directionsMode, userId}).get();
+      const {docs} = snapshot;
+      docs.length > 0 &&
+        docs.forEach(doc => {
+          const {id} = doc.data();
+          getTotalsColRef({userId, directionsMode}).doc(id).delete();
+        });
+    });
+    await Promise.all(promises);
+    resolve(true);
+  });

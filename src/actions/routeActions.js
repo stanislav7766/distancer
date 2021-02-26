@@ -1,10 +1,4 @@
-import {
-  ROUTES_LIST_ENDED,
-  ROUTES_LIST_EMPTY,
-  ERROR_OCCURRED,
-  ERROR_NETWORK_FAILED,
-  ROUTES_BATCH_LIMIT,
-} from '~/constants/constants';
+import {ROUTES_LIST_ENDED, ROUTES_LIST_EMPTY, ERROR_NETWORK_FAILED, ROUTES_BATCH_LIMIT} from '~/constants/constants';
 import {isFilledArr} from '~/utils/validation/helpers';
 import firestore from '@react-native-firebase/firestore';
 import {mapperCoordsArrToObj, mapperCoordsObjToArr} from '~/utils/coordinate-helpers';
@@ -83,15 +77,28 @@ export const saveRoute = ({payload}) =>
     try {
       const {route, userId} = payload;
       const {id, points, ...rest} = route;
-      const written = await getRoutesColRef({userId})
+      await getRoutesColRef({userId})
         .doc(id)
         .set({
           ...rest,
           id,
           points: mapperCoordsArrToObj(points),
         });
-      resolve({success: written, reason: written ? '' : ERROR_OCCURRED});
+      resolve({success: true, reason: ''});
     } catch (err) {
       reject(err);
     }
+  });
+
+export const deleteAllRoutes = ({userId}) =>
+  new Promise(async resolve => {
+    const snapshot = await getRoutesColRef({userId}).get();
+    const {docs} = snapshot;
+    docs.length > 0 &&
+      docs.forEach(doc => {
+        const {id} = doc.data();
+        getRoutesColRef({userId}).doc(id).delete();
+      });
+
+    resolve(true);
   });

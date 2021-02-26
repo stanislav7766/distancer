@@ -128,3 +128,19 @@ export const saveActivity = ({payload}) =>
       reject(err);
     }
   });
+
+export const deleteAllActivities = ({userId}) =>
+  new Promise(async resolve => {
+    const directionsModes = ['walking', 'cycling', 'driving'];
+    const promises = directionsModes.map(async directionsMode => {
+      const snapshot = await getActivitiesColRef({directionsMode, userId}).get();
+      const {docs} = snapshot;
+      docs.length > 0 &&
+        docs.forEach(doc => {
+          const {id} = doc.data();
+          getActivitiesColRef({userId, directionsMode}).doc(id).delete();
+        });
+    });
+    await Promise.all(promises);
+    resolve(true);
+  });

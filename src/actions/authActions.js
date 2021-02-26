@@ -17,7 +17,10 @@ import {setItem, getItem, removeItem, updateItem} from '~/utils/fs/asyncStorage'
 import {GoogleSignin} from '@react-native-community/google-signin';
 import {isFilledArr} from '~/utils/validation/helpers';
 import {validateData} from '~/utils/validation/validation';
-import {mapForDBProfile, mapForStoreProfile} from '~/utils/profile-helpers';
+import {getProfileFilledKey, mapForDBProfile, mapForStoreProfile} from '~/utils/profile-helpers';
+import {deleteAllActivities} from './activityActions';
+import {deleteAllTotals} from './totalsActions';
+import {deleteAllRoutes} from './routeActions';
 
 GoogleSignin.configure({
   offlineAccess: false,
@@ -27,6 +30,8 @@ GoogleSignin.configure({
 const isSignedGoogle = async () => {
   return await GoogleSignin.isSignedIn();
 };
+
+const getUserDocRef = ({userId}) => firestore().collection('users').doc(userId);
 
 const _signOutGoogle = async () => {
   await GoogleSignin.revokeAccess();
@@ -69,11 +74,10 @@ const _signInWithGoogleCredential = async () => {
   return {success: true, data: {user}};
 };
 
-const _saveProfile = (uid, profile) =>
-  Promise.all([firestore().collection('users').doc(uid).set(profile), setItem(uid, profile)]);
+const _saveProfile = (uid, profile) => Promise.all([getUserDocRef({userId: uid}).set(profile), setItem(uid, profile)]);
 
 const _updateProfile = (uid, profile) =>
-  Promise.all([firestore().collection('users').doc(uid).update(profile), updateItem(uid, profile)]);
+  Promise.all([getUserDocRef({userId: uid}).update(profile), updateItem(uid, profile)]);
 
 export const updateProfile = ({payload}) =>
   new Promise(async (resolve, reject) => {
@@ -86,10 +90,7 @@ export const updateProfile = ({payload}) =>
       if (!isValid) return resolve({success: false, reason});
       const mappedProfile = mapForDBProfile(profile);
       const {userId, ...restProfile} = mappedProfile;
-      await Promise.all([
-        firestore().collection('users').doc(userId).update(restProfile),
-        updateItem(userId, restProfile),
-      ]);
+      await Promise.all([getUserDocRef({userId}).update(restProfile), updateItem(userId, restProfile)]);
       resolve({success: true});
     } catch (err) {
       reject(err);
@@ -109,7 +110,7 @@ export const loginWithGoogle = () =>
         user: {uid},
       } = data;
 
-      const doc = await firestore().collection('users').doc(uid).get();
+      const doc = await getUserDocRef({userId: uid}).get();
 
       doc.exists
         ? resolve({success: true, reason: '', data: {user: {...doc.data(), userId: uid}}})
@@ -236,8 +237,9 @@ export const getCurrentUser = () =>
         if (!user) return resolve({success: false, reason: '', data: {user: null}});
 
         const {uid} = user;
-        const doc = await firestore().collection('users').doc(uid).get();
+        const doc = await getUserDocRef({userId: uid}).get();
         const data = doc.exists ? doc.data() : await getItem(uid);
+        if (!data) return resolve({success: false, NEED_AUTHORIZATION});
         resolve({success: true, reason: '', data: {user: mapForStoreProfile(data)}});
       });
     } catch (err) {
@@ -288,7 +290,7 @@ export const loginUser = ({payload}) =>
 
       const response = await auth().signInWithEmailAndPassword(email, password);
       const {uid} = response.user;
-      const doc = await firestore().collection('users').doc(uid).get();
+      const doc = await getUserDocRef({userId: uid}).get();
 
       doc.exists
         ? resolve({success: true, reason: '', data: {user: {...doc.data(), userId: uid}}})
@@ -299,6 +301,13 @@ export const loginUser = ({payload}) =>
       const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
       reject(mes);
     }
+  });
+
+export const deleteUserProfile = ({userId}) =>
+  new Promise(async resolve => {
+    await Promise.all([getUserDocRef({userId}).delete(), removeItem(userId), removeItem(getProfileFilledKey(userId))]);
+
+    resolve(true);
   });
 
 export const deleteAccount = ({payload}) =>
@@ -313,11 +322,10 @@ export const deleteAccount = ({payload}) =>
       await auth().currentUser.delete();
 
       await Promise.all([
-        firestore().collection('users').doc(userId).delete(),
-        deleteIfExist({directionsMode: 'walking', userId}),
-        deleteIfExist({directionsMode: 'cycling', userId}),
-        deleteIfExist({directionsMode: 'driving', userId}),
-        removeItem(userId),
+        deleteAllActivities({userId}),
+        deleteAllTotals({userId}),
+        deleteAllRoutes({userId}),
+        deleteUserProfile({userId}),
       ]);
       resolve({success: true, reason: ''});
     } catch (err) {
@@ -343,18 +351,4 @@ export const logoutUser = ({payload}) =>
       const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
       reject(mes);
     }
-  });
-const getActivitiesColRef = ({userId, directionsMode}) =>
-  firestore().collection('activities').doc(directionsMode).collection(userId);
-
-const deleteIfExist = ({directionsMode, userId}) =>
-  new Promise(async resolve => {
-    const snapshot = await getActivitiesColRef({directionsMode, userId}).get();
-    const {docs} = snapshot;
-    docs.length > 0 &&
-      (await docs.forEach(doc => {
-        const {id} = doc.data();
-        getActivitiesColRef({userId, directionsMode}).doc(id).delete();
-      }));
-    resolve(true);
   });
