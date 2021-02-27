@@ -21,7 +21,7 @@ import {getProfileFilledKey, mapForDBProfile, mapForStoreProfile} from '~/utils/
 import {deleteAllActivities} from './activityActions';
 import {deleteAllTotals} from './totalsActions';
 import {deleteAllRoutes} from './routeActions';
-import {setAvatarStorage} from './storageActions';
+import {deleteUserAvatar, setAvatarStorage} from './storageActions';
 
 GoogleSignin.configure({
   offlineAccess: false,
@@ -323,14 +323,15 @@ export const deleteAccount = ({payload}) =>
       const {userId} = payload;
       const isSignedIn = await isSignedGoogle();
       isSignedIn && (await _signOutGoogle());
-      await auth().currentUser.delete();
 
       await Promise.all([
+        deleteUserAvatar({userId}),
         deleteAllActivities({userId}),
         deleteAllTotals({userId}),
         deleteAllRoutes({userId}),
         deleteUserProfile({userId}),
       ]);
+      await auth().currentUser.delete();
       resolve({success: true, reason: ''});
     } catch (err) {
       const {code} = err;

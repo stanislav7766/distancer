@@ -21,3 +21,10 @@ export const setAvatarStorage = ({payload}) =>
       reject(error);
     }
   });
+
+export const deleteUserAvatar = ({userId}) =>
+  new Promise(async resolve => {
+    await getAvatarRef({userId}).delete();
+
+    resolve(true);
+  });
