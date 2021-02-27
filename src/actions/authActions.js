@@ -21,6 +21,7 @@ import {getProfileFilledKey, mapForDBProfile, mapForStoreProfile} from '~/utils/
 import {deleteAllActivities} from './activityActions';
 import {deleteAllTotals} from './totalsActions';
 import {deleteAllRoutes} from './routeActions';
+import {setAvatarStorage} from './storageActions';
 
 GoogleSignin.configure({
   offlineAccess: false,
@@ -85,13 +86,15 @@ export const updateProfile = ({payload}) =>
       const isConnected = await isNetworkAvailable();
       if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
 
-      const {profile} = payload;
+      const {profile, avatarURI} = payload;
       const {isValid, reason} = validateData(profile);
       if (!isValid) return resolve({success: false, reason});
       const mappedProfile = mapForDBProfile(profile);
       const {userId, ...restProfile} = mappedProfile;
-      await _updateProfile(userId, restProfile);
-      resolve({success: true});
+      const {success, data} = await setAvatarStorage({payload: {uri: avatarURI, userId}});
+      const partProfile = success ? {photoURL: data.photoURL} : {};
+      await _updateProfile(userId, {...restProfile, ...partProfile});
+      resolve({success: true, data: {partProfile}});
     } catch (err) {
       reject(err);
     }

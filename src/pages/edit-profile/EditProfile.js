@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Text} from 'react-native';
+import {launchImageLibrary} from 'react-native-image-picker';
 import {CenterXY, Container, Row, Column, Styles, btnSaveStyles, mt20, mt30} from './styles';
 import {RoundedIcon} from '~/componets/rounded-icon';
 import useSvgFactory from '~/hooks/use-svg-factory';
@@ -16,6 +17,16 @@ import {useAuth} from '~/stores/auth';
 import {useNavigation} from '~/stores/navigation';
 import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
 import {useSpinner} from '~/stores/spinner';
+import {Touchable} from '~/componets/touchable';
+import {isExist} from '~/utils/validation/helpers';
+import {ERROR_OCCURRED, STORAGE_PERMISSIONS_DENIED} from '~/constants/constants';
+
+const imageProps = {
+  mediaType: 'photo',
+  includeBase64: false,
+  maxHeight: 200,
+  maxWidth: 200,
+};
 
 const EditProfile = ({withNewUser = false}) => {
   const makeCancelable = useCancelablePromise();
@@ -30,6 +41,12 @@ const EditProfile = ({withNewUser = false}) => {
     setProfile(auth.profile);
   }, [auth.profile]);
 
+  const avatarSource = auth?.profile?.photoURL;
+
+  const [avatar, setAvatar] = useState({
+    uri: avatarSource,
+    changed: false,
+  });
   const {themeStyle} = useTheme();
   const IconLeftArrow = useSvgFactory(getLeftArrow, {width: 30, height: 33, fillAccent: themeStyle.accentColor});
 
@@ -45,15 +62,15 @@ const EditProfile = ({withNewUser = false}) => {
     if (isLoading) return;
 
     startLoading();
-    makeCancelable(updateProfile({payload: {profile}}), () => {
+    makeCancelable(updateProfile({payload: {profile, avatarURI: avatar.changed ? avatar.uri : ''}}), () => {
       stopLoading();
     })
-      .then(({success, reason}) => {
+      .then(({success, reason, data}) => {
         if (!success) {
           Toast.show(reason);
           return;
         }
-        auth.setProfile(profile);
+        auth.setProfile({...profile, ...data.partProfile});
         onMarkFilledProfile({payload: {filled: true, userId: auth.profile.userId}});
         goToMain();
       })
@@ -67,8 +84,6 @@ const EditProfile = ({withNewUser = false}) => {
     withNewUser ? resetScreen({screenId: 'Landing'}) : popToMainScreen();
   };
 
-  const avatarSource = auth?.profile?.photoURL;
-
   const InputsProps = {
     themeStyle,
     profile,
@@ -78,6 +93,22 @@ const EditProfile = ({withNewUser = false}) => {
     themeStyle,
     profile,
     setProfile,
+  };
+
+  const onChooseImage = () => {
+    launchImageLibrary(imageProps, response => {
+      const {errorCode, uri, didCancel} = response;
+      if (didCancel) return;
+      if (isExist(errorCode)) {
+        const message = errorCode === 'permission' ? STORAGE_PERMISSIONS_DENIED : ERROR_OCCURRED;
+        Toast.show(message);
+        return;
+      }
+      setAvatar({
+        uri,
+        changed: true,
+      });
+    });
   };
 
   const Inputs = <ProfileInputs {...InputsProps} />;
@@ -95,7 +126,7 @@ const EditProfile = ({withNewUser = false}) => {
   const AvatarView = (
     <Row {...mt30}>
       <Column alignItems={'center'}>
-        <Avatar size={80} src={avatarSource} />
+        <Touchable Child={<Avatar size={80} src={avatar.uri} />} onPress={onChooseImage} />
       </Column>
     </Row>
   );
