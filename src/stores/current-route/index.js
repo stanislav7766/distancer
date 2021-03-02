@@ -1,8 +1,8 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable, observe} from 'mobx';
 import {DEFAULT_ROUTE} from '~/constants/constants';
 import {measureDistance} from '~/utils/route-helpers';
 import {isEqualJson} from '~/utils/validation/helpers';
+import {storesDI} from '~/utils/store-di';
 
 export class CurrentRouteStore {
   constructor() {
@@ -53,6 +53,6 @@ export class CurrentRouteStore {
   _isListenPoints = ({name, oldValue, newValue}) =>
     name === 'currentRoute' && !isEqualJson(oldValue?.points, newValue?.points) && this.watchPoints;
 }
+storesDI.Injectable('currentRouteStore')(CurrentRouteStore);
 
-export const CurrentRouteContext = createContext();
-export const useCurrentRoute = () => useContext(CurrentRouteContext);
+export const useCurrentRoute = () => storesDI.Inject('currentRouteStore');

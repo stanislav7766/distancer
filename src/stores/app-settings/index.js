@@ -1,14 +1,14 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable, observe} from 'mobx';
 import {DEFAULT_SCREEN, DEFAULT_THEME} from '~/constants/constants';
 import {isExist} from '~/utils/validation/helpers';
+import {storesDI} from '~/utils/store-di';
 
 export class AppSettingsStore {
-  constructor({themeStore, appModeStore, authStore}) {
-    this.themeStore = themeStore;
-    this.appModeStore = appModeStore;
-    this.authStore = authStore;
-    this.theme = themeStore.theme;
+  constructor() {
+    this.themeStore = storesDI.Inject('themeStore');
+    this.appModeStore = storesDI.Inject('appModeStore');
+    this.authStore = storesDI.Inject('authStore');
+    this.theme = this.themeStore.theme;
 
     observe(this.themeStore, this._listenThemeStore);
     makeAutoObservable(this);
@@ -44,5 +44,6 @@ export class AppSettingsStore {
   };
 }
 
-export const AppSettingsContext = createContext();
-export const useAppSettings = () => useContext(AppSettingsContext);
+storesDI.Injectable('appSettingsStore')(AppSettingsStore);
+
+export const useAppSettings = () => storesDI.Inject('appSettingsStore');

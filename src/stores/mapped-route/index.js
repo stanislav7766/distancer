@@ -1,4 +1,3 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
 import {isEqualJson, isFilledArr, isFunction} from '~/utils/validation/helpers';
 import {getIndexSingleDiff, findIndexByKey, getLastItem} from '~/utils/common-helpers/arr-helpers';
@@ -10,6 +9,7 @@ import {
   mapperWithNewId,
   coordinateWithNewId,
 } from '~/utils/route-helpers';
+import {storesDI} from '~/utils/store-di';
 
 export class MappedRouteStore {
   constructor() {
@@ -81,5 +81,6 @@ export class MappedRouteStore {
   };
 }
 
-export const MappedRouteContext = createContext();
-export const useMappedRoute = () => useContext(MappedRouteContext);
+storesDI.Injectable('mappedRouteStore')(MappedRouteStore);
+
+export const useMappedRoute = () => storesDI.Inject('mappedRouteStore');

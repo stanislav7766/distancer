@@ -1,7 +1,7 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
 import {DEFAULT_AUTO_PAUSE, DEFAULT_TIMER_ON_START, DEFAULT_VIBRATE_ON_START} from '~/constants/constants';
 import {isExist} from '~/utils/validation/helpers';
+import {storesDI} from '~/utils/store-di';
 
 export class ActivitySettingsStore {
   constructor() {
@@ -27,6 +27,6 @@ export class ActivitySettingsStore {
     isExist(autoPause) && this.setAutoPause(autoPause);
   };
 }
+storesDI.Injectable('activitySettingsStore')(ActivitySettingsStore);
 
-export const ActivitySettingsContext = createContext();
-export const useActivitySettings = () => useContext(ActivitySettingsContext);
+export const useActivitySettings = () => storesDI.Inject('activitySettingsStore');

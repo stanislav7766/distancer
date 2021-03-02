@@ -1,5 +1,5 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
+import {storesDI} from '~/utils/store-di';
 
 export class SpinnerStore {
   constructor() {
@@ -34,6 +34,6 @@ export class SpinnerStore {
     this.isMoreLoading = false;
   };
 }
+storesDI.Injectable('spinnerStore')(SpinnerStore);
 
-export const SpinnerContext = createContext();
-export const useSpinner = () => useContext(SpinnerContext);
+export const useSpinner = () => storesDI.Inject('spinnerStore');

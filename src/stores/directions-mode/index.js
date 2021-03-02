@@ -1,6 +1,6 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
 import {DIRECTIONS_MODE} from '~/constants/constants';
+import {storesDI} from '~/utils/store-di';
 
 export class DirectionsModeStore {
   constructor() {
@@ -17,6 +17,5 @@ export class DirectionsModeStore {
     this.isDirectionsMode = isDirectionsMode;
   };
 }
-
-export const DirectionsModeContext = createContext();
-export const useDirectionsMode = () => useContext(DirectionsModeContext);
+storesDI.Injectable('directionsModeStore')(DirectionsModeStore);
+export const useDirectionsMode = () => storesDI.Inject('directionsModeStore');

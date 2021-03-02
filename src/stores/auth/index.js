@@ -1,6 +1,6 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
 import {DEFAULT_PROFILE} from '~/constants/constants';
+import {storesDI} from '~/utils/store-di';
 
 export class AuthStore {
   constructor() {
@@ -18,6 +18,6 @@ export class AuthStore {
     this.profile = {...this.profile, ...profile};
   };
 }
+storesDI.Injectable('authStore')(AuthStore);
 
-export const AuthContext = createContext();
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => storesDI.Inject('authStore');

@@ -1,5 +1,5 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
+import {storesDI} from '~/utils/store-di';
 
 const defaultInit = {
   headerText: '',
@@ -32,6 +32,6 @@ export class ModalInputConfirmStore {
     this.init = defaultInit;
   };
 }
+storesDI.Injectable('modalInputConfirmStore')(ModalInputConfirmStore);
 
-export const ModalInputConfirmContext = createContext();
-export const useModalInputConfirm = () => useContext(ModalInputConfirmContext);
+export const useModalInputConfirm = () => storesDI.Inject('modalInputConfirmStore');

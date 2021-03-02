@@ -1,7 +1,7 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
 import {THEMES} from '~/constants/constants';
 import {ThemeStyle} from '~/constants/styles';
+import {storesDI} from '~/utils/store-di';
 
 export class ThemeStore {
   constructor() {
@@ -17,5 +17,6 @@ export class ThemeStore {
   };
 }
 
-export const ThemeContext = createContext();
-export const useTheme = () => useContext(ThemeContext);
+storesDI.Injectable('themeStore')(ThemeStore);
+
+export const useTheme = () => storesDI.Inject('themeStore');

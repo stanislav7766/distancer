@@ -1,6 +1,6 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable, observe} from 'mobx';
 import {APP_MODE, ROUTE_TYPES} from '~/constants/constants';
+import {storesDI} from '~/utils/store-di';
 
 const {VIEW_MODE} = APP_MODE;
 const {ROUTE} = ROUTE_TYPES;
@@ -36,6 +36,6 @@ export class AppModeStore {
     this.isViewRouteMode !== mode && (this.isViewRouteMode = mode);
   };
 }
+storesDI.Injectable('appModeStore')(AppModeStore);
 
-export const AppModeContext = createContext();
-export const useAppMode = () => useContext(AppModeContext);
+export const useAppMode = () => storesDI.Inject('appModeStore');

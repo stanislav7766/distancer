@@ -1,5 +1,5 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
+import {storesDI} from '~/utils/store-di';
 
 const defaultInit = {
   pickerItems: [],
@@ -29,6 +29,6 @@ export class ModalPickerStore {
     this.init = defaultInit;
   };
 }
+storesDI.Injectable('modalPickerStore')(ModalPickerStore);
 
-export const ModalPickerContext = createContext();
-export const useModalPicker = () => useContext(ModalPickerContext);
+export const useModalPicker = () => storesDI.Inject('modalPickerStore');

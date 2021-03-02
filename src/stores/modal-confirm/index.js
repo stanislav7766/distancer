@@ -1,5 +1,5 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
+import {storesDI} from '~/utils/store-di';
 
 const defaultInit = {text: '', preset: 'footer', onNo: () => {}, onYes: () => {}};
 
@@ -23,6 +23,6 @@ export class ModalConfirmStore {
     this.init = defaultInit;
   };
 }
+storesDI.Injectable('modalConfirmStore')(ModalConfirmStore);
 
-export const ModalConfirmContext = createContext();
-export const useModalConfirm = () => useContext(ModalConfirmContext);
+export const useModalConfirm = () => storesDI.Inject('modalConfirmStore');

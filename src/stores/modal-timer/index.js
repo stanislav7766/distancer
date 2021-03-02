@@ -1,5 +1,5 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
+import {storesDI} from '~/utils/store-di';
 
 const defaultInit = {onFinish: () => {}, secs: 0};
 
@@ -23,6 +23,6 @@ export class ModalTimerStore {
     this.init = defaultInit;
   };
 }
+storesDI.Injectable('modalTimerStore')(ModalTimerStore);
 
-export const ModalTimerContext = createContext();
-export const useModalTimer = () => useContext(ModalTimerContext);
+export const useModalTimer = () => storesDI.Inject('modalTimerStore');

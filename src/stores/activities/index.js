@@ -1,8 +1,8 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
 import {DEFAULT_ACTIVITIES} from '~/constants/constants';
 import {filterByIndex, findIndexByKey, uniquifyByKey} from '~/utils/common-helpers/arr-helpers';
 import {groupsMerger, mapper, removeItemFromGroups} from '~/utils/activity-helpers/mapper';
+import {storesDI} from '~/utils/store-di';
 
 export class ActivitiesStore {
   constructor() {
@@ -65,6 +65,6 @@ export class ActivitiesStore {
     this.grouppedActivities = groupsMerger(this.grouppedActivities, moreGroups);
   };
 }
+storesDI.Injectable('activitiesStore')(ActivitiesStore);
 
-export const ActivitiesContext = createContext();
-export const useActivities = () => useContext(ActivitiesContext);
+export const useActivities = () => storesDI.Inject('activitiesStore');

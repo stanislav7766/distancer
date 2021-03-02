@@ -1,7 +1,7 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
 import {DEFAULT_DRAG_HINTS} from '~/constants/constants';
 import {isExist} from '~/utils/validation/helpers';
+import {storesDI} from '~/utils/store-di';
 
 export class RouteSettingsStore {
   constructor() {
@@ -18,6 +18,6 @@ export class RouteSettingsStore {
     isExist(dragHints) && this.setDragHints(dragHints);
   };
 }
+storesDI.Injectable('routeSettingsStore')(RouteSettingsStore);
 
-export const RouteSettingsContext = createContext();
-export const useRouteSettings = () => useContext(RouteSettingsContext);
+export const useRouteSettings = () => storesDI.Inject('routeSettingsStore');

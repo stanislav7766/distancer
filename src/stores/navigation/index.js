@@ -1,6 +1,6 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
 import {isEmptyString, isExist, isObject} from '~/utils/validation/helpers';
+import {storesDI} from '~/utils/store-di';
 
 const DEFAULT_TRANSITION_PROPS = {
   animation: 'bottom',
@@ -68,6 +68,6 @@ export class NavigationStore {
     return isExist(this.navigation) && isObject(transitionProps);
   };
 }
+storesDI.Injectable('navigationStore')(NavigationStore);
 
-export const NavigationContext = createContext();
-export const useNavigation = () => useContext(NavigationContext);
+export const useNavigation = () => storesDI.Inject('navigationStore');

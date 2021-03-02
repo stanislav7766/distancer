@@ -1,9 +1,9 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable, observe} from 'mobx';
 import {DEFAULT_LIVE_ROUTE, LIVE_SPECS_DEFAULT, LIVE_TYPES} from '~/constants/constants';
 import {measureDistance} from '~/utils/route-helpers';
 import {calcPace, kmPerHourToPace, calcAvgSpeed} from '~/utils/activity-helpers';
 import {isEqualJson} from '~/utils/validation/helpers';
+import {storesDI} from '~/utils/store-di';
 
 const {STOP} = LIVE_TYPES;
 
@@ -98,6 +98,6 @@ export class LiveRouteStore {
   _isListenCurrentSpeed = ({name, oldValue, newValue}) =>
     name === 'specs' && oldValue?.currentSpeed !== newValue?.currentSpeed;
 }
+storesDI.Injectable('liveRouteStore')(LiveRouteStore);
 
-export const LiveRouteContext = createContext();
-export const useLiveRoute = () => useContext(LiveRouteContext);
+export const useLiveRoute = () => storesDI.Inject('liveRouteStore');

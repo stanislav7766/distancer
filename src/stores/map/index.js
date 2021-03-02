@@ -1,7 +1,7 @@
-import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
 import {DEFAULT_MAP_SETTINGS} from '~/constants/constants';
 import {isExist} from '~/utils/validation/helpers';
+import {storesDI} from '~/utils/store-di';
 
 export class MapStore {
   constructor() {
@@ -42,6 +42,6 @@ export class MapStore {
     this.showMapIcons = showMapIcons;
   };
 }
+storesDI.Injectable('mapStore')(MapStore);
 
-export const MapContext = createContext();
-export const useMap = () => useContext(MapContext);
+export const useMap = () => storesDI.Inject('mapStore');
