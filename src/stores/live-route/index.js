@@ -98,6 +98,5 @@ export class LiveRouteStore {
   _isListenCurrentSpeed = ({name, oldValue, newValue}) =>
     name === 'specs' && oldValue?.currentSpeed !== newValue?.currentSpeed;
 }
-storesDI.Injectable('liveRouteStore')(LiveRouteStore);
 
 export const useLiveRoute = () => storesDI.Inject('liveRouteStore');

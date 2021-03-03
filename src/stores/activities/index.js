@@ -65,6 +65,5 @@ export class ActivitiesStore {
     this.grouppedActivities = groupsMerger(this.grouppedActivities, moreGroups);
   };
 }
-storesDI.Injectable('activitiesStore')(ActivitiesStore);
 
 export const useActivities = () => storesDI.Inject('activitiesStore');

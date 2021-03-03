@@ -36,6 +36,5 @@ export class AppModeStore {
     this.isViewRouteMode !== mode && (this.isViewRouteMode = mode);
   };
 }
-storesDI.Injectable('appModeStore')(AppModeStore);
 
 export const useAppMode = () => storesDI.Inject('appModeStore');

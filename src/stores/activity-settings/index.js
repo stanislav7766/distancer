@@ -27,6 +27,5 @@ export class ActivitySettingsStore {
     isExist(autoPause) && this.setAutoPause(autoPause);
   };
 }
-storesDI.Injectable('activitySettingsStore')(ActivitySettingsStore);
 
 export const useActivitySettings = () => storesDI.Inject('activitySettingsStore');

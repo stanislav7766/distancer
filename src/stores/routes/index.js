@@ -29,6 +29,5 @@ export class RoutesStore {
     this.routes = DEFAULT_ROUTES;
   };
 }
-storesDI.Injectable('routesStore')(RoutesStore);
 
 export const useRoutes = () => storesDI.Inject('routesStore');

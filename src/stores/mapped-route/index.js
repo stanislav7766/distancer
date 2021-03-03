@@ -81,6 +81,4 @@ export class MappedRouteStore {
   };
 }
 
-storesDI.Injectable('mappedRouteStore')(MappedRouteStore);
-
 export const useMappedRoute = () => storesDI.Inject('mappedRouteStore');

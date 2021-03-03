@@ -29,6 +29,5 @@ export class ModalPickerStore {
     this.init = defaultInit;
   };
 }
-storesDI.Injectable('modalPickerStore')(ModalPickerStore);
 
 export const useModalPicker = () => storesDI.Inject('modalPickerStore');

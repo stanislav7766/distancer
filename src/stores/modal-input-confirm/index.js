@@ -32,6 +32,5 @@ export class ModalInputConfirmStore {
     this.init = defaultInit;
   };
 }
-storesDI.Injectable('modalInputConfirmStore')(ModalInputConfirmStore);
 
 export const useModalInputConfirm = () => storesDI.Inject('modalInputConfirmStore');

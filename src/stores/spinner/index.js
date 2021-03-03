@@ -34,6 +34,5 @@ export class SpinnerStore {
     this.isMoreLoading = false;
   };
 }
-storesDI.Injectable('spinnerStore')(SpinnerStore);
 
 export const useSpinner = () => storesDI.Inject('spinnerStore');

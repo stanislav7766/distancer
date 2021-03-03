@@ -17,6 +17,4 @@ export class ThemeStore {
   };
 }
 
-storesDI.Injectable('themeStore')(ThemeStore);
-
 export const useTheme = () => storesDI.Inject('themeStore');

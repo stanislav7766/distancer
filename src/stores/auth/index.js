@@ -18,6 +18,5 @@ export class AuthStore {
     this.profile = {...this.profile, ...profile};
   };
 }
-storesDI.Injectable('authStore')(AuthStore);
 
 export const useAuth = () => storesDI.Inject('authStore');

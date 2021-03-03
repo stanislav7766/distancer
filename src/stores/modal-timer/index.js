@@ -23,6 +23,5 @@ export class ModalTimerStore {
     this.init = defaultInit;
   };
 }
-storesDI.Injectable('modalTimerStore')(ModalTimerStore);
 
 export const useModalTimer = () => storesDI.Inject('modalTimerStore');

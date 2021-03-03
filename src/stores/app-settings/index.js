@@ -44,6 +44,4 @@ export class AppSettingsStore {
   };
 }
 
-storesDI.Injectable('appSettingsStore')(AppSettingsStore);
-
 export const useAppSettings = () => storesDI.Inject('appSettingsStore');

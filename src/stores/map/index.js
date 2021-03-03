@@ -42,6 +42,5 @@ export class MapStore {
     this.showMapIcons = showMapIcons;
   };
 }
-storesDI.Injectable('mapStore')(MapStore);
 
 export const useMap = () => storesDI.Inject('mapStore');

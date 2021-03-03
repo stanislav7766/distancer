@@ -53,6 +53,5 @@ export class CurrentRouteStore {
   _isListenPoints = ({name, oldValue, newValue}) =>
     name === 'currentRoute' && !isEqualJson(oldValue?.points, newValue?.points) && this.watchPoints;
 }
-storesDI.Injectable('currentRouteStore')(CurrentRouteStore);
 
 export const useCurrentRoute = () => storesDI.Inject('currentRouteStore');

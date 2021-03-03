@@ -41,3 +41,5 @@ export const isObject = obj => obj instanceof Object && obj.constructor === Obje
 export const isNum = num => Number.isFinite(num);
 export const isAvgPace = pace => typeof pace === 'string' && /^[0-9]{1,3}\'[0-9]{1,3}\"$/.test(pace);
 export const ishhmmss = hhmmss => typeof hhmmss === 'string' && /^[0-9]{2}:[0-9]{2}:[0-9]{2}$/.test(hhmmss);
+
+export const isClass = v => typeof v === 'function' && v.prototype.constructor === v;

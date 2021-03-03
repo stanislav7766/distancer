@@ -17,5 +17,4 @@ export class DirectionsModeStore {
     this.isDirectionsMode = isDirectionsMode;
   };
 }
-storesDI.Injectable('directionsModeStore')(DirectionsModeStore);
 export const useDirectionsMode = () => storesDI.Inject('directionsModeStore');

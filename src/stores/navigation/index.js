@@ -68,6 +68,5 @@ export class NavigationStore {
     return isExist(this.navigation) && isObject(transitionProps);
   };
 }
-storesDI.Injectable('navigationStore')(NavigationStore);
 
 export const useNavigation = () => storesDI.Inject('navigationStore');

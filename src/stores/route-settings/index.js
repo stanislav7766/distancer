@@ -18,6 +18,5 @@ export class RouteSettingsStore {
     isExist(dragHints) && this.setDragHints(dragHints);
   };
 }
-storesDI.Injectable('routeSettingsStore')(RouteSettingsStore);
 
 export const useRouteSettings = () => storesDI.Inject('routeSettingsStore');
