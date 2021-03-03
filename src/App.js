@@ -1,4 +1,5 @@
 import React from 'react';
+import '~/config/papyrus';
 import '~/config/stores';
 import Main from './Main';
 import {ContextCompose} from '~/componets/context-compose';

@@ -5,16 +5,16 @@ import {readSettings, writeSettings} from '~/utils/fs/storage';
 import {ERROR_OCCURRED} from '~/constants/constants';
 
 export const useListenApp = () => {
-  const {theme, defaultScreen, setAppSettings} = useAppSettings();
+  const {theme, locale, defaultScreen, setAppSettings} = useAppSettings();
 
   const updateStorageApp = useCallback(async () => {
     try {
       const settings = await readSettings('app');
-      await writeSettings({...settings, theme, defaultScreen}, 'app');
+      await writeSettings({...settings, theme, defaultScreen, locale}, 'app');
     } catch (error) {
       Toast.show(ERROR_OCCURRED);
     }
-  }, [theme, defaultScreen]);
+  }, [theme, defaultScreen, locale]);
 
   const updateStoreApp = useCallback(async () => {
     try {

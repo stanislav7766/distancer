@@ -28,6 +28,13 @@ export const APP_MODE = {
   SAVED_MODE: 'Saved',
 };
 
+export const LOCALES = {
+  EN: 'en_US',
+  UK: 'uk_UA',
+};
+
+export const DEFAULT_LOCALE = LOCALES.EN;
+
 export const MODAL_HEIGHTS = {
   LIVE_HEIGHT: 70,
   LIVE_EXP_HEIGHT: 180,
@@ -69,17 +76,23 @@ export const DEFAULT_ACTIVITY_SETTINGS = {
 
 export const LIVE_STATIONARY_FILTER_M = 5;
 export const GET_SCREEN_PICKER_ITEMS = () => Object.values(APP_MODE).map(text => ({label: text, value: text}));
-export const GET_TIMER_PICKER_ITEMS = () => new Array(11).fill(0).map((_, i) => ({label: `${i} sec`, value: `${i}`}));
+export const GET_LOCALES_ITEMS = () => [
+  {label: 'English', value: 'en_US'},
+  {label: 'Українська', value: 'uk_UA'},
+];
 
-export const GET_HEIGHT_PICKER_ITEMS = () =>
-  new Array(MAX_HEIGHT).fill(0).map((_, i) => ({label: `${i + 1} cm`, value: `${i + 1}`}));
+export const GET_TIMER_PICKER_ITEMS = ({sec = 'sec'} = {sec: 'sec'}) =>
+  new Array(11).fill(0).map((_, i) => ({label: `${i} ${sec}`, value: `${i}`}));
 
-export const GET_WEIGHT_PICKER_ITEMS = () =>
-  new Array(MAX_WEIGHT).fill(0).map((_, i) => ({label: `${i + 1} kgs`, value: `${i + 1}`}));
+export const GET_HEIGHT_PICKER_ITEMS = ({cm = 'cm'} = {cm: 'cm'}) =>
+  new Array(MAX_HEIGHT).fill(0).map((_, i) => ({label: `${i + 1} ${cm}`, value: `${i + 1}`}));
 
-export const GET_GENDER_PICKER_ITEMS = () => [
-  {label: 'Male', value: 'Male'},
-  {label: 'Female', value: 'Female'},
+export const GET_WEIGHT_PICKER_ITEMS = ({kgs = 'kgs'} = {kgs: 'kgs'}) =>
+  new Array(MAX_WEIGHT).fill(0).map((_, i) => ({label: `${i + 1} ${kgs}`, value: `${i + 1}`}));
+
+export const GET_GENDER_PICKER_ITEMS = ({male = 'Male', female = 'Female'} = {male: 'Male', female: 'Female'}) => [
+  {label: male, value: 'Male'},
+  {label: female, value: 'Female'},
 ];
 export const LIVE_TYPES = {
   STOP: 'stop',
