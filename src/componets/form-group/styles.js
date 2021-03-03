@@ -15,3 +15,5 @@ export const Styles = themeStyle => {
 export const mb30 = {
   marginBottom: 30,
 };
+
+export const flex0 = {flex: 0};
