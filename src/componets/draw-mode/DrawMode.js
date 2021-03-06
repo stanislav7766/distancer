@@ -19,7 +19,7 @@ import {getDrag} from '~/assets/svg-icons/drag';
 import Toast from 'react-native-simple-toast';
 import {randomID} from '~/utils/random-id';
 import {Row, Column, Styles, btnSaveStyles, mt10, mx0} from './styles';
-import {ACCENT_RED, ERROR_OCCURRED, SELECT_NEEDED_POINT, DIRECTIONS_MODE} from '~/constants/constants';
+import {ACCENT_RED, DIRECTIONS_MODE} from '~/constants/constants';
 import {saveRoute} from '~/actions';
 import {isFilledArr} from '~/utils/validation/helpers';
 import {useDirectionsMode} from '~/stores/directions-mode';
@@ -29,6 +29,9 @@ import {useAppMode} from '~/stores/app-mode';
 import {observer} from 'mobx-react-lite';
 import {useAuth} from '~/stores/auth';
 import {getTimestamp} from '~/utils/time-helpers';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const {WALKING} = DIRECTIONS_MODE;
 
@@ -73,7 +76,7 @@ const DrawMode = ({themeStyle}) => {
 
   const onPressDragMode = () => {
     if (!dragMode) {
-      dragHints && Toast.show(SELECT_NEEDED_POINT);
+      dragHints && Toast.show(papyrusify('drawMode.message.selectNeededPoint'));
       isFilledArr(points) && flyToFirst();
     }
     setDragMode(!dragMode);
@@ -84,10 +87,10 @@ const DrawMode = ({themeStyle}) => {
       .then(res => {
         const {success, reason} = res;
         success && onPressCancel();
-        Toast.show(success ? 'Saved' : reason);
+        Toast.show(success ? papyrusify('drawMode.message.saved') : reason);
       })
       .catch(_ => {
-        Toast.show(ERROR_OCCURRED);
+        Toast.show(papyrusify('common.message.errorOccurred'));
       });
   };
 
@@ -105,7 +108,9 @@ const DrawMode = ({themeStyle}) => {
     <>
       <Row {...mt10}>
         <Column alignItems={'flex-start'}>
-          <Text style={stylesTextKM}>{distance} km</Text>
+          <Text style={stylesTextKM}>
+            {distance} {papyrusify('common.designation.km')}
+          </Text>
         </Column>
         <Column alignItems={'flex-end'}>{SwitchDrawMode}</Column>
       </Row>
@@ -130,7 +135,7 @@ const DrawMode = ({themeStyle}) => {
           </Row>
         </Column>
         <Column alignItems={'flex-end'}>
-          <Btn onPress={onPressSave} title={'Save Route'} {...btnSaveStyles} />
+          <Btn onPress={onPressSave} title={papyrusify('drawMode.button.saveRoute')} {...btnSaveStyles} />
         </Column>
       </Row>
     </>

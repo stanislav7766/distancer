@@ -2,7 +2,9 @@ import {useCallback} from 'react';
 import Toast from 'react-native-simple-toast';
 import {useRouteSettings} from '~/stores/route-settings';
 import {readSettings, writeSettings} from '~/utils/fs/storage';
-import {ERROR_OCCURRED} from '~/constants/constants';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 export const useListenRoute = () => {
   const {dragHints, setRouteSettings} = useRouteSettings();
@@ -12,7 +14,7 @@ export const useListenRoute = () => {
       const settings = await readSettings('route');
       await writeSettings({...settings, dragHints}, 'route');
     } catch (error) {
-      Toast.show(ERROR_OCCURRED);
+      Toast.show(papyrusify('common.message.errorOccurred'));
     }
   }, [dragHints]);
 
@@ -21,7 +23,7 @@ export const useListenRoute = () => {
       const settings = await readSettings('route');
       setRouteSettings(settings);
     } catch (error) {
-      Toast.show(ERROR_OCCURRED);
+      Toast.show(papyrusify('common.message.errorOccurred'));
     }
   }, [setRouteSettings]);
   return [updateStoreRoute, updateStorageRoute];

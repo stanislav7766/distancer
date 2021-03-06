@@ -3,7 +3,7 @@ import {Text} from 'react-native';
 import {Btn} from '~/componets/btn';
 import Toast from 'react-native-simple-toast';
 import {Row, Column, stylesTextKM, Styles, btnDeleteStyles, mt10, mx0} from './styles';
-import {APP_MODE, ERROR_OCCURRED, DELETE_ROUTE_CONFIRM, ACCENT_BLUE} from '~/constants/constants';
+import {APP_MODE, ACCENT_BLUE} from '~/constants/constants';
 import SelectDirection from '~/componets/directions-bar/SelectDirection';
 import {useModalConfirm as useConfirm} from '~/stores/modal-confirm';
 import useSvgFactory from '~/hooks/use-svg-factory';
@@ -18,7 +18,9 @@ import {useMap} from '~/stores/map';
 import {useCurrentRoute} from '~/stores/current-route';
 import {useRoutes} from '~/stores/routes';
 import {isFilledArr} from '~/utils/validation/helpers';
+import {getLocaleStore} from '~/stores/locale';
 
+const {papyrusify} = getLocaleStore();
 const {LIVE_MODE} = APP_MODE;
 
 const Route = ({themeStyle, goToMain}) => {
@@ -50,16 +52,16 @@ const Route = ({themeStyle, goToMain}) => {
       .then(res => {
         const {success, reason} = res;
         success && onPressCancel();
-        Toast.show(success ? 'Deleted' : reason);
+        Toast.show(success ? papyrusify('savedMode.message.deleted') : reason);
       })
       .catch(_ => {
-        Toast.show(ERROR_OCCURRED);
+        Toast.show(papyrusify('common.message.errorOccurred'));
       });
   };
 
   const onRequestDelete = () => {
     setInit({
-      text: DELETE_ROUTE_CONFIRM,
+      text: papyrusify('savedMode.message.deleteRouteConfirm'),
       onNo: onHideConfirm,
       onYes: onPressDelete,
     });
@@ -81,7 +83,9 @@ const Route = ({themeStyle, goToMain}) => {
         <Column>
           <Row {...mx0}>
             <Column flex={0.5} alignItems={'flex-start'}>
-              <Text style={[stylesTextKM, {color: themeStyle.textColorSecondary}]}>{distance} km</Text>
+              <Text style={[stylesTextKM, {color: themeStyle.textColorSecondary}]}>
+                {distance} {papyrusify('common.designation.km')}
+              </Text>
             </Column>
             <Column flex={0.2} alignItems={'flex-start'}>
               <SelectDirection mode={directionsMode} color={ACCENT_BLUE} />
@@ -92,7 +96,7 @@ const Route = ({themeStyle, goToMain}) => {
           </Row>
         </Column>
         <Column alignItems={'flex-end'}>
-          <Btn {...btnDeleteStyles} title={'Delete Route'} onPress={onRequestDelete} />
+          <Btn {...btnDeleteStyles} title={papyrusify('savedMode.button.deleteRoute')} onPress={onRequestDelete} />
         </Column>
       </Row>
     </>

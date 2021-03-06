@@ -3,13 +3,7 @@ import {Vibration} from 'react-native';
 import {Row, Column, btnStartStyles, btnPauseStyles, btnContinueStyles, mt10} from './styles';
 import {Btn} from '~/componets/btn';
 import {randomID} from '~/utils/random-id';
-import {
-  LIVE_TYPES,
-  LIVE_SPECS_DEFAULT,
-  ERROR_OCCURRED,
-  LIVE_STATIONARY_FILTER_M,
-  FINISH_LIVE_ROUTE_CONFIRM,
-} from '~/constants/constants';
+import {LIVE_TYPES, LIVE_SPECS_DEFAULT, LIVE_STATIONARY_FILTER_M} from '~/constants/constants';
 import {getTimestamp, yyyymmddNow} from '~/utils/time-helpers';
 import {
   useOnIsDirectionsMode,
@@ -34,6 +28,9 @@ import {isFilledArr} from '~/utils/validation/helpers';
 import {measureDistanceM} from '~/utils/route-helpers';
 import {getLastItem} from '~/utils/common-helpers/arr-helpers';
 import {formatSpeed} from '~/utils/activity-helpers';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const {STOP, GO, PAUSE} = LIVE_TYPES;
 
@@ -114,10 +111,10 @@ const LiveMode = ({closeModal, openModal}) => {
     saveActivity({payload})
       .then(res => {
         const {success, reason} = res;
-        Toast.show(success ? 'Saved' : reason);
+        Toast.show(success ? papyrusify('liveMode.message.saved') : reason);
       })
       .catch(_ => {
-        Toast.show(ERROR_OCCURRED);
+        Toast.show(papyrusify('common.message.errorOccurred'));
       })
       .finally(_ => {
         onPressCancel();
@@ -171,7 +168,7 @@ const LiveMode = ({closeModal, openModal}) => {
   };
   const onRequestStop = () => {
     setInitConfirm({
-      text: FINISH_LIVE_ROUTE_CONFIRM,
+      text: papyrusify('liveMode.message.finishActivityConfirm'),
       onNo: onHideConfirm,
       onYes: onPressStop,
     });
@@ -189,9 +186,29 @@ const LiveMode = ({closeModal, openModal}) => {
 
   const statusBtnCall = mode =>
     ({
-      [STOP]: <Btn {...btnStartStyles} title={"Let's go!"} onPress={needTimer ? preOnPressStart : onPressStart} />,
-      [GO]: <Btn {...btnPauseStyles} title={'Pause'} onLongPress={onRequestStop} onPress={onPressPause} />,
-      [PAUSE]: <Btn {...btnContinueStyles} title={'Continue'} onLongPress={onRequestStop} onPress={onPressContinue} />,
+      [STOP]: (
+        <Btn
+          {...btnStartStyles}
+          title={papyrusify('liveMode.button.start')}
+          onPress={needTimer ? preOnPressStart : onPressStart}
+        />
+      ),
+      [GO]: (
+        <Btn
+          {...btnPauseStyles}
+          title={papyrusify('liveMode.button.pause')}
+          onLongPress={onRequestStop}
+          onPress={onPressPause}
+        />
+      ),
+      [PAUSE]: (
+        <Btn
+          {...btnContinueStyles}
+          title={papyrusify('liveMode.button.continue')}
+          onLongPress={onRequestStop}
+          onPress={onPressContinue}
+        />
+      ),
     }[mode]);
 
   const ActionButton = (

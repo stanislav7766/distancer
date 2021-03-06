@@ -1,10 +1,8 @@
 import {PermissionsAndroid} from 'react-native';
-import {
-  GIVE_GPS_PERMISSIONS,
-  GIVE_GPS_PERMISSIONS_DETAILED,
-  GPS_PERMS_ACCESS_COARSE,
-  GPS_PERMS_ACCESS_FINE,
-} from '~/constants/constants';
+import {GPS_PERMS_ACCESS_COARSE, GPS_PERMS_ACCESS_FINE} from '~/constants/constants';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 export const askGpsPermissions = () =>
   new Promise(resolve => {
@@ -15,8 +13,8 @@ export const askGpsPermissions = () =>
         PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
       ],
       {
-        title: GIVE_GPS_PERMISSIONS,
-        message: GIVE_GPS_PERMISSIONS_DETAILED,
+        title: papyrusify('permissions.message.giveGps'),
+        message: papyrusify('permissions.message.giveGpsDetailed'),
       },
     )
       .then(granted =>

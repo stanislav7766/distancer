@@ -5,17 +5,14 @@ import {changeEmail, requestChangeEmail, deleteAccount, requestChangePassword, c
 import {FormGroup, GroupText} from '~/componets/form-group';
 import Toast from 'react-native-simple-toast';
 import {Touchable} from '~/componets/touchable';
-import {
-  NO_CURRENT_USER,
-  DELETE_ACCOUNT_CONFIRM,
-  UPDATE_EMAIL_CONFIRM,
-  UPDATE_PASSWORD_CONFIRM,
-} from '~/constants/constants';
 import {observer} from 'mobx-react-lite';
 import {useTheme} from '~/stores/theme';
 import {useAuth} from '~/stores/auth';
 import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
 import {useSpinner} from '~/stores/spinner';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const GroupAccount = () => {
   const makeCancelable = useCancelablePromise();
@@ -47,7 +44,7 @@ const GroupAccount = () => {
   };
 
   const onRequestDeleteAccount = () => {
-    onRequestConfirm(DELETE_ACCOUNT_CONFIRM, onPressDeleteAccount);
+    onRequestConfirm(papyrusify('menuMode.message.deleteAccountConfirm'), onPressDeleteAccount);
   };
 
   const onChangeEmail = ({payload}) => {
@@ -57,7 +54,7 @@ const GroupAccount = () => {
           Toast.show(reason);
           return;
         }
-        Toast.show('Email updated');
+        Toast.show(papyrusify('menuMode.message.emailUpdated'));
       })
       .catch(err => {
         Toast.show(err);
@@ -71,7 +68,7 @@ const GroupAccount = () => {
           Toast.show(reason);
           return;
         }
-        Toast.show('Password updated');
+        Toast.show(papyrusify('menuMode.message.passwordUpdated'));
       })
       .catch(err => {
         Toast.show(err);
@@ -96,10 +93,10 @@ const GroupAccount = () => {
           return;
         }
         onRequestInputConfirm({
-          headerText: UPDATE_EMAIL_CONFIRM,
+          headerText: papyrusify('menuMode.message.updateEmailConfirm'),
           onYes: updateEmailConfirmed,
           input: {
-            placeholder: 'New Email',
+            placeholder: papyrusify('menuMode.input.newEmail'),
           },
         });
       })
@@ -122,10 +119,10 @@ const GroupAccount = () => {
           return;
         }
         onRequestInputConfirm({
-          headerText: UPDATE_PASSWORD_CONFIRM,
+          headerText: papyrusify('menuMode.message.updatePasswordConfirm'),
           onYes: updatePasswordConfirmed,
           input: {
-            placeholder: 'New Password',
+            placeholder: papyrusify('menuMode.input.newPassword'),
           },
         });
       })
@@ -158,16 +155,20 @@ const GroupAccount = () => {
         setAuthorized(false);
       })
       .catch(err => {
-        err === NO_CURRENT_USER ? setAuthorized(false) : Toast.show(err);
+        err === papyrusify('sign.message.noCurrentUser') ? setAuthorized(false) : Toast.show(err);
       })
       .finally(_ => {
         stopLoading();
       });
   };
 
-  const ChangeEmailText = <GroupText title="Change Email" themeStyle={themeStyle} />;
-  const ChangePasswordText = <GroupText title="Change Password" themeStyle={themeStyle} />;
-  const DeleteAccountText = <GroupText title="Delete Account" themeStyle={themeStyle} />;
+  const ChangeEmailText = <GroupText title={papyrusify('menuMode.preference.changeEmail')} themeStyle={themeStyle} />;
+  const ChangePasswordText = (
+    <GroupText title={papyrusify('menuMode.preference.changePassword')} themeStyle={themeStyle} />
+  );
+  const DeleteAccountText = (
+    <GroupText title={papyrusify('menuMode.preference.deleteAccount')} themeStyle={themeStyle} />
+  );
 
   const ChangeEmailTouch = <Touchable Child={ChangeEmailText} onPress={onPressChangeEmail} />;
   const ChangePasswordTouch = <Touchable Child={ChangePasswordText} onPress={onPressChangePassword} />;
@@ -180,7 +181,11 @@ const GroupAccount = () => {
   ];
 
   const AccountSettingsGroup = (
-    <FormGroup items={accountSettingsItems} themeStyle={themeStyle} title="Account settings" />
+    <FormGroup
+      items={accountSettingsItems}
+      themeStyle={themeStyle}
+      title={papyrusify('menuMode.title.accountSettings')}
+    />
   );
 
   return <>{AccountSettingsGroup}</>;

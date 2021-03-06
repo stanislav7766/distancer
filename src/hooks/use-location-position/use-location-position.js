@@ -1,7 +1,9 @@
 import {useCallback} from 'react';
 import Geolocation from 'react-native-geolocation-service';
 import Toast from 'react-native-simple-toast';
-import {ERROR_TRY_AGAIN, ERROR_GPS_TURNED_OFF, ERROR_GPS_PROBLEM} from '~/constants/constants';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 export const useLocationPosition = cameraRef => {
   const moveCamera = useCallback(
@@ -28,7 +30,12 @@ export const useLocationPosition = cameraRef => {
       Geolocation.getCurrentPosition(
         ({coords}) => onPositionUpdate(coords, zoomLevel),
         err => {
-          const toast = err.code === 2 ? ERROR_GPS_TURNED_OFF : err.code === 3 ? ERROR_TRY_AGAIN : ERROR_GPS_PROBLEM;
+          const toast =
+            err.code === 2
+              ? papyrusify('gps.message.errorGpsTurnedOff')
+              : err.code === 3
+              ? papyrusify('common.message.tryAgain')
+              : papyrusify('gps.message.errorGpsProblem');
           Toast.show(toast);
         },
         {timeout: 5000, maximumAge: 1000, enableHighAccuracy: true},

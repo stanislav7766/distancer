@@ -1,7 +1,9 @@
-import {ERROR_OCCURRED} from '~/constants/constants';
+import {getLocaleStore} from '~/stores/locale';
 import {getItem, setItem} from '~/utils/fs/asyncStorage';
 import {getProfileFilledKey, validateViewedProfile} from '~/utils/profile-helpers';
 import {isNull} from '~/utils/validation/helpers';
+
+const {papyrusify} = getLocaleStore();
 
 export const markProfileFilled = ({payload}) =>
   new Promise(async (resolve, reject) => {
@@ -11,7 +13,7 @@ export const markProfileFilled = ({payload}) =>
       await setItem(key, filled);
       resolve({success: true});
     } catch (err) {
-      reject(ERROR_OCCURRED);
+      reject(papyrusify('common.message.errorOccurred'));
     }
   });
 
@@ -31,6 +33,6 @@ export const checkProfileFilled = ({payload}) =>
       !validProfile && (await setItem(key, false));
       resolve({success: true, reason: '', data: {filled: validProfile && filled}});
     } catch (err) {
-      reject(ERROR_OCCURRED);
+      reject(papyrusify('common.message.errorOccurred'));
     }
   });

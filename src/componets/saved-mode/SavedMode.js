@@ -11,7 +11,9 @@ import {useOnDefaultRoutes, useOnDefaultActivities, useOnShowMapIcons} from '~/h
 import {useAppMode} from '~/stores/app-mode';
 import {observer} from 'mobx-react-lite';
 import {useNavigation} from '~/stores/navigation';
+import {getLocaleStore} from '~/stores/locale';
 
+const {papyrusify} = getLocaleStore();
 const {ROUTE, ACTIVITY} = ROUTE_TYPES;
 
 const SavedMode = ({themeStyle}) => {
@@ -52,11 +54,14 @@ const SavedMode = ({themeStyle}) => {
         <Column>
           <Touchable
             onPress={changeRouteType.bind(null, ACTIVITY)}
-            Child={renderButton({title: 'Activities', type: ACTIVITY})}
+            Child={renderButton({title: papyrusify('savedMode.button.activities'), type: ACTIVITY})}
           />
         </Column>
         <Column>
-          <Touchable onPress={changeRouteType.bind(null, ROUTE)} Child={renderButton({title: 'Routes', type: ROUTE})} />
+          <Touchable
+            onPress={changeRouteType.bind(null, ROUTE)}
+            Child={renderButton({title: papyrusify('savedMode.button.routes'), type: ROUTE})}
+          />
         </Column>
       </Row>
     </View>

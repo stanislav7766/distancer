@@ -1,7 +1,7 @@
 import React, {useEffect, useCallback, useMemo} from 'react';
 import {VirtualList} from '~/componets/virtualized-list';
 import Toast from 'react-native-simple-toast';
-import {ERROR_OCCURRED, DIRECTIONS_MODE} from '~/constants/constants';
+import {DIRECTIONS_MODE} from '~/constants/constants';
 import {useOnDirectionsMode, useOnIsDirectionsMode} from '~/hooks/use-on-effect';
 import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
 import {getFirstActivities, getNextActivities} from '~/actions';
@@ -16,7 +16,9 @@ import {useRunAfterInteractions} from '~/hooks/use-interaction-manager';
 import {useMakeRef} from '~/hooks/use-make-ref';
 import {countInitialGroupsToRender} from '~/utils/activity-helpers';
 import {useSpinner} from '~/stores/spinner';
+import {getLocaleStore} from '~/stores/locale';
 
+const {papyrusify} = getLocaleStore();
 const {WALKING} = DIRECTIONS_MODE;
 
 const SavedActivities = ({themeStyle, goToRoute}) => {
@@ -63,7 +65,7 @@ const SavedActivities = ({themeStyle, goToRoute}) => {
       })
       .catch(_ => {
         setDefaultActivities();
-        Toast.show(ERROR_OCCURRED);
+        Toast.show(papyrusify('common.message.errorOccurred'));
       })
       .finally(_ => {
         stopLoading();
@@ -98,16 +100,16 @@ const SavedActivities = ({themeStyle, goToRoute}) => {
       })
       .catch(_ => {
         setDefaultActivities();
-        Toast.show(ERROR_OCCURRED);
+        Toast.show(papyrusify('common.message.errorOccurred'));
       })
       .finally(_ => {
         stopMoreLoading();
       });
   }, [
-    directionsModeRef,
     isLoadingRef,
     isMoreLoadingRef,
     startMoreLoading,
+    directionsModeRef,
     makeCancelable,
     profile.userId,
     nextKeyRef,
@@ -149,6 +151,7 @@ const SavedActivities = ({themeStyle, goToRoute}) => {
       direction: directionsModeRef.current,
       onPresItem: onPressActivityItem,
       onNext: onNextActivities,
+      designation: papyrusify('common.designation'),
     };
     return <ActivityGroup {...groupProps} />;
   };

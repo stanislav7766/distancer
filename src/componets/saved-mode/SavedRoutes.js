@@ -4,7 +4,7 @@ import Toast from 'react-native-simple-toast';
 import {Item} from '~/componets/item';
 import {Preview} from '~/componets/preview';
 import {Row, Styles, mt20, mb20} from './styles';
-import {ERROR_OCCURRED, ROUTES_BATCH_LIMIT} from '~/constants/constants';
+import {ROUTES_BATCH_LIMIT} from '~/constants/constants';
 import {getFirstRoutes, getNextRoutes} from '~/actions';
 import {useRunAfterInteractions} from '~/hooks/use-interaction-manager';
 import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
@@ -16,6 +16,9 @@ import {useAuth} from '~/stores/auth';
 import {isEqualJson} from '~/utils/validation/helpers';
 import {useMakeRef} from '~/hooks/use-make-ref';
 import {useSpinner} from '~/stores/spinner';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const SavedRoutes = ({themeStyle, goToRoute}) => {
   const makeCancelable = useCancelablePromise();
@@ -52,7 +55,7 @@ const SavedRoutes = ({themeStyle, goToRoute}) => {
         setNextKey(data.nextKey);
       })
       .catch(_ => {
-        Toast.show(ERROR_OCCURRED);
+        Toast.show(papyrusify('common.message.errorOccurred'));
       })
       .finally(_ => {
         stopLoading();
@@ -82,7 +85,7 @@ const SavedRoutes = ({themeStyle, goToRoute}) => {
         setNextKey(data.nextKey);
       })
       .catch(_ => {
-        Toast.show(ERROR_OCCURRED);
+        Toast.show(papyrusify('common.message.errorOccurred'));
       })
       .finally(_ => {
         stopMoreLoading();
@@ -108,7 +111,14 @@ const SavedRoutes = ({themeStyle, goToRoute}) => {
 
   const Footer = <Row {...mb20} />;
 
-  const renderItem = ({item}) => <Route themeStyle={themeStyle} item={item} onPressItem={onPressItem} />;
+  const renderItem = ({item}) => (
+    <Route
+      designation={papyrusify('common.designation')}
+      themeStyle={themeStyle}
+      item={item}
+      onPressItem={onPressItem}
+    />
+  );
 
   return (
     <VirtualList
@@ -126,7 +136,7 @@ const SavedRoutes = ({themeStyle, goToRoute}) => {
 
 const onUpdate = (prev, next) => isEqualJson(prev, next);
 
-const Route = memo(({themeStyle, item, onPressItem}) => {
+const Route = memo(({themeStyle, item, onPressItem, designation}) => {
   const {styleItemRoute} = Styles(themeStyle);
   const IconWrap = coords => <Preview coords={coords} />;
 
@@ -136,7 +146,7 @@ const Route = memo(({themeStyle, item, onPressItem}) => {
         style={styleItemRoute}
         onPress={() => onPressItem(item)}
         IconComponent={IconWrap(item.points)}
-        text={`${item.distance} km`}
+        text={`${item.distance} ${designation.km}`}
       />
     </Row>
   );

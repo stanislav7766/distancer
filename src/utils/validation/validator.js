@@ -1,18 +1,34 @@
-import {WEAK_PASSWORD, INVALID_EMAIL, WRONG_AGE} from '~/constants/constants';
 import {isEmail, isEmpty, isLength, isNumLength, isNumber, isAvgPace, ishhmmss, isNum} from './helpers';
 isEmpty;
-const FIELD_REQUIRED = field => `The ${field} is required`;
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const validateProp = (prop, value) =>
   ({
-    email: (!isEmail(value) && INVALID_EMAIL) || '',
-    password: (isEmpty(value) && FIELD_REQUIRED('Password')) || (!isLength(value, {min: 6}) && WEAK_PASSWORD) || '',
-    firstName: (isEmpty(value) && FIELD_REQUIRED('First name')) || '',
-    lastName: (isEmpty(value) && FIELD_REQUIRED('Last name')) || '',
-    age: ((!isNumber(value) || !isNumLength(+value, {min: 1, max: 130})) && WRONG_AGE) || '',
-    gender: (isEmpty(value) && FIELD_REQUIRED('Gender')) || '',
-    weight: (isEmpty(value) && FIELD_REQUIRED('Weight')) || '',
-    height: (isEmpty(value) && FIELD_REQUIRED('Height')) || '',
+    email: (!isEmail(value) && papyrusify('validation.message.invalidEmail')) || '',
+    password:
+      (isEmpty(value) && papyrusify('validation.function.fieldRequired')(papyrusify(`sign.input.${prop}`))) ||
+      (!isLength(value, {min: 6}) && papyrusify('validation.message.weakPassword')) ||
+      '',
+    firstName:
+      (isEmpty(value) && papyrusify('validation.function.fieldRequired')(papyrusify(`editProfile.input.${prop}`))) ||
+      '',
+    lastName:
+      (isEmpty(value) && papyrusify('validation.function.fieldRequired')(papyrusify(`editProfile.input.${prop}`))) ||
+      '',
+    age:
+      ((!isNumber(value) || !isNumLength(+value, {min: 1, max: 130})) && papyrusify('validation.message.ageWrong')) ||
+      '',
+    gender:
+      (isEmpty(value) && papyrusify('validation.function.fieldRequired')(papyrusify(`editProfile.input.${prop}`))) ||
+      '',
+    weight:
+      (isEmpty(value) && papyrusify('validation.function.fieldRequired')(papyrusify(`editProfile.input.${prop}`))) ||
+      '',
+    height:
+      (isEmpty(value) && papyrusify('validation.function.fieldRequired')(papyrusify(`editProfile.input.${prop}`))) ||
+      '',
   }[prop]);
 
 const validateActivityProp = (prop, value) =>

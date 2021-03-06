@@ -1,9 +1,12 @@
-import {ROUTES_LIST_ENDED, ROUTES_LIST_EMPTY, ERROR_NETWORK_FAILED, ROUTES_BATCH_LIMIT} from '~/constants/constants';
+import {ROUTES_BATCH_LIMIT} from '~/constants/constants';
 import {isFilledArr} from '~/utils/validation/helpers';
 import firestore from '@react-native-firebase/firestore';
 import {mapperCoordsArrToObj, mapperCoordsObjToArr} from '~/utils/coordinate-helpers';
 import {isNetworkAvailable} from '~/utils/network-helpers';
 import {getLastItem} from '~/utils/common-helpers/arr-helpers';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const getRoutesColRef = ({userId}) => firestore().collection('routes').doc('users').collection(userId);
 
@@ -11,7 +14,7 @@ export const deleteRoute = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {routeId, userId} = payload;
       await getRoutesColRef({userId}).doc(routeId).update({
@@ -39,7 +42,8 @@ export const getFirstRoutes = ({payload}) =>
       const snaphot = await getRoutesColRef({userId}).orderBy('timestamp', 'desc').limit(ROUTES_BATCH_LIMIT).get();
       const {docs} = snaphot;
       const routes = _mapRouteDocs(docs);
-      if (!isFilledArr(routes)) return resolve({success: false, reason: ROUTES_LIST_EMPTY});
+      if (!isFilledArr(routes))
+        return resolve({success: false, reason: papyrusify('savedMode.message.routesListEmpty')});
 
       const {timestamp} = getLastItem(routes);
 
@@ -62,7 +66,8 @@ export const getNextRoutes = ({payload}) =>
 
       const {docs} = snaphot;
       const routes = _mapRouteDocs(docs);
-      if (!isFilledArr(routes)) return resolve({success: false, reason: ROUTES_LIST_ENDED});
+      if (!isFilledArr(routes))
+        return resolve({success: false, reason: papyrusify('savedMode.message.routesListEnded')});
 
       const {timestamp} = getLastItem(routes);
 

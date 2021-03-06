@@ -7,7 +7,7 @@ import {isExist, isObject} from '~/utils/validation/helpers';
 const separator = '.';
 
 const execPapyrus = (accum, key) =>
-  (val => (isObject(val) ? val : {result: isExist(val) ? val : ''})).call(null, accum[key]);
+  (val => (isObject(val) ? val : {_result: isExist(val) ? val : ''})).call(null, accum[key]);
 
 export class LocaleStore {
   constructor() {
@@ -21,7 +21,10 @@ export class LocaleStore {
   setLocale = locale => {
     this.locale = locale;
   };
-  papyrusify = path => path.split(separator).reduce(execPapyrus, this.papyrus).result;
+  papyrusify = path => {
+    const papyrusified = path.split(separator).reduce(execPapyrus, this.papyrus);
+    return papyrusified._result ?? papyrusified;
+  };
   _listenLocale = ({name, newValue}) => {
     if (name !== 'locale') return;
     this.papyrus = localesDI.Inject(newValue);
@@ -29,3 +32,4 @@ export class LocaleStore {
 }
 
 export const useLocale = () => storesDI.Inject('localeStore');
+export const getLocaleStore = () => storesDI.Inject('localeStore');

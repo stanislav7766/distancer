@@ -3,9 +3,11 @@ import {useMounted} from '../use-mounted';
 import {useModalConfirm as useConfirm} from '~/stores/modal-confirm';
 import {useAuth} from '~/stores/auth';
 import {useNavigation} from '~/stores/navigation';
-import {PROFILE_FILLING_CONFIRM} from '~/constants/constants';
 import {checkProfileFilled} from '~/actions';
 import Toast from 'react-native-simple-toast';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 export const useRemindFillProfile = () => {
   const {pushScreen, currentScreenId} = useNavigation();
@@ -40,7 +42,7 @@ export const useRemindFillProfile = () => {
         if (data.filled || currentScreenId !== 'Landing') return;
 
         onRequestConfirm({
-          text: PROFILE_FILLING_CONFIRM,
+          text: papyrusify('editProfile.message.profileFillingConfirm'),
           onYes: goToEditProfile,
         });
       })

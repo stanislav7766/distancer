@@ -18,8 +18,7 @@ export const WINDOW_HEIGHT = height;
 export const WINDOW_WIDTH = width;
 export const NAVBAR_HEIGHT = height * 0.06;
 export const CURRENT_POSITION_ZOOM = 15;
-export const REQUIRE_LOCATION_PERMS = 'App requires location tracking permission';
-export const QUESTION_OPEN_SETTINGS = 'Would you like to open app settings?';
+
 export const APP_MODE = {
   LIVE_MODE: 'Live',
   VIEW_MODE: 'View',
@@ -99,15 +98,15 @@ export const LIVE_TYPES = {
   PAUSE: 'pause',
   GO: 'go',
 };
-export const LIVE_MODDING = [
-  {title: '', subTitle: 'Pace', type: 'pace'},
-  {title: ' km/h', subTitle: 'Avg. speed', type: 'avgSpeed'},
-  {title: ' km', subTitle: 'Distance', type: 'distance'},
-  {title: '', subTitle: 'Time', type: 'time'},
+export const LIVE_MODDING = designation => [
+  {title: '', subTitle: `${designation.currentPace}`, type: 'pace'},
+  {title: ` ${designation.kmPerH}`, subTitle: `${designation.avgSpeed}`, type: 'avgSpeed'},
+  {title: ` ${designation.km}`, subTitle: `${designation.distance}`, type: 'distance'},
+  {title: '', subTitle: `${designation.time}`, type: 'time'},
 ];
-export const LIVE_CURRENT_PROPS = [
-  {title: ' km/h', subTitle: 'Current speed', type: 'currentSpeed'},
-  {title: '', subTitle: 'Current pace', type: 'currentPace'},
+export const LIVE_CURRENT_PROPS = designation => [
+  {title: ` ${designation.kmPerH}`, subTitle: `${designation.currentSpeed}`, type: 'currentSpeed'},
+  {title: '', subTitle: `${designation.currentPace}`, type: 'currentPace'},
 ];
 export const LIVE_SPECS_DEFAULT = {
   avgSpeed: 0.0,
@@ -170,53 +169,11 @@ export const ACTIVITIES_BATCH_LIMIT = 30;
 export const MAX_HEIGHT = 220;
 export const MAX_WEIGHT = 230;
 
-export const CITY_NOT_FOUND = 'City Not Found';
-export const CHOOSE_YOUR_LOCATION = 'Choose your location';
-export const TYPE_CITY = 'Type City';
-export const DRAW_ROUTE_BTN = 'Draw Route';
-
 export const HAS_LAUNCHED = 'hasLaunched';
-export const ERROR_GPS_TURNED_OFF = 'No location provider available. Turn on GPS';
-export const ERROR_GPS_PROBLEM = 'No location provider available. Check your GPS settings';
-export const ERROR_TRY_AGAIN = 'Try again';
-export const ERROR_OCCURRED = 'An error occurred';
-export const ERROR_NETWORK_FAILED = 'Network request failed';
-export const GPS_PERMISSIONS_DENIED = 'Location permissions denied';
-export const STORAGE_PERMISSIONS_DENIED = 'STORAGE permissions denied';
-export const GPS_PERMISSIONS_GRANTED = 'Location permissions granted';
-export const GPS_ALLOW_PERMISSIONS = 'Allow permissions in settings';
-export const ROUTES_LIST_EMPTY = 'Routes list is empty';
-export const ROUTES_LIST_ENDED = 'Routes list is ended';
-export const ACTIVITIES_LIST_ENDED = 'Activities list is ended';
-export const ACTIVITIES_LIST_EMPTY = 'Activities list is empty';
-export const GIVE_GPS_PERMISSIONS = 'Give Location Permission';
-export const GIVE_GPS_PERMISSIONS_DETAILED = 'App needs location permission to find your position';
+
 export const GPS_PERMS_ACCESS_COARSE = 'android.permission.ACCESS_COARSE_LOCATION';
 export const GPS_PERMS_ACCESS_FINE = 'android.permission.ACCESS_FINE_LOCATION';
-export const PLEASE_FINISH_ACTIVITY = 'Please finish activity';
-export const EMAIL_ALREADY_USED = 'The email address is already in use by another account';
-export const WEAK_PASSWORD = 'Password should be at least 6 characters';
-export const INVALID_EMAIL = 'The email can include latin letters (a-z), numbers (0-9) and period (.)';
-export const USER_NOT_FOUND = 'User not found';
-export const WRONG_PASSWORD = 'Password wrong';
-export const NO_CURRENT_USER = 'You are not signed';
+
 export const WEB_CLIENT_ID = '904930169800-gdj1tqibo2rd87m8cu0pchdhjcitso6a.apps.googleusercontent.com';
-export const WRONG_AGE = 'Type the correct age';
-export const DELETE_ACTIVITY_CONFIRM = 'Are you sure you want to delete this activity?';
-export const DELETE_ROUTE_CONFIRM = 'Are you sure you want to delete this route?';
-export const LOGOUT_CONFIRM = 'Are you sure you want to logout?';
-export const DELETE_ACCOUNT_CONFIRM = 'Are you sure you want to delete your account?';
-export const UPDATE_EMAIL_CONFIRM = 'Do you want to update email?';
-export const UPDATE_PASSWORD_CONFIRM = 'Do you want to update password?';
-export const NOT_IN_DRAG_MODE = 'Drag mode not active. Press drag button';
-export const SELECT_NEEDED_POINT = "Press on point that you'll drag";
-export const DRAG_POINT_NOW = 'Drag selected point now';
-export const FINISH_LIVE_ROUTE_CONFIRM = 'Are you sure you want to finish this activity?';
-export const PROFILE_FILLING_CONFIRM = 'Your profile is not fully completed.\n Do you want to fill it up?';
-export const NOT_FOUND_CITY = 'City Not Found';
-export const NEED_AUTHORIZATION = 'Log in first';
-export const NEEED_RE_LOGIN = 'Please re-log in for changing email/password';
-export const NOT_CHANGE_EMAIL_G_ACCOUNT = 'Sorry, you can not change email with Google account';
-export const NOT_CHANGE_PASSWORD_G_ACCOUNT = 'Sorry, you can not change password with Google account';
 
 export const PART_KEY_FILLED_PROFILE = '-filled-profile';

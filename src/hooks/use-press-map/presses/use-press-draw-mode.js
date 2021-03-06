@@ -2,15 +2,21 @@ import {useCallback} from 'react';
 import Toast from 'react-native-simple-toast';
 import {FetchDirections} from '~/utils/fetch-helpers/fetch-directions';
 import {isFilledArr} from '~/utils/validation/helpers';
-import {ERROR_OCCURRED, ERROR_NETWORK_FAILED} from '~/constants/constants';
 import {getLastItem} from '~/utils/common-helpers/arr-helpers';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 export const usePressDrawMode = ({points, pushPoints, dragMode, directionsMode, isDirectionsMode}) => {
   const allowFetchDirections = isDirectionsMode && isFilledArr(points);
 
   const onFetchSuccess = useCallback(coords => isFilledArr(coords) && pushPoints(coords), [pushPoints]);
   const onFetchError = useCallback(error => {
-    Toast.show(error.message === ERROR_NETWORK_FAILED ? ERROR_NETWORK_FAILED : `${ERROR_OCCURRED}. Try later`);
+    Toast.show(
+      error.message === papyrusify('common.message.errorNetworkFailed')
+        ? papyrusify('common.message.errorNetworkFailed')
+        : `${papyrusify('common.message.errorOccurred')}. ${papyrusify('common.message.tryLater')}`,
+    );
   }, []);
 
   const fetchDirections = useCallback(

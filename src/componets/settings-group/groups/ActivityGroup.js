@@ -8,6 +8,9 @@ import {FormGroup, GroupText} from '~/componets/form-group';
 import {Touchable} from '~/componets/touchable';
 import {GET_TIMER_PICKER_ITEMS} from '~/constants/constants';
 import {observer} from 'mobx-react-lite';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const GroupActivity = () => {
   const {
@@ -29,7 +32,7 @@ const GroupActivity = () => {
   };
   const onSelectTimerOnStart = () => {
     setInitPicker({
-      pickerItems: GET_TIMER_PICKER_ITEMS(),
+      pickerItems: GET_TIMER_PICKER_ITEMS(papyrusify('menuMode.picker.sec')),
       selectedItems: [`${timerOnStart}`],
       defaultItem: `${timerOnStart}`,
       setSelectedItems: onChangeTimerOnStart,
@@ -48,10 +51,18 @@ const GroupActivity = () => {
     onFalse: () => setVibrateOnStart(false),
   });
 
-  const AutoPauseText = <GroupText title="Auto pause" themeStyle={themeStyle} />;
-  const VibrateOnStartText = <GroupText title="Vibrate on start" themeStyle={themeStyle} />;
-  const TimerOnStartText = <GroupText title="Timer on start" themeStyle={themeStyle} />;
-  const TimerOnStartValue = <GroupText title={`${timerOnStart} sec`} style={orangeColor} themeStyle={themeStyle} />;
+  const AutoPauseText = <GroupText title={papyrusify('menuMode.preference.autoPause')} themeStyle={themeStyle} />;
+  const VibrateOnStartText = (
+    <GroupText title={papyrusify('menuMode.preference.vibrateOnStart')} themeStyle={themeStyle} />
+  );
+  const TimerOnStartText = <GroupText title={papyrusify('menuMode.preference.timerOnStart')} themeStyle={themeStyle} />;
+  const TimerOnStartValue = (
+    <GroupText
+      title={`${timerOnStart} ${papyrusify('menuMode.picker.sec')}`}
+      style={orangeColor}
+      themeStyle={themeStyle}
+    />
+  );
 
   const DefaultScreenPicker = <Touchable Child={TimerOnStartValue} onPress={onSelectTimerOnStart} />;
 
@@ -62,7 +73,11 @@ const GroupActivity = () => {
   ];
 
   const ActivitySettingsGroup = (
-    <FormGroup items={activitySettingsItems} themeStyle={themeStyle} title="Activity settings" />
+    <FormGroup
+      items={activitySettingsItems}
+      themeStyle={themeStyle}
+      title={papyrusify('menuMode.title.activitySettings')}
+    />
   );
 
   return <>{ActivitySettingsGroup}</>;

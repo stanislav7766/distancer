@@ -12,6 +12,9 @@ import {GoogleSignBtn} from '~/componets/google-sign-btn';
 import {observer} from 'mobx-react-lite';
 import {useAuth} from '~/stores/auth';
 import {useSpinner} from '~/stores/spinner';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const SignUp = ({themeStyle, goToProfile, goBack}) => {
   const {startLoading, isLoading, stopLoading} = useSpinner();
@@ -70,21 +73,25 @@ const SignUp = ({themeStyle, goToProfile, goBack}) => {
 
   const Greeting = (
     <>
-      <Text style={greetingStyle}>Welcome,</Text>
-      <Text style={subGreetingStyle}>sign up to continue</Text>
+      <Text style={greetingStyle}>{papyrusify('signUp.message.welcome')}</Text>
+      <Text style={subGreetingStyle}>{papyrusify('signUp.message.signUpToContinue')}</Text>
     </>
   );
 
   const SignUpGoogle = (
     <Row {...mt10}>
       <Column alignItems={'center'}>
-        <GoogleSignBtn {...btnGoogleStyles} title={'Continue with Google'} onPress={onPressSignUpGoogle} />
+        <GoogleSignBtn
+          {...btnGoogleStyles}
+          title={papyrusify('signUp.button.withGoogle')}
+          onPress={onPressSignUpGoogle}
+        />
       </Column>
     </Row>
   );
   const Or = (
     <Row {...mt10}>
-      <Text style={subGreetingStyle}>or</Text>
+      <Text style={subGreetingStyle}>{papyrusify('signUp.message.or')}</Text>
     </Row>
   );
   const Inputs = (
@@ -93,7 +100,7 @@ const SignUp = ({themeStyle, goToProfile, goBack}) => {
         <TextInput
           autoCompleteType="email"
           style={inputStyle}
-          placeholder={'Email'}
+          placeholder={papyrusify('sign.input.email')}
           value={input.email}
           onChangeText={text => onChangeText({text, type: 'email'})}
         />
@@ -103,7 +110,7 @@ const SignUp = ({themeStyle, goToProfile, goBack}) => {
           secureTextEntry={true}
           autoCompleteType="password"
           style={inputStyle}
-          placeholder={'Password'}
+          placeholder={papyrusify('sign.input.password')}
           value={input.password}
           onChangeText={text => onChangeText({text, type: 'password'})}
         />
@@ -124,7 +131,7 @@ const SignUp = ({themeStyle, goToProfile, goBack}) => {
       {Inputs}
       <Row {...mt30}>
         <Column alignItems={'center'}>
-          <Btn {...btnSignUpStyles} title={'Sign Up'} onPress={onSubmitEditing} />
+          <Btn {...btnSignUpStyles} title={papyrusify('signUp.button.signUp')} onPress={onSubmitEditing} />
         </Column>
       </Row>
       {Or}

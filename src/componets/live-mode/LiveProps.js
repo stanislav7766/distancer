@@ -5,6 +5,9 @@ import {observer} from 'mobx-react-lite';
 import {LIVE_CURRENT_PROPS, LIVE_MODDING, LIVE_SPECS_DEFAULT} from '~/constants/constants';
 import {Column, Row, mt10} from './styles';
 import {isAvgPace, isNum, ishhmmss} from '~/utils/validation/helpers';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const LiveProps = () => {
   const {liveRoute, specs} = useLiveRoute();
@@ -34,7 +37,7 @@ const LiveProps = () => {
   const CurrentProps = (
     <Column alignItems={'flex-start'}>
       <LiveInfo
-        items={LIVE_CURRENT_PROPS}
+        items={LIVE_CURRENT_PROPS(papyrusify('liveMode.designation'))}
         titleProp="title"
         subTitleProp="subTitle"
         titleValue={propValueCall(currentPropType)}
@@ -47,7 +50,7 @@ const LiveProps = () => {
   const Props = (
     <Column alignItems={'flex-end'}>
       <LiveInfo
-        items={LIVE_MODDING}
+        items={LIVE_MODDING(papyrusify('liveMode.designation'))}
         titleProp="title"
         subTitleProp="subTitle"
         titleValue={propValueCall(livePropType)}

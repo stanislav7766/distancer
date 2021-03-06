@@ -19,7 +19,9 @@ import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
 import {useSpinner} from '~/stores/spinner';
 import {Touchable} from '~/componets/touchable';
 import {isExist} from '~/utils/validation/helpers';
-import {ERROR_OCCURRED, STORAGE_PERMISSIONS_DENIED} from '~/constants/constants';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const imageProps = {
   mediaType: 'photo',
@@ -100,7 +102,10 @@ const EditProfile = ({withNewUser = false}) => {
       const {errorCode, uri, didCancel} = response;
       if (didCancel) return;
       if (isExist(errorCode)) {
-        const message = errorCode === 'permission' ? STORAGE_PERMISSIONS_DENIED : ERROR_OCCURRED;
+        const message =
+          errorCode === 'permission'
+            ? papyrusify('permissions.message.storageDenied')
+            : papyrusify('common.message.errorOccurred');
         Toast.show(message);
         return;
       }
@@ -118,7 +123,7 @@ const EditProfile = ({withNewUser = false}) => {
   const Header = (
     <Row>
       <Column alignItems="center">
-        <Text style={headerStyle}>Profile settings</Text>
+        <Text style={headerStyle}>{papyrusify('editProfile.message.profileSettings')}</Text>
       </Column>
       {!withNewUser && <RoundedIcon style={arrowIconDims} IconComponent={IconLeftArrow} onPress={goToMain} />}
     </Row>
@@ -134,7 +139,7 @@ const EditProfile = ({withNewUser = false}) => {
   const SaveBtn = (
     <Row {...mt20}>
       <Column alignItems={'flex-start'}>
-        <Btn {...btnSaveStyles} title={'Save'} onPress={onSubmitEditing} />
+        <Btn {...btnSaveStyles} title={papyrusify('editProfile.button.save')} onPress={onSubmitEditing} />
       </Column>
     </Row>
   );

@@ -25,6 +25,7 @@ export const Styles = themeStyle => {
   const subGreetingStyle = {
     fontSize: 22,
     color: themeStyle.textColorSecondary,
+    textAlign: 'right',
   };
 
   return {inputStyle, arrowIconDims, greetingStyle, subGreetingStyle};

@@ -1,7 +1,20 @@
-export const buildItemString = ({date, distance, pace, movingTime, avgSpeed}, isRun) =>
-  `${date}\n ${distance} km     ${isRun ? `${pace} /km` : `${avgSpeed}km/h`}      ${movingTime}`;
+const defaultDesignation = {
+  km: 'km',
+  perKM: '/km',
+  kmPerH: 'km/h',
+  runs: 'runs',
+  activities: 'activities',
+};
+export const buildItemString = (
+  {date, distance, pace, movingTime, avgSpeed},
+  isRun,
+  designation = defaultDesignation,
+) =>
+  `${date}\n ${distance} ${designation.km}     ${
+    isRun ? `${pace} ${designation.perKM}` : `${avgSpeed}${designation.kmPerH}`
+  }      ${movingTime}`;
 
-export const buildRunString = ({monthCount, monthDistance, monthAvgPace}) =>
-  `${monthCount} runs    ${monthDistance} km   ${monthAvgPace} /km`;
-export const buildActivityString = ({monthCount, monthDistance, monthAvgSpeed}) =>
-  `${monthCount} activities    ${monthDistance} km   ${monthAvgSpeed} km/h`;
+export const buildRunString = ({monthCount, monthDistance, monthAvgPace}, designation = defaultDesignation) =>
+  `${monthCount} ${designation.runs}    ${monthDistance} ${designation.km}   ${monthAvgPace} ${designation.perKM}`;
+export const buildActivityString = ({monthCount, monthDistance, monthAvgSpeed}, designation = defaultDesignation) =>
+  `${monthCount} ${designation.activities}    ${monthDistance} ${designation.km}   ${monthAvgSpeed} ${designation.kmPerH}`;

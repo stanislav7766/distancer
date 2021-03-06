@@ -12,6 +12,9 @@ import {GoogleSignBtn} from '~/componets/google-sign-btn';
 import {observer} from 'mobx-react-lite';
 import {useAuth} from '~/stores/auth';
 import {useSpinner} from '~/stores/spinner';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const SignIn = ({themeStyle, goToMain}) => {
   const {startLoading, stopLoading, isLoading} = useSpinner();
@@ -36,7 +39,7 @@ const SignIn = ({themeStyle, goToMain}) => {
     setProfile(data.user);
     setAuthorized(true);
     goToMain();
-    Toast.show('Authorized');
+    Toast.show(papyrusify('signIn.message.authorized'));
   };
 
   const onPressSignInGoogle = () => {
@@ -62,22 +65,24 @@ const SignIn = ({themeStyle, goToMain}) => {
   };
   const Greeting = (
     <>
-      <Text style={greetingStyle}>Welcome back,</Text>
-      <Text autoCompleteType="email" style={subGreetingStyle}>
-        sign in to continue
-      </Text>
+      <Text style={greetingStyle}>{papyrusify('signIn.message.welcomeBack')}</Text>
+      <Text style={[subGreetingStyle]}>{papyrusify('signIn.message.signInToContinue')}</Text>
     </>
   );
   const SignInGoogle = (
     <Row {...mt10}>
       <Column alignItems={'center'}>
-        <GoogleSignBtn {...btnGoogleStyles} title={'Continue with Google'} onPress={onPressSignInGoogle} />
+        <GoogleSignBtn
+          {...btnGoogleStyles}
+          title={papyrusify('signIn.button.withGoogle')}
+          onPress={onPressSignInGoogle}
+        />
       </Column>
     </Row>
   );
   const Or = (
     <Row {...mt10}>
-      <Text style={subGreetingStyle}>or</Text>
+      <Text style={subGreetingStyle}>{papyrusify('signIn.message.or')}</Text>
     </Row>
   );
   const Inputs = (
@@ -85,7 +90,7 @@ const SignIn = ({themeStyle, goToMain}) => {
       <Row>
         <TextInput
           style={inputStyle}
-          placeholder={'Email'}
+          placeholder={papyrusify('sign.input.email')}
           value={input.email}
           onChangeText={text => onChangeText({text, type: 'email'})}
         />
@@ -95,7 +100,7 @@ const SignIn = ({themeStyle, goToMain}) => {
           secureTextEntry={true}
           autoCompleteType="password"
           style={inputStyle}
-          placeholder={'Password'}
+          placeholder={papyrusify('sign.input.password')}
           value={input.password}
           onChangeText={text => onChangeText({text, type: 'password'})}
         />
@@ -116,7 +121,7 @@ const SignIn = ({themeStyle, goToMain}) => {
       {Inputs}
       <Row {...mt30}>
         <Column alignItems={'center'}>
-          <Btn {...btnSignInStyles} title={'Sign In'} onPress={onSubmitEditing} />
+          <Btn {...btnSignInStyles} title={papyrusify('signIn.button.signIn')} onPress={onSubmitEditing} />
         </Column>
       </Row>
       {Or}

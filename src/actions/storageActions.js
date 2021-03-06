@@ -1,7 +1,9 @@
 import storage from '@react-native-firebase/storage';
-import {ERROR_NETWORK_FAILED} from '~/constants/constants';
+import {getLocaleStore} from '~/stores/locale';
 import {isNetworkAvailable} from '~/utils/network-helpers';
 import {isEmptyString} from '~/utils/validation/helpers';
+
+const {papyrusify} = getLocaleStore();
 
 const getAvatarRef = ({userId}) => storage().ref(`/avatars/${userId}/avatar.jpg`);
 
@@ -9,7 +11,7 @@ export const setAvatarStorage = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {uri, userId} = payload;
       if (!uri || isEmptyString(uri)) return resolve({success: false});

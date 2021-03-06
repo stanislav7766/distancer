@@ -1,12 +1,6 @@
-import {
-  EMAIL_ALREADY_USED,
-  WEAK_PASSWORD,
-  INVALID_EMAIL,
-  WRONG_PASSWORD,
-  USER_NOT_FOUND,
-  NO_CURRENT_USER,
-  NEEED_RE_LOGIN,
-} from '~/constants/constants';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const FIREBASE_CODE_EMAIL_USER = 'auth/email-already-in-use';
 const FIREBASE_CODE_WEAK_PASSWORD = 'auth/weak-password';
@@ -16,12 +10,12 @@ const FIREBASE_CODE_WRONG_PASSWORD = 'auth/wrong-password';
 const FIREBASE_CODE_NEED_RE_LOGIN = 'auth/requires-recent-login';
 const FIREBASE_CODE_NO_CURRENT_USER = 'auth/no-current-user';
 export const FIREBASE_CODES = {
-  [FIREBASE_CODE_EMAIL_USER]: EMAIL_ALREADY_USED,
-  [FIREBASE_CODE_WEAK_PASSWORD]: WEAK_PASSWORD,
-  [FIREBASE_CODE_INVALID_EMAIL]: INVALID_EMAIL,
-  [FIREBASE_CODE_USER_NOT_FOUND]: USER_NOT_FOUND,
-  [FIREBASE_CODE_WRONG_PASSWORD]: WRONG_PASSWORD,
-  [FIREBASE_CODE_NO_CURRENT_USER]: NO_CURRENT_USER,
-  [FIREBASE_CODE_NEED_RE_LOGIN]: NEEED_RE_LOGIN,
+  [FIREBASE_CODE_EMAIL_USER]: papyrusify('sign.message.emailAlreadyUsed'),
+  [FIREBASE_CODE_WEAK_PASSWORD]: papyrusify('validation.message.weakPassword'),
+  [FIREBASE_CODE_INVALID_EMAIL]: papyrusify('validation.message.invalidEmail'),
+  [FIREBASE_CODE_USER_NOT_FOUND]: papyrusify('sign.message.userNotFound'),
+  [FIREBASE_CODE_WRONG_PASSWORD]: papyrusify('validation.message.passwordWrong'),
+  [FIREBASE_CODE_NO_CURRENT_USER]: papyrusify('sign.message.noCurrentUser'),
+  [FIREBASE_CODE_NEED_RE_LOGIN]: papyrusify('sign.message.needReLogin'),
 };
 // firestore/unknown

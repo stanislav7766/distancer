@@ -10,12 +10,15 @@ import {
   DEFAULT_GENDER,
 } from '~/constants/constants';
 import {Styles, Row, Column, ContainerPickers, pickerTextStyle, mt10} from './styles';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const pickerItems = type =>
   ({
-    height: GET_HEIGHT_PICKER_ITEMS(),
-    weight: GET_WEIGHT_PICKER_ITEMS(),
-    gender: GET_GENDER_PICKER_ITEMS(),
+    height: GET_HEIGHT_PICKER_ITEMS(papyrusify('editProfile.designation')),
+    weight: GET_WEIGHT_PICKER_ITEMS(papyrusify('editProfile.designation')),
+    gender: GET_GENDER_PICKER_ITEMS(papyrusify('editProfile.designation')),
   }[type]);
 
 const defaultItem = type =>
@@ -47,30 +50,36 @@ const ProfilePickers = ({themeStyle, profile, setProfile}) => {
       <TouchableOpacity onPress={() => selectPicker('gender')}>
         <Row {...mt10}>
           <Column alignItems={'flex-start'}>
-            <Text style={[pickerTextStyle, grayColor]}>Gender</Text>
+            <Text style={[pickerTextStyle, grayColor]}>{papyrusify('editProfile.input.gender')}</Text>
           </Column>
           <Column alignItems={'flex-end'}>
-            <Text style={[pickerTextStyle, orangeColor]}>{gender}</Text>
+            <Text style={[pickerTextStyle, orangeColor]}>
+              {papyrusify(`editProfile.designation.${gender.toLowerCase()}`)}
+            </Text>
           </Column>
         </Row>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => selectPicker('height')}>
         <Row {...mt10}>
           <Column alignItems={'flex-start'}>
-            <Text style={[pickerTextStyle, grayColor]}>Height</Text>
+            <Text style={[pickerTextStyle, grayColor]}>{papyrusify('editProfile.input.height')}</Text>
           </Column>
           <Column alignItems={'flex-end'}>
-            <Text style={[pickerTextStyle, orangeColor]}>{height} cm</Text>
+            <Text style={[pickerTextStyle, orangeColor]}>
+              {height} {papyrusify('editProfile.designation.cm')}
+            </Text>
           </Column>
         </Row>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => selectPicker('weight')}>
         <Row {...mt10}>
           <Column alignItems={'flex-start'}>
-            <Text style={[pickerTextStyle, grayColor]}>Weight</Text>
+            <Text style={[pickerTextStyle, grayColor]}>{papyrusify('editProfile.input.weight')}</Text>
           </Column>
           <Column alignItems={'flex-end'}>
-            <Text style={[pickerTextStyle, orangeColor]}>{weight} kgs</Text>
+            <Text style={[pickerTextStyle, orangeColor]}>
+              {weight} {papyrusify('editProfile.designation.kgs')}
+            </Text>
           </Column>
         </Row>
       </TouchableOpacity>

@@ -1,7 +1,6 @@
 import {toLatin} from '~/utils/translit';
 import {MAP_TOKEN} from 'react-native-dotenv';
 import {isFilledArr} from '~/utils/validation/helpers';
-import {NOT_FOUND_CITY} from '~/constants/constants';
 
 const filterResponse = arr => arr.map(({text, center}) => ({text, center}));
 const getURL = text =>
@@ -16,7 +15,7 @@ export const FetchCities = text =>
       .then(response => response.json())
       .then(({features}) => {
         if (!isFilledArr(features)) {
-          resolve([null, NOT_FOUND_CITY]);
+          resolve([null, 'Error occurred']);
           return;
         }
         resolve([filterResponse(features), '']);

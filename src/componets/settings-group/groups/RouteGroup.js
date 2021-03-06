@@ -4,6 +4,9 @@ import {useRouteSettings} from '~/stores/route-settings';
 import {FormGroup, GroupText} from '~/componets/form-group';
 import {useTheme} from '~/stores/theme';
 import {observer} from 'mobx-react-lite';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const GroupRoute = () => {
   const {themeStyle} = useTheme();
@@ -17,11 +20,13 @@ const GroupRoute = () => {
     onFalse: () => setDragHints(false),
   });
 
-  const DragHintsText = <GroupText title="Drag's hints" themeStyle={themeStyle} />;
+  const DragHintsText = <GroupText title={papyrusify('menuMode.preference.dragHints')} themeStyle={themeStyle} />;
 
   const routeSettingsItems = [{Left: DragHintsText, Right: DragHintsSwitch}];
 
-  const RouteSettingsGroup = <FormGroup items={routeSettingsItems} themeStyle={themeStyle} title="Route settings" />;
+  const RouteSettingsGroup = (
+    <FormGroup items={routeSettingsItems} themeStyle={themeStyle} title={papyrusify('menuMode.title.routeSettings')} />
+  );
 
   return <>{RouteSettingsGroup}</>;
 };

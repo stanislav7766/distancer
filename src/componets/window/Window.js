@@ -8,6 +8,9 @@ import {CenterXY, Form, styles, Column, btnYesStyles, btnNoStyles} from './style
 import {runParalel} from '~/utils/animations';
 import {getCheck} from '~/assets/svg-icons/check';
 import {getClose} from '~/assets/svg-icons/close';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const checkSvgParams = {
   width: 33,
@@ -57,10 +60,10 @@ const Window = ({
       footer: (
         <>
           <Column alignItems="flex-start">
-            <Btn {...btnYesStyles} onPress={onBottomYesHandler} title="Yes" />
+            <Btn {...btnYesStyles} onPress={onBottomYesHandler} title={papyrusify('common.picker.yes')} />
           </Column>
           <Column alignItems="flex-end">
-            <Btn {...btnNoStyles} onPress={onBottomNoHandler} title="No" />
+            <Btn {...btnNoStyles} onPress={onBottomNoHandler} title={papyrusify('common.picker.no')} />
           </Column>
         </>
       ),

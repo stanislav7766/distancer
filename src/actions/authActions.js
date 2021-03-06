@@ -1,17 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {FIREBASE_CODES} from '../firebase/constants';
-import {
-  ERROR_OCCURRED,
-  WEB_CLIENT_ID,
-  ERROR_NETWORK_FAILED,
-  USER_NOT_FOUND,
-  EMAIL_ALREADY_USED,
-  NEED_AUTHORIZATION,
-  NOT_CHANGE_EMAIL_G_ACCOUNT,
-  NEEED_RE_LOGIN,
-  NOT_CHANGE_PASSWORD_G_ACCOUNT,
-} from '~/constants/constants';
+import {WEB_CLIENT_ID} from '~/constants/constants';
 import {isNetworkAvailable} from '~/utils/network-helpers';
 import {setItem, getItem, removeItem, updateItem} from '~/utils/fs/asyncStorage';
 import {GoogleSignin} from '@react-native-community/google-signin';
@@ -22,6 +12,9 @@ import {deleteAllActivities} from './activityActions';
 import {deleteAllTotals} from './totalsActions';
 import {deleteAllRoutes} from './routeActions';
 import {deleteUserAvatar, setAvatarStorage} from './storageActions';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 GoogleSignin.configure({
   offlineAccess: false,
@@ -58,7 +51,9 @@ const _signUpWithGoogleCredential = async () => {
     additionalUserInfo: {isNewUser, profile},
     user,
   } = await auth().signInWithCredential(googleCredential);
-  return !isNewUser ? {success: false, reason: EMAIL_ALREADY_USED} : {success: true, data: {profile, user}};
+  return !isNewUser
+    ? {success: false, reason: papyrusify('sign.message.emailAlreadyUsed')}
+    : {success: true, data: {profile, user}};
 };
 
 const _signInWithGoogleCredential = async () => {
@@ -68,7 +63,7 @@ const _signInWithGoogleCredential = async () => {
   } = await _signWithGoogle();
 
   const exist = await _checkUserExistByEmail(email);
-  if (!exist) return {success: false, reason: USER_NOT_FOUND};
+  if (!exist) return {success: false, reason: papyrusify('sign.message.userNotFound')};
 
   const googleCredential = auth.GoogleAuthProvider.credential(idToken);
   const {user} = await auth().signInWithCredential(googleCredential);
@@ -84,7 +79,7 @@ export const updateProfile = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {profile, avatarURI} = payload;
       const {isValid, reason} = validateData(profile);
@@ -104,7 +99,7 @@ export const loginWithGoogle = () =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {success, reason, data} = await _signInWithGoogleCredential();
       if (!success) return resolve({success: false, reason});
@@ -114,7 +109,7 @@ export const loginWithGoogle = () =>
       } = data;
 
       const doc = await getUserDocRef({userId: uid}).get();
-      if (!doc.exists) return resolve({success: false, reason: USER_NOT_FOUND});
+      if (!doc.exists) return resolve({success: false, reason: papyrusify('sign.message.userNotFound')});
 
       const profile = doc.data();
       resolve({success: true, reason: '', data: {user: {...mapForStoreProfile(profile), userId: uid}}});
@@ -128,13 +123,13 @@ export const requestChangeEmail = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {authorized} = payload;
-      if (!authorized) return resolve({success: false, reason: NEED_AUTHORIZATION});
+      if (!authorized) return resolve({success: false, reason: papyrusify('sign.message.needAuth')});
 
       const signed = await isSignedGoogle();
-      if (signed) return resolve({success: false, reason: NOT_CHANGE_EMAIL_G_ACCOUNT});
+      if (signed) return resolve({success: false, reason: papyrusify('menuMode.message.noChangeEmailGAccount')});
 
       return resolve({success: true});
     } catch (err) {
@@ -146,13 +141,13 @@ export const requestChangePassword = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {authorized} = payload;
-      if (!authorized) return resolve({success: false, reason: NEED_AUTHORIZATION});
+      if (!authorized) return resolve({success: false, reason: papyrusify('sign.message.needAuth')});
 
       const signed = await isSignedGoogle();
-      if (signed) return resolve({success: false, reason: NOT_CHANGE_PASSWORD_G_ACCOUNT});
+      if (signed) return resolve({success: false, reason: papyrusify('menuMode.message.noChangePasswordGAccount')});
 
       return resolve({success: true});
     } catch (err) {
@@ -164,21 +159,23 @@ export const changePassword = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {password} = payload;
       const {isValid, reason} = validateData({password});
       if (!isValid) return resolve({success: false, reason});
 
       const user = auth().currentUser;
-      if (!user) return resolve({success: false, reason: NEEED_RE_LOGIN});
+      if (!user) return resolve({success: false, reason: papyrusify('sign.message.needReLogin')});
 
       await user.updatePassword(password);
 
       return resolve({success: true});
     } catch (err) {
       const {code} = err;
-      const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
+      const mes = FIREBASE_CODES.hasOwnProperty(code)
+        ? FIREBASE_CODES[code]
+        : papyrusify('common.message.errorOccurred');
       reject(mes);
     }
   });
@@ -187,14 +184,14 @@ export const changeEmail = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {email} = payload;
       const {isValid, reason} = validateData({email});
       if (!isValid) return resolve({success: false, reason});
 
       const user = auth().currentUser;
-      if (!user) return resolve({success: false, reason: NEEED_RE_LOGIN});
+      if (!user) return resolve({success: false, reason: papyrusify('sign.message.needReLogin')});
 
       const {uid} = user;
       await user.updateEmail(email);
@@ -203,7 +200,9 @@ export const changeEmail = ({payload}) =>
       return resolve({success: true});
     } catch (err) {
       const {code} = err;
-      const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
+      const mes = FIREBASE_CODES.hasOwnProperty(code)
+        ? FIREBASE_CODES[code]
+        : papyrusify('common.message.errorOccurred');
       reject(mes);
     }
   });
@@ -211,7 +210,7 @@ export const registerWithGoogle = () =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {success, reason, data} = await _signUpWithGoogleCredential();
       if (!success) resolve({success: false, reason});
@@ -242,12 +241,14 @@ export const getCurrentUser = () =>
         const {uid} = user;
         const doc = await getUserDocRef({userId: uid}).get();
         const data = doc.exists ? doc.data() : await getItem(uid);
-        if (!data) return resolve({success: false, NEED_AUTHORIZATION});
+        if (!data) return resolve({success: false, reason: papyrusify('sign.message.needAuth')});
         resolve({success: true, reason: '', data: {user: mapForStoreProfile(data)}});
       });
     } catch (err) {
       const {code} = err;
-      const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
+      const mes = FIREBASE_CODES.hasOwnProperty(code)
+        ? FIREBASE_CODES[code]
+        : papyrusify('common.message.errorOccurred');
       reject({success: false, reason: mes});
     }
   });
@@ -256,7 +257,7 @@ export const registerUser = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {
         data: {email, password},
@@ -274,7 +275,9 @@ export const registerUser = ({payload}) =>
       await _saveProfile(uid, profile);
     } catch (err) {
       const {code} = err;
-      const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
+      const mes = FIREBASE_CODES.hasOwnProperty(code)
+        ? FIREBASE_CODES[code]
+        : papyrusify('common.message.errorOccurred');
       reject(mes);
     }
   });
@@ -283,7 +286,7 @@ export const loginUser = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {
         data: {email, password},
@@ -295,14 +298,16 @@ export const loginUser = ({payload}) =>
       const {uid} = response.user;
       const doc = await getUserDocRef({userId: uid}).get();
 
-      if (!doc.exists) return resolve({success: false, reason: USER_NOT_FOUND});
+      if (!doc.exists) return resolve({success: false, reason: papyrusify('sign.message.userNotFound')});
       const profile = doc.data();
       resolve({success: true, reason: '', data: {user: {...mapForStoreProfile(profile), userId: uid}}});
 
       doc.exists && (await setItem(uid, profile));
     } catch (err) {
       const {code} = err;
-      const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
+      const mes = FIREBASE_CODES.hasOwnProperty(code)
+        ? FIREBASE_CODES[code]
+        : papyrusify('common.message.errorOccurred');
       reject(mes);
     }
   });
@@ -318,7 +323,7 @@ export const deleteAccount = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {userId} = payload;
       const isSignedIn = await isSignedGoogle();
@@ -335,7 +340,9 @@ export const deleteAccount = ({payload}) =>
       resolve({success: true, reason: ''});
     } catch (err) {
       const {code} = err;
-      const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
+      const mes = FIREBASE_CODES.hasOwnProperty(code)
+        ? FIREBASE_CODES[code]
+        : papyrusify('common.message.errorOccurred');
       reject(mes);
     }
   });
@@ -344,7 +351,7 @@ export const logoutUser = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {userId} = payload;
       const isSignedIn = await isSignedGoogle();
@@ -353,7 +360,9 @@ export const logoutUser = ({payload}) =>
       resolve({success: true, reason: ''});
     } catch (err) {
       const {code} = err;
-      const mes = FIREBASE_CODES.hasOwnProperty(code) ? FIREBASE_CODES[code] : ERROR_OCCURRED;
+      const mes = FIREBASE_CODES.hasOwnProperty(code)
+        ? FIREBASE_CODES[code]
+        : papyrusify('common.message.errorOccurred');
       reject(mes);
     }
   });

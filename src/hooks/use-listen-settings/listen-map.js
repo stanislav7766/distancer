@@ -2,7 +2,9 @@ import {useCallback} from 'react';
 import Toast from 'react-native-simple-toast';
 import {useMap} from '~/stores/map';
 import {readSettings, writeSettings} from '~/utils/fs/storage';
-import {ERROR_OCCURRED} from '~/constants/constants';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 export const useListenMap = () => {
   const {setMapSettings, mapRef} = useMap();
@@ -15,7 +17,7 @@ export const useListenMap = () => {
       const settings = await readSettings('map');
       await writeSettings({...settings, zoomLevel: newZoom, centerCoordinate: newCenter}, 'map');
     } catch (error) {
-      Toast.show(ERROR_OCCURRED);
+      Toast.show(papyrusify('common.message.errorOccurred'));
     }
   }, [mapRef]);
 
@@ -24,7 +26,7 @@ export const useListenMap = () => {
       const settings = await readSettings('map');
       setMapSettings(settings);
     } catch (error) {
-      Toast.show(ERROR_OCCURRED);
+      Toast.show(papyrusify('common.message.errorOccurred'));
     }
   }, [setMapSettings]);
 

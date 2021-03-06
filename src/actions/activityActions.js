@@ -1,9 +1,4 @@
-import {
-  ERROR_NETWORK_FAILED,
-  ACTIVITIES_LIST_EMPTY,
-  ACTIVITIES_BATCH_LIMIT,
-  ACTIVITIES_LIST_ENDED,
-} from '~/constants/constants';
+import {ACTIVITIES_BATCH_LIMIT} from '~/constants/constants';
 import {isNetworkAvailable} from '~/utils/network-helpers';
 import {isFilledArr} from '~/utils/validation/helpers';
 import firestore from '@react-native-firebase/firestore';
@@ -13,6 +8,9 @@ import {filterActivitiesToTotalKeys} from '~/utils/activity-helpers/mapper';
 import {getTotalsPerKeys, substractTotalsPerKey, updateTotalsPerKey} from './totalsActions';
 import {activityToMonthTotals, mapActivityDocs} from '~/utils/activity-helpers';
 import {validateActivity} from '~/utils/validation/validation';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const getActivitiesColRef = ({userId, directionsMode}) =>
   firestore().collection('activities').doc(directionsMode).collection(userId);
@@ -45,7 +43,7 @@ export const deleteActivity = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const isConnected = await isNetworkAvailable();
-      if (!isConnected) return resolve({success: false, reason: ERROR_NETWORK_FAILED});
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
 
       const {activity, userId} = payload;
       const {directionsMode, id: activityId} = activity;
@@ -73,7 +71,8 @@ export const getFirstActivities = ({payload}) =>
         .get();
       const {docs} = snaphot;
       const activities = mapActivityDocs(docs);
-      if (!isFilledArr(activities)) return resolve({success: false, reason: ACTIVITIES_LIST_EMPTY});
+      if (!isFilledArr(activities))
+        return resolve({success: false, reason: papyrusify('savedMode.message.activitiesListEmpty')});
 
       const {timestamp} = getLastItem(activities);
       const groupsTotals = await _getGroupsTotals({activities, direction, userId});
@@ -94,7 +93,8 @@ export const getNextActivities = ({payload}) =>
         .get();
       const {docs} = snaphot;
       const activities = mapActivityDocs(docs);
-      if (!isFilledArr(activities)) return resolve({success: false, reason: ACTIVITIES_LIST_ENDED});
+      if (!isFilledArr(activities))
+        return resolve({success: false, reason: papyrusify('savedMode.message.activitiesListEnded')});
 
       const {timestamp} = getLastItem(activities);
       const groupsTotals = await _getGroupsTotals({activities, direction, userId});

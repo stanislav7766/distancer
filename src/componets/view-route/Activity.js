@@ -4,7 +4,7 @@ import {Btn} from '~/componets/btn';
 import Toast from 'react-native-simple-toast';
 import {useLocationPosition} from '~/hooks/use-location-position';
 import {Row, Column, stylesActivityProps, btnDeleteStyles, mt10} from './styles';
-import {ERROR_OCCURRED, DELETE_ACTIVITY_CONFIRM, ACCENT_BLUE} from '~/constants/constants';
+import {ACCENT_BLUE} from '~/constants/constants';
 import {useModalConfirm as useConfirm} from '~/stores/modal-confirm';
 import {useOnDefaultActivity} from '~/hooks/use-on-effect';
 import SelectDirection from '~/componets/directions-bar/SelectDirection';
@@ -15,11 +15,13 @@ import {observer} from 'mobx-react-lite';
 import {useLiveRoute} from '~/stores/live-route';
 import {useActivities} from '~/stores/activities';
 import {isFilledArr} from '~/utils/validation/helpers';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const Activity = ({themeStyle, goToMain}) => {
   const {liveRoute} = useLiveRoute();
   const {removeById} = useActivities();
-
   const {profile} = useAuth();
   const {zoomLevel, cameraRef} = useMap();
   const {moveCamera} = useLocationPosition(cameraRef);
@@ -43,16 +45,16 @@ const Activity = ({themeStyle, goToMain}) => {
       .then(res => {
         const {success, reason} = res;
         success && onPressCancel();
-        Toast.show(success ? 'Deleted' : reason);
+        Toast.show(success ? papyrusify('savedMode.message.deleted') : reason);
       })
       .catch(_ => {
-        Toast.show(ERROR_OCCURRED);
+        Toast.show(papyrusify('common.message.errorOccurred'));
       });
   };
 
   const onRequestDelete = () => {
     setInit({
-      text: DELETE_ACTIVITY_CONFIRM,
+      text: papyrusify('savedMode.message.deleteActivityConfirm'),
       onNo: onHideConfirm,
       onYes: onPressDelete,
     });
@@ -65,31 +67,45 @@ const Activity = ({themeStyle, goToMain}) => {
         <Column>
           <Row>
             <Column alignItems={'flex-start'}>
-              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>Distance</Text>
+              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>
+                {papyrusify('savedMode.activityDetail.distance')}
+              </Text>
             </Column>
             <Column alignItems={'flex-end'}>
-              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>{distance} km</Text>
+              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>
+                {distance} {papyrusify('savedMode.activityDetail.km')}
+              </Text>
             </Column>
           </Row>
           <Row>
             <Column alignItems={'flex-start'}>
-              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>Pace</Text>
+              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>
+                {papyrusify('savedMode.activityDetail.pace')}
+              </Text>
             </Column>
             <Column alignItems={'flex-end'}>
-              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>{pace} /km</Text>
+              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>
+                {pace} {papyrusify('savedMode.activityDetail.perKM')}
+              </Text>
             </Column>
           </Row>
           <Row>
             <Column alignItems={'flex-start'}>
-              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>Avg. speed</Text>
+              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>
+                {papyrusify('savedMode.activityDetail.avgSpeed')}
+              </Text>
             </Column>
             <Column alignItems={'flex-end'}>
-              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>{avgSpeed} km/h</Text>
+              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>
+                {avgSpeed} {papyrusify('savedMode.activityDetail.kmPerH')}
+              </Text>
             </Column>
           </Row>
           <Row>
             <Column alignItems={'flex-start'}>
-              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>MovingTime</Text>
+              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>
+                {papyrusify('savedMode.activityDetail.movingTime')}
+              </Text>
             </Column>
             <Column alignItems={'flex-end'}>
               <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>{movingTime}</Text>
@@ -97,7 +113,9 @@ const Activity = ({themeStyle, goToMain}) => {
           </Row>
           <Row>
             <Column alignItems={'flex-start'}>
-              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>Total time</Text>
+              <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>
+                {papyrusify('savedMode.activityDetail.totalTime')}
+              </Text>
             </Column>
             <Column alignItems={'flex-end'}>
               <Text style={[stylesActivityProps, {color: themeStyle.textColorSecondary}]}>{totalTime}</Text>
@@ -110,7 +128,7 @@ const Activity = ({themeStyle, goToMain}) => {
           <SelectDirection mode={directionsMode} color={ACCENT_BLUE} />
         </Column>
         <Column alignItems={'flex-end'}>
-          <Btn {...btnDeleteStyles} title={'Delete Activity'} onPress={onRequestDelete} />
+          <Btn {...btnDeleteStyles} title={papyrusify('savedMode.button.deleteActivity')} onPress={onRequestDelete} />
         </Column>
       </Row>
     </>

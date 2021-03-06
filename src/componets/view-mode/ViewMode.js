@@ -12,9 +12,11 @@ import {FetchCities} from '~/utils/fetch-helpers/fetch-city';
 import {isFilledArr} from '~/utils/validation/helpers';
 import {useOnIsDirectionsMode, useOnShowMapIcons} from '~/hooks/use-on-effect';
 import {Row, Column, Styles, mt20, mt10} from './styles';
-import {CITY_NOT_FOUND, CHOOSE_YOUR_LOCATION, TYPE_CITY, ERROR_OCCURRED} from '~/constants/constants';
 import {observer} from 'mobx-react-lite';
 import Toast from 'react-native-simple-toast';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const ViewMode = ({themeStyle, closeModal, openModal}) => {
   const {cameraRef, zoomLevel, setShowMapIcons} = useMap();
@@ -64,9 +66,9 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
   const onSubmitEditing = async () => {
     try {
       const [res, err] = await FetchCities(city.name);
-      setPlaces(err === '' ? res : [{text: CITY_NOT_FOUND}]);
+      setPlaces(err === '' ? res : [{text: papyrusify('viewMode.message.cityNotFound')}]);
     } catch (error) {
-      Toast.show(ERROR_OCCURRED);
+      Toast.show(papyrusify('common.message.errorOccurred'));
     }
   };
 
@@ -77,14 +79,19 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
           <Row key={i} {...mt20}>
             <Item
               style={styleItem}
-              onPress={() => el.text !== CITY_NOT_FOUND && onPressItem(el)}
+              onPress={() => el.text !== papyrusify('viewMode.message.cityNotFound') && onPressItem(el)}
               IconComponent={IconMarker}
               text={el.text}
             />
           </Row>
         ))}
       <Row {...mt20}>
-        <Item style={styleItem} onPress={onCurrentLocation} IconComponent={IconMarker} text={CHOOSE_YOUR_LOCATION} />
+        <Item
+          style={styleItem}
+          onPress={onCurrentLocation}
+          IconComponent={IconMarker}
+          text={papyrusify('viewMode.message.chooseYourLocation')}
+        />
       </Row>
     </>
   );
@@ -103,7 +110,7 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
       <Row {...mt10}>
         <TextInput
           style={inputStyle}
-          placeholder={TYPE_CITY}
+          placeholder={papyrusify('viewMode.input.typeCity')}
           value={city?.name}
           onSubmitEditing={onSubmitEditing}
           openModal={onOpenModal}

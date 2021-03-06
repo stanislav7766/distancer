@@ -11,9 +11,12 @@ import {useMap} from '~/stores/map';
 import {useCurrentRoute} from '~/stores/current-route';
 import Toast from 'react-native-simple-toast';
 import {isEmpty, isFilledArr} from '~/utils/validation/helpers';
-import {NOT_IN_DRAG_MODE, DRAG_POINT_NOW, APP_MODE} from '~/constants/constants';
+import {APP_MODE} from '~/constants/constants';
 import {observer} from 'mobx-react-lite';
 import {getBounds} from '~/utils/common-helpers/arr-helpers';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const MappedRoute = () => {
   const [dragCoord, setDragCoord] = useState(null);
@@ -59,10 +62,10 @@ const MappedRoute = () => {
 
   const onPress = coord => {
     if (!dragModeRef.current) {
-      dragHints && Toast.show(NOT_IN_DRAG_MODE);
+      dragHints && Toast.show(papyrusify('drawMode.message.noInDragMode'));
       return;
     }
-    dragHints && Toast.show(DRAG_POINT_NOW);
+    dragHints && Toast.show(papyrusify('drawMode.message.dragPointNow'));
     moveCamera({zoomLevel: 16, centerCoordinate: coord.coordinate});
     setDragCoord(coord);
   };

@@ -1,14 +1,20 @@
 import {useEffect} from 'react';
 import {Alert} from 'react-native';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
-import {REQUIRE_LOCATION_PERMS, QUESTION_OPEN_SETTINGS} from '~/constants/constants';
 import {bgConfig} from './config';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const callAlert = showAppSettings =>
-  Alert.alert(REQUIRE_LOCATION_PERMS, QUESTION_OPEN_SETTINGS, [
-    {text: 'Yes', onPress: () => showAppSettings()},
-    {text: 'No', onPress: () => {}, style: 'cancel'},
-  ]);
+  Alert.alert(
+    papyrusify('permissions.message.requireLocationTracking'),
+    papyrusify('permissions.message.questionOpenSettings'),
+    [
+      {text: papyrusify('permissions.button.yes'), onPress: () => showAppSettings()},
+      {text: papyrusify('permissions.button.no'), onPress: () => {}, style: 'cancel'},
+    ],
+  );
 
 const useBackgroundLocation = onUpdateLocation => {
   const unsubscribe = () => {

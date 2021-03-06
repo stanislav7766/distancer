@@ -9,11 +9,14 @@ import {getSaved} from '~/assets/svg-icons/saved';
 import {getMenu} from '~/assets/svg-icons/menu';
 import {getDraw} from '~/assets/svg-icons/draw';
 import {getMarker} from '~/assets/svg-icons/marker';
-import {APP_MODE, LIVE_TYPES, PLEASE_FINISH_ACTIVITY} from '~/constants/constants';
+import {APP_MODE, LIVE_TYPES} from '~/constants/constants';
 import Toast from 'react-native-simple-toast';
 import NavbarIcon from './NavbarIcon';
 import {observer} from 'mobx-react-lite';
 import {randomID} from '~/utils/random-id';
+import {getLocaleStore} from '~/stores/locale';
+
+const {papyrusify} = getLocaleStore();
 
 const {STOP} = LIVE_TYPES;
 const {VIEW_MODE, DRAW_MODE, SAVED_MODE, MENU_MODE, LIVE_MODE} = APP_MODE;
@@ -31,7 +34,7 @@ const Navbar = () => {
   }, [authorized]);
 
   const toastFinishLive = () => {
-    Toast.show(PLEASE_FINISH_ACTIVITY);
+    Toast.show(papyrusify('liveMode.message.finishActivityFirst'));
   };
   const onPressItem = mode => {
     if (appMode === LIVE_MODE && status !== STOP) {

@@ -1,6 +1,9 @@
 import React from 'react';
 import {TextInput} from '~/componets/text-input';
+import {getLocaleStore} from '~/stores/locale';
 import {Styles, Row, mt10} from './styles';
+
+const {papyrusify} = getLocaleStore();
 
 const ProfileInputs = ({themeStyle, profile, setProfile}) => {
   const {inputStyle} = Styles(themeStyle);
@@ -17,7 +20,7 @@ const ProfileInputs = ({themeStyle, profile, setProfile}) => {
       <Row>
         <TextInput
           style={inputStyle}
-          placeholder={'First name'}
+          placeholder={papyrusify('editProfile.input.firstName')}
           value={firstName}
           onChangeText={text => onChangeText({text, type: 'firstName'})}
         />
@@ -25,7 +28,7 @@ const ProfileInputs = ({themeStyle, profile, setProfile}) => {
       <Row {...mt10}>
         <TextInput
           style={inputStyle}
-          placeholder={'Last name'}
+          placeholder={papyrusify('editProfile.input.lastName')}
           value={lastName}
           onChangeText={text => onChangeText({text, type: 'lastName'})}
         />
@@ -33,7 +36,7 @@ const ProfileInputs = ({themeStyle, profile, setProfile}) => {
       <Row {...mt10}>
         <TextInput
           style={inputStyle}
-          placeholder={'Age'}
+          placeholder={papyrusify('editProfile.input.age')}
           value={age}
           keyboardType="decimal-pad"
           onChangeText={text => onChangeText({text, type: 'age'})}
