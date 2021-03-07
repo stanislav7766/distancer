@@ -6,7 +6,7 @@ export const menuMode = {
     signUp: 'Sign up',
   },
   picker: {
-    lenguage: 'English',
+    language: 'English',
     sec: 'sec',
   },
   title: {
@@ -17,7 +17,7 @@ export const menuMode = {
   },
   preference: {
     changeEmail: 'Change Email',
-    lenguage: 'Lenguage',
+    language: 'Language',
     changePassword: 'Change Password',
     deleteAccount: 'Delete Account',
     autoPause: 'Auto pause',

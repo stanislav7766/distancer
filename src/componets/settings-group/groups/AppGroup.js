@@ -26,16 +26,16 @@ const GroupApp = () => {
   const DefaultScreenText = (
     <GroupText title={papyrusify('menuMode.preference.defaultScreen')} themeStyle={themeStyle} />
   );
-  const LenguageText = <GroupText title={papyrusify('menuMode.preference.lenguage')} themeStyle={themeStyle} />;
-  const LenguageValue = (
-    <GroupText title={papyrusify('menuMode.picker.lenguage')} style={orangeColor} themeStyle={themeStyle} />
+  const LanguageText = <GroupText title={papyrusify('menuMode.preference.language')} themeStyle={themeStyle} />;
+  const LanguageValue = (
+    <GroupText title={papyrusify('menuMode.picker.language')} style={orangeColor} themeStyle={themeStyle} />
   );
   const DefaultScreenValue = <GroupText title={defaultScreen} style={orangeColor} themeStyle={themeStyle} />;
 
   const onChangeDefaultScreen = ([value]) => {
     setDefaultScreen(value);
   };
-  const onChangeLenguage = ([value]) => {
+  const onChangeLanguage = ([value]) => {
     setLocale(value);
   };
   const onSelectDefaultScreen = () => {
@@ -47,23 +47,23 @@ const GroupApp = () => {
     });
     onShowPicker();
   };
-  const onSelectLenguage = () => {
+  const onSelectLanguage = () => {
     setInit({
       pickerItems: GET_LOCALES_ITEMS(),
       selectedItems: [locale],
       defaultItem: locale,
-      setSelectedItems: onChangeLenguage,
+      setSelectedItems: onChangeLanguage,
     });
     onShowPicker();
   };
 
   const DefaultScreenPicker = <Touchable Child={DefaultScreenValue} onPress={onSelectDefaultScreen} />;
-  const LenguagePicker = <Touchable Child={LenguageValue} onPress={onSelectLenguage} />;
+  const LanguagePicker = <Touchable Child={LanguageValue} onPress={onSelectLanguage} />;
 
   const authItems = authorized ? [{Left: DefaultScreenText, Right: DefaultScreenPicker}] : [];
   const sharedItems = [
     {Left: ThemeText, Right: ThemeSwith},
-    {Left: LenguageText, Right: LenguagePicker},
+    {Left: LanguageText, Right: LanguagePicker},
   ];
 
   const AppSettingsGroup = (

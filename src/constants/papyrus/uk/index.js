@@ -6,7 +6,7 @@ export const menuMode = {
     signUp: 'Долучитися',
   },
   picker: {
-    lenguage: 'Українська',
+    language: 'Українська',
     sec: 'сек',
   },
   title: {
@@ -17,7 +17,7 @@ export const menuMode = {
   },
   preference: {
     changeEmail: 'Змінити пошту',
-    lenguage: 'Мова',
+    language: 'Мова',
     changePassword: 'Змінити пароль',
     deleteAccount: 'Видалити акаунт',
     autoPause: 'Авто пауза',
@@ -89,7 +89,7 @@ export const viewMode = {
     chooseYourLocation: 'Обрати вашу геопозицію',
   },
   input: {
-    typeCity: 'Вкажість місто',
+    typeCity: 'Вкажіть місто',
   },
 };
 
