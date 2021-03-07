@@ -32,7 +32,7 @@ const GroupActivity = () => {
   };
   const onSelectTimerOnStart = () => {
     setInitPicker({
-      pickerItems: GET_TIMER_PICKER_ITEMS(papyrusify('menuMode.picker.sec')),
+      pickerItems: GET_TIMER_PICKER_ITEMS({sec: papyrusify('menuMode.picker.sec')}),
       selectedItems: [`${timerOnStart}`],
       defaultItem: `${timerOnStart}`,
       setSelectedItems: onChangeTimerOnStart,
