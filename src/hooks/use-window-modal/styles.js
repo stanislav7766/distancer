@@ -1,6 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {WINDOW_WIDTH} from '~/constants/constants';
-export {Row, mx0} from '~/constants/styles';
+import {btnContainerStyle, btnTextStyle} from '~/constants/styles';
+export {Row, mx0, Column, mt10} from '~/constants/styles';
 
 const centerXY = {flex: 1, justifyContent: 'center', alignItems: 'center'};
 
@@ -30,4 +31,9 @@ export const Styles = themeStyle => {
   };
 
   return {inputStyle};
+};
+
+export const btnStyles = {
+  containerStyle: {...btnContainerStyle, height: 40},
+  textStyle: btnTextStyle,
 };

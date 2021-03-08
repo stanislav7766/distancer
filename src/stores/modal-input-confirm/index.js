@@ -3,6 +3,7 @@ import {storesDI} from '~/utils/store-di';
 
 const defaultInit = {
   headerText: '',
+  btnText: '',
   preset: 'footer',
   onNo: () => {},
   onYes: () => {},
