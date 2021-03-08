@@ -180,6 +180,31 @@ export const changePassword = ({payload}) =>
     }
   });
 
+export const verifyPassword = ({payload}) =>
+  new Promise(async resolve => {
+    try {
+      const isConnected = await isNetworkAvailable();
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
+
+      const {password} = payload;
+      const {isValid, reason} = validateData({password});
+      if (!isValid) return resolve({success: false, reason});
+
+      const user = auth().currentUser;
+      if (!user) return resolve({success: false, reason: papyrusify('sign.message.needReLogin')});
+
+      const credential = auth.EmailAuthProvider.credential(user.email, password);
+      await user.reauthenticateWithCredential(credential);
+
+      resolve({success: true});
+    } catch (err) {
+      const {code} = err;
+      const reason = FIREBASE_CODES.hasOwnProperty(code)
+        ? FIREBASE_CODES[code]
+        : papyrusify('common.message.errorOccurred');
+      resolve({success: false, reason});
+    }
+  });
 export const changeEmail = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {

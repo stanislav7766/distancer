@@ -13,5 +13,6 @@ export {
   requestChangeEmail,
   changePassword,
   requestChangePassword,
+  verifyPassword,
 } from './authActions';
 export {checkProfileFilled, markProfileFilled} from './profileActions';
