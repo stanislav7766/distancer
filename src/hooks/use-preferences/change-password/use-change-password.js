@@ -54,7 +54,7 @@ export const useChangePassword = () => {
     setInitInputConfirm({
       preset: 'close',
       headerText: papyrusify('menuMode.message.updatePasswordConfirm'),
-      btnText: papyrusify('menuMode.button.changePassword'),
+      btnText: papyrusify('menuMode.button.change'),
       onYes: passwordVerified,
       input: {
         placeholder: papyrusify('menuMode.input.newPassword'),
