@@ -1,5 +1,6 @@
 import storage from '@react-native-firebase/storage';
 import {getLocaleStore} from '~/stores/locale';
+import {FIREBASE_CODE_STORAGE_NOT_FOUND} from '../firebase/constants';
 import {isNetworkAvailable} from '~/utils/network-helpers';
 import {isEmptyString} from '~/utils/validation/helpers';
 
@@ -26,7 +27,14 @@ export const setAvatarStorage = ({payload}) =>
 
 export const deleteUserAvatar = ({userId}) =>
   new Promise(async resolve => {
-    await getAvatarRef({userId}).delete();
-
-    resolve(true);
+    try {
+      await getAvatarRef({userId}).delete();
+      resolve(true);
+    } catch (error) {
+      if (error.code === FIREBASE_CODE_STORAGE_NOT_FOUND) {
+        resolve(true);
+        return;
+      }
+      resolve(false);
+    }
   });
