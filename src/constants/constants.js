@@ -32,6 +32,11 @@ export const LOCALES = {
   UK: 'uk_UA',
 };
 
+export const APP_SETTINGS_PATH = 'app_settings';
+export const MAP_SETTINGS_PATH = 'map_settings';
+export const ACTIVITY_SETTINGS_PATH = 'activity_settings';
+export const ROUTE_SETTINGS_PATH = 'route_settings';
+
 export const DEFAULT_LOCALE = LOCALES.EN;
 
 export const MODAL_HEIGHTS = {

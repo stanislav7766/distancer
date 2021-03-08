@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage';
+import {isExist, isNull} from '../validation/helpers';
 
 export const getItem = async key => {
   const string = await AsyncStorage.getItem(key);
@@ -17,4 +18,13 @@ export const updateItem = async (key, data) => {
   const string = await AsyncStorage.getItem(key);
   const oldData = JSON.parse(string) || {};
   await setItem(key, {...oldData, ...data});
+};
+
+export const existsItem = async key => {
+  try {
+    const value = await getItem(key);
+    return isExist(value) && !isNull(value);
+  } catch (error) {
+    return false;
+  }
 };
