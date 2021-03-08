@@ -115,7 +115,7 @@ export const loginWithGoogle = () =>
       resolve({success: true, reason: '', data: {user: {...mapForStoreProfile(profile), userId: uid}}});
       doc.exists && (await setItem(uid, profile));
     } catch (err) {
-      reject(err.message);
+      reject(papyrusify('common.message.tryAgain'));
     }
   });
 
@@ -228,7 +228,7 @@ export const registerWithGoogle = () =>
       resolve({success: true, reason: '', data: {user: mapForStoreProfile(userProfile)}});
       await _saveProfile(uid, userProfile);
     } catch (err) {
-      reject(err.message);
+      reject(papyrusify('common.message.tryAgain'));
     }
   });
 
