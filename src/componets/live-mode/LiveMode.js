@@ -149,12 +149,10 @@ const LiveMode = ({closeModal, openModal}) => {
   function onPressPause() {
     onStopWatch();
     setStatus(PAUSE);
-    onVibro();
   }
   function onPressContinue() {
     onContinueWatch();
     setStatus(GO);
-    onVibro();
   }
   const postOnPressCancel = () => {
     onResetWatch();
@@ -180,7 +178,6 @@ const LiveMode = ({closeModal, openModal}) => {
     const totalTime = onTimeWatch();
     const {movingTime} = specs;
     const activity = {...liveRoute, totalTime, movingTime, directionsMode};
-    onVibro();
     onSaveActivity({activity, userId: profile.userId});
   }
 
