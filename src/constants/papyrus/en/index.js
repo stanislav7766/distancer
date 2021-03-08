@@ -33,6 +33,7 @@ export const menuMode = {
     logoutConfirm: 'Are you sure you want to logout?',
     deleteAccountConfirm: 'Are you sure you want to delete your account?',
     updateEmailConfirm: 'Do you want to update email?',
+    verifyPassword: 'Need verify password',
     updatePasswordConfirm: 'Do you want to update password?',
     emailUpdated: 'Email updated',
     passwordUpdated: 'Password updated',
@@ -40,6 +41,7 @@ export const menuMode = {
   input: {
     newEmail: 'New Email',
     newPassword: 'New Password',
+    currentPassword: 'Current Password',
   },
 };
 

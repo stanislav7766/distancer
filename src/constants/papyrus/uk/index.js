@@ -33,6 +33,7 @@ export const menuMode = {
     logoutConfirm: 'Ви впевнені, що бажаєте вийти?',
     deleteAccountConfirm: 'Ви впевнені, що бажаєте видалити акаунт?',
     updateEmailConfirm: 'Ви бажаєте змінити пошту?',
+    verifyPassword: 'Підтвердіть поточний пароль',
     updatePasswordConfirm: 'Ви бажаєте змінити пароль?',
     emailUpdated: 'Пошту змінено',
     passwordUpdated: 'Пароль Змінено',
@@ -40,6 +41,7 @@ export const menuMode = {
   input: {
     newEmail: 'Нова пошта',
     newPassword: 'Новий пароль',
+    currentPassword: 'Поточний пароль',
   },
 };
 
