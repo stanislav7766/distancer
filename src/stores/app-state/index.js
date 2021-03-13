@@ -8,12 +8,16 @@ export class AppStateStore {
   }
 
   appState = AppState.currentState;
+  allowUpdate = true;
 
   get isGoOut() {
     return this.appState === 'background' || this.appState === 'inactive';
   }
   setAppState = nextState => {
-    this.appState = nextState;
+    this.allowUpdate && (this.appState = nextState);
+  };
+  setAllowUpdate = allowUpdate => {
+    this.allowUpdate = allowUpdate;
   };
 }
 
