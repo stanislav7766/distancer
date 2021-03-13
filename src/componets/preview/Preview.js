@@ -5,7 +5,9 @@ import {fromLatLngToPoint, getPointsDimenssions} from '~/utils/point-helpers';
 import {getAnimation, runAnimation} from '~/utils/animations';
 import {stylePreview} from './styles';
 
-const Preview = ({coords}) => {
+const Preview = ({coords, previewStyle}) => {
+  const _stylePreview = {...stylePreview, ...(previewStyle ?? {})};
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const styleAnim = {
     opacity: fadeAnim,
@@ -16,7 +18,7 @@ const Preview = ({coords}) => {
   };
   const handleCanvas = canvas => {
     if (canvas) {
-      const {width, height, lineColor} = stylePreview;
+      const {width, height, lineColor} = _stylePreview;
 
       const ctx = canvas.getContext('2d');
       ctx.shadowColor = 'rgba(128,128,128,.2)';
@@ -40,7 +42,7 @@ const Preview = ({coords}) => {
   };
 
   return (
-    <View style={stylePreview}>
+    <View style={_stylePreview}>
       <Animated.View style={styleAnim}>
         <CanvasNative ref={handleCanvas} />
       </Animated.View>
