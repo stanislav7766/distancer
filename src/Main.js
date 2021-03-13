@@ -13,6 +13,8 @@ import {
 } from '~/hooks/use-window-modal';
 import useHookSpinner from '~/hooks/use-spinner';
 import {observer} from 'mobx-react-lite';
+import {useAppState} from '~/stores/app-state';
+import useHookAppState from '~/hooks/use-app-state';
 
 const Main = () => {
   const pickerModal = usePicker();
@@ -20,6 +22,7 @@ const Main = () => {
   const timerModal = useTimer();
   const inputConfirmModal = useInputConfirm();
   const spinnerStore = useSpinner();
+  const appStateStore = useAppState();
 
   const [ModalPicker] = useModalPicker(pickerModal);
   const [ModalConfirm] = useModalConfirm(confirmModal);
@@ -28,6 +31,7 @@ const Main = () => {
   const {LoadingSpinner, MoreLoadingSpinner} = useHookSpinner(spinnerStore);
 
   const [Navigator] = useNavigator();
+  useHookAppState(appStateStore);
   return (
     <>
       {Navigator}

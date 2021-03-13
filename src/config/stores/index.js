@@ -19,7 +19,9 @@ import {NavigationStore} from '~/stores/navigation';
 import {SpinnerStore} from '~/stores/spinner';
 import {storesDI} from '~/utils/store-di';
 import {LocaleStore} from '~/stores/locale';
+import {AppStateStore} from '~/stores/app-state';
 
+storesDI.Injectable('appStateStore')(AppStateStore);
 storesDI.Injectable('themeStore')(ThemeStore);
 storesDI.Injectable('appModeStore')(AppModeStore);
 storesDI.Injectable('authStore')(AuthStore);
