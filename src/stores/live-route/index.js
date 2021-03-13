@@ -1,7 +1,7 @@
 import {makeAutoObservable, observe} from 'mobx';
 import {DEFAULT_LIVE_ROUTE, LIVE_SPECS_DEFAULT, LIVE_TYPES} from '~/constants/constants';
 import {measureDistance} from '~/utils/route-helpers';
-import {calcPace, kmPerHourToPace, calcAvgSpeed} from '~/utils/activity-helpers';
+import {calcPace, kmPerHourToPace, calcAvgSpeed, mapTimeActivity} from '~/utils/activity-helpers';
 import {isEqualJson} from '~/utils/validation/helpers';
 import {storesDI} from '~/utils/store-di';
 import {randomID} from '~/utils/random-id';
@@ -52,14 +52,14 @@ export class LiveRouteStore {
   onFinishActivity = () => {
     this.stopwatchStore.stopWatch();
     const {movingTime} = this.specs;
-    const {totalTime} = this.stopwatchStore;
+
     const {directionsMode} = this.directionsModeStore;
-    const activity = {...this.liveRoute, totalTime, movingTime, directionsMode};
+    const activity = {...this.liveRoute, movingTime, directionsMode};
 
     this.stopwatchStore.resetWatch();
     this.setStatus(STOP);
     this.setDefaultLiveRoute();
-    return activity;
+    return mapTimeActivity(activity);
   };
 
   setLiveRoute = liveRoute => {
@@ -97,6 +97,9 @@ export class LiveRouteStore {
   };
   setMovingTime = movingTime => {
     this.specs.movingTime !== movingTime && this.setSpecs({movingTime});
+  };
+  setTotalTime = totalTime => {
+    this.liveRoute.totalTime !== totalTime && (this.liveRoute.totalTime = totalTime);
   };
   setStatus = status => {
     this.specs.status !== status && this.setSpecs({status});
@@ -145,6 +148,7 @@ export class LiveRouteStore {
   _listenStopWatchStore = ({name, newValue}) => {
     if (name !== 'time') return;
     this.setMovingTime(newValue.hhmmss);
+    this.setTotalTime(this.stopwatchStore.totalTime);
   };
 }
 
