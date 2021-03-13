@@ -1,4 +1,4 @@
-import {hhmmssToSec, paceToSec, secToPace} from '~/utils/time-helpers';
+import {hhmmssToSec, paceToSec, secTohhmmss, secToPace} from '~/utils/time-helpers';
 import {
   DEFAULT_PACE,
   DEFAULT_AVG_SPEED,
@@ -147,3 +147,15 @@ export const mapActivityDocs = docs =>
     rest.points1 = mapperCoordsObjToArr(points1);
     return rest;
   });
+
+export const mapTimeActivity = ({movingTime, totalTime, ...rest}) => {
+  const movingMs = hhmmssToSec(movingTime);
+  const totalMs = hhmmssToSec(totalTime);
+
+  const updatedTotalTime = secTohhmmss(Math.max(...[movingMs, totalMs]));
+  return {
+    ...rest,
+    movingTime,
+    totalTime: updatedTotalTime,
+  };
+};
