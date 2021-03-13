@@ -20,7 +20,9 @@ import {SpinnerStore} from '~/stores/spinner';
 import {storesDI} from '~/utils/store-di';
 import {LocaleStore} from '~/stores/locale';
 import {AppStateStore} from '~/stores/app-state';
+import {StopwatchStore} from '~/stores/stopwatch';
 
+storesDI.Injectable('stopwatchStore')(StopwatchStore);
 storesDI.Injectable('appStateStore')(AppStateStore);
 storesDI.Injectable('themeStore')(ThemeStore);
 storesDI.Injectable('appModeStore')(AppModeStore);

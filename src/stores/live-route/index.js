@@ -4,8 +4,10 @@ import {measureDistance} from '~/utils/route-helpers';
 import {calcPace, kmPerHourToPace, calcAvgSpeed} from '~/utils/activity-helpers';
 import {isEqualJson} from '~/utils/validation/helpers';
 import {storesDI} from '~/utils/store-di';
+import {randomID} from '~/utils/random-id';
+import {getTimestamp, yyyymmddNow} from '~/utils/time-helpers';
 
-const {STOP} = LIVE_TYPES;
+const {STOP, GO, PAUSE} = LIVE_TYPES;
 
 const DEFAULT_SPECS = {
   status: STOP,
@@ -16,6 +18,12 @@ const DEFAULT_SPECS = {
 
 export class LiveRouteStore {
   constructor() {
+    this.appStateStore = storesDI.Inject('appStateStore');
+    this.stopwatchStore = storesDI.Inject('stopwatchStore');
+    this.directionsModeStore = storesDI.Inject('directionsModeStore');
+
+    observe(this.appStateStore, this._listenAppStateStore);
+    observe(this.stopwatchStore, this._listenStopWatchStore);
     makeAutoObservable(this);
     observe(this, this._listenStore);
   }
@@ -26,6 +34,32 @@ export class LiveRouteStore {
 
   setSpecs = specs => {
     this.specs = {...this.specs, ...specs};
+  };
+
+  onStartActivity = () => {
+    this.stopwatchStore.startWatch();
+    this.setStatus(GO);
+    this.setLiveRoute({id: randomID(), date: yyyymmddNow(), timestamp: getTimestamp()});
+  };
+  onPauseActivity = () => {
+    this.stopwatchStore.stopWatch();
+    this.setStatus(PAUSE);
+  };
+  onContinueActivity = () => {
+    this.stopwatchStore.continueWatch();
+    this.setStatus(GO);
+  };
+  onFinishActivity = () => {
+    this.stopwatchStore.stopWatch();
+    const {movingTime} = this.specs;
+    const {totalTime} = this.stopwatchStore;
+    const {directionsMode} = this.directionsModeStore;
+    const activity = {...this.liveRoute, totalTime, movingTime, directionsMode};
+
+    this.stopwatchStore.resetWatch();
+    this.setStatus(STOP);
+    this.setDefaultLiveRoute();
+    return activity;
   };
 
   setLiveRoute = liveRoute => {
@@ -97,6 +131,21 @@ export class LiveRouteStore {
 
   _isListenCurrentSpeed = ({name, oldValue, newValue}) =>
     name === 'specs' && oldValue?.currentSpeed !== newValue?.currentSpeed;
+
+  _listenAppStateStore = ({name}) => {
+    if (name !== 'appState') return;
+
+    if (this.appStateStore.isGoOut) {
+      this.stopwatchStore.toBackground();
+      return;
+    }
+    const needStart = this.specs.status === GO;
+    this.stopwatchStore.toForeground(needStart);
+  };
+  _listenStopWatchStore = ({name, newValue}) => {
+    if (name !== 'time') return;
+    this.setMovingTime(newValue.hhmmss);
+  };
 }
 
 export const useLiveRoute = () => storesDI.Inject('liveRouteStore');

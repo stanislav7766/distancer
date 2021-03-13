@@ -2,9 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import {Vibration} from 'react-native';
 import {Row, Column, btnStartStyles, btnPauseStyles, btnContinueStyles, mt10} from './styles';
 import {Btn} from '~/componets/btn';
-import {randomID} from '~/utils/random-id';
 import {LIVE_TYPES, LIVE_SPECS_DEFAULT, LIVE_STATIONARY_FILTER_M} from '~/constants/constants';
-import {getTimestamp, yyyymmddNow} from '~/utils/time-helpers';
 import {
   useOnIsDirectionsMode,
   useOnLiveWithRoute,
@@ -14,9 +12,7 @@ import {
 import {useActivitySettings} from '~/stores/activity-settings';
 import Toast from 'react-native-simple-toast';
 import useBackgroundLocation from '~/hooks/use-background-location';
-import useBackgroundStopWatch from '~/hooks/use-background-stopwatch';
 import {saveActivity} from '~/actions';
-import {useDirectionsMode} from '~/stores/directions-mode';
 import {useModalTimer as useTimer} from '~/stores/modal-timer';
 import {useModalConfirm as useConfirm} from '~/stores/modal-confirm';
 import {useAuth} from '~/stores/auth';
@@ -43,12 +39,12 @@ const LiveMode = ({closeModal, openModal}) => {
   const {
     liveRoute,
     specs,
-    setLiveRoute,
-    setMovingTime,
     pushPoints,
-    setDefaultLiveRoute,
     setCurrentSpeed,
-    setStatus,
+    onStartActivity,
+    onPauseActivity,
+    onContinueActivity,
+    onFinishActivity,
   } = useLiveRoute();
   const allowLocationUpdate = useRef(false);
   const lastCoordRef = useRef([]);
@@ -82,21 +78,15 @@ const LiveMode = ({closeModal, openModal}) => {
   const {start: startBgLocation, stop: stopBgLocation} = useBackgroundLocation(onUpdateLocation);
 
   const {profile} = useAuth();
-  const {directionsMode} = useDirectionsMode();
 
   const {points1} = liveRoute;
   const {status} = specs;
   const isGo = status === GO;
   const isStop = status === STOP;
-  const {onStartWatch, onContinueWatch, onTimeWatch, onResetWatch, onStopWatch, hhmmss} = useBackgroundStopWatch(isGo);
 
   useEffect(() => {
     allowLocationUpdate.current = isGo;
   }, [isGo]);
-
-  useEffect(() => {
-    setMovingTime(hhmmss);
-  }, [hhmmss, setMovingTime]);
 
   useEffect(() => {
     isFilledArr(points1) && (lastCoordRef.current = getLastItem(points1));
@@ -135,11 +125,9 @@ const LiveMode = ({closeModal, openModal}) => {
     onShowTimer();
   }
   const postOnPressStart = () => {
-    setStatus(GO);
     startBgLocation();
-    onStartWatch();
     onVibro();
-    setLiveRoute({id: randomID(), date: yyyymmddNow(), timestamp: getTimestamp()});
+    onStartActivity();
   };
 
   function onPressStart() {
@@ -147,22 +135,13 @@ const LiveMode = ({closeModal, openModal}) => {
     setTimeout(postOnPressStart, 300);
   }
   function onPressPause() {
-    onStopWatch();
-    setStatus(PAUSE);
+    onPauseActivity();
   }
   function onPressContinue() {
-    onContinueWatch();
-    setStatus(GO);
+    onContinueActivity();
   }
-  const postOnPressCancel = () => {
-    onResetWatch();
-    setStatus(STOP);
-    setDefaultLiveRoute();
-    clearLiveWithRoute();
-  };
   const onPressCancel = () => {
-    closeModal();
-    postOnPressCancel();
+    clearLiveWithRoute();
   };
   const onRequestStop = () => {
     setInitConfirm({
@@ -175,10 +154,9 @@ const LiveMode = ({closeModal, openModal}) => {
 
   function onPressStop() {
     stopBgLocation();
-    const totalTime = onTimeWatch();
-    const {movingTime} = specs;
-    const activity = {...liveRoute, totalTime, movingTime, directionsMode};
+    const activity = onFinishActivity();
     onSaveActivity({activity, userId: profile.userId});
+    closeModal();
   }
 
   const statusBtnCall = mode =>
