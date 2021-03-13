@@ -43,3 +43,4 @@ export const isAvgPace = pace => typeof pace === 'string' && /^[0-9]{1,3}\'[0-9]
 export const ishhmmss = hhmmss => typeof hhmmss === 'string' && /^[0-9]{2}:[0-9]{2}:[0-9]{2}$/.test(hhmmss);
 
 export const isClass = v => typeof v === 'function' && v.prototype.constructor === v;
+export const isString = val => typeof val === 'string';
