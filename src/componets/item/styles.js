@@ -1,9 +1,10 @@
 import {StyleSheet} from 'react-native';
 import styled from 'styled-components';
+import {isString} from '~/utils/validation/helpers';
 export {Row, Column} from '~/constants/styles';
 
 export const Container = styled.TouchableOpacity`
-  width: 100%;
+  width: ${props => (!props.width ? '100%' : isString(props.width) ? props.width : `${props.width}px`)};
   height: ${props => props.height ?? 60}px;
 `;
 
@@ -12,6 +13,7 @@ export const TextStyled = styled.Text`
   font-family: Noto Sans;
   font-style: normal;
   font-weight: normal;
+  align-self: ${props => props.alignSelf ?? 'flex-start'};
   font-size: ${props => props.fontSize ?? 17}px;
   line-height: 23px;
 `;

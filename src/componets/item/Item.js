@@ -14,7 +14,7 @@ const runAnimation = (anim, params, cb) => {
 };
 
 const Item = ({text, style, onPress, IconComponent}) => {
-  const {width, height, fontSize, textColor, backgroundColor, elevation} = style;
+  const {width, height, fontSize, textColor, backgroundColor, elevation, alignSelf} = style;
   const [flexIcon, flexText] = [style.flexIcon || 0.1, 1 - (style.flexIcon || 0.1)];
 
   const scaleAnim = useRef(new Animated.Value(0)).current;
@@ -45,11 +45,13 @@ const Item = ({text, style, onPress, IconComponent}) => {
       >
         <Press activeOpacity={1} onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut}>
           <Row>
-            <Column alignItems="flex-start" flex={flexIcon}>
-              {IconComponent && IconComponent}
-            </Column>
+            {IconComponent && (
+              <Column alignItems="flex-start" flex={flexIcon}>
+                {IconComponent}
+              </Column>
+            )}
             <Column alignItems="flex-start" flex={flexText}>
-              <TextStyled fontSize={fontSize} textColor={textColor}>
+              <TextStyled fontSize={fontSize} textColor={textColor} alignSelf={alignSelf}>
                 {text}
               </TextStyled>
             </Column>
