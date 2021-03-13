@@ -168,8 +168,8 @@ export const DEFAULT_ACTIVITIES = [];
 export const DEFAULT_ROUTES = [];
 export const DEFAULT_PLACES = [];
 
-export const ROUTES_BATCH_LIMIT = 30;
-export const ACTIVITIES_BATCH_LIMIT = 30;
+export const ROUTES_BATCH_LIMIT = 10;
+export const ACTIVITIES_BATCH_LIMIT = 10;
 
 export const MAX_HEIGHT = 220;
 export const MAX_WEIGHT = 230;
