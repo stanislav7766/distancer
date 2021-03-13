@@ -8,7 +8,7 @@ import {useListenActivity} from './listen-activity';
 import {useListenRoute} from './listen-route';
 
 const useListenSettings = () => {
-  const {isGoOut} = useAppState();
+  const {isGoOut, appState} = useAppState();
 
   const [updateStoreApp, updateStorageApp] = useListenApp();
   const [updateStoreMap, updateStorageMap] = useListenMap();
@@ -31,7 +31,7 @@ const useListenSettings = () => {
 
   useEffect(() => {
     updateStorageSettings();
-  }, [updateStorageSettings]);
+  }, [appState, updateStorageSettings]);
 
   useEffect(() => {
     updateStoreSettings();
