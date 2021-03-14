@@ -20,15 +20,10 @@ export class AppSettingsStore {
   theme = this?.themeStore?.theme ?? DEFAULT_THEME;
   locale = this?.localeStore?.locale ?? DEFAULT_LOCALE;
   defaultScreen = DEFAULT_SCREEN;
-  _loadedSettings = false;
-
-  setLoadedSettings = () => {
-    this._loadedSettings = true;
-  };
+  _loadedDefaultScreen = false;
 
   setDefaultScreen = defaultScreen => {
     this.defaultScreen = defaultScreen;
-    this.setLoadedSettings();
   };
   setTheme = theme => {
     this.themeStore.setTheme(theme);
@@ -50,7 +45,10 @@ export class AppSettingsStore {
   };
   _listenDefaultScreen = ({name, newValue}) => {
     if (name !== 'defaultScreen') return;
-    !this._loadedSettings && this.authStore.authorized && this.appModeStore.setAppMode(newValue);
+    if (this._loadedDefaultScreen) return;
+
+    this.authStore.authorized && this.appModeStore.setAppMode(newValue);
+    this._loadedDefaultScreen = true;
   };
 }
 

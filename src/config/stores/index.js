@@ -21,23 +21,59 @@ import {storesDI} from '~/utils/store-di';
 import {LocaleStore} from '~/stores/locale';
 import {AppStateStore} from '~/stores/app-state';
 import {StopwatchStore} from '~/stores/stopwatch';
+import {persistStore} from '~/utils/persist-helpers';
 
 storesDI.Injectable('stopwatchStore')(StopwatchStore);
 storesDI.Injectable('appStateStore')(AppStateStore);
-storesDI.Injectable('themeStore')(ThemeStore);
+storesDI.Injectable('themeStore')(
+  persistStore(new ThemeStore(), {
+    name: 'themeStore',
+    properties: ['theme', 'themeStyle'],
+  }),
+);
 storesDI.Injectable('appModeStore')(AppModeStore);
-storesDI.Injectable('authStore')(AuthStore);
-storesDI.Injectable('localeStore')(LocaleStore);
-storesDI.Injectable('appSettingsStore')(AppSettingsStore);
-storesDI.Injectable('activitySettingsStore')(ActivitySettingsStore);
-storesDI.Injectable('routeSettingsStore')(RouteSettingsStore);
+storesDI.Injectable('authStore')(
+  persistStore(new AuthStore(), {
+    name: 'authStore',
+    properties: ['authorized', 'profile'],
+  }),
+);
+storesDI.Injectable('localeStore')(
+  persistStore(new LocaleStore(), {
+    name: 'localeStore',
+    properties: ['locale', 'papyrus'],
+  }),
+);
+storesDI.Injectable('appSettingsStore')(
+  persistStore(new AppSettingsStore(), {
+    name: 'appSettingsStore',
+    properties: ['defaultScreen'],
+  }),
+);
+storesDI.Injectable('activitySettingsStore')(
+  persistStore(new ActivitySettingsStore(), {
+    name: 'activitySettingsStore',
+    properties: ['timerOnStart', 'vibrateOnStart', 'autoPause'],
+  }),
+);
+storesDI.Injectable('routeSettingsStore')(
+  persistStore(new RouteSettingsStore(), {
+    name: 'routeSettingsStore',
+    properties: ['dragHints'],
+  }),
+);
 storesDI.Injectable('modalPickerStore')(ModalPickerStore);
 storesDI.Injectable('modalConfirmStore')(ModalConfirmStore);
 storesDI.Injectable('modalInputConfirmStore')(ModalInputConfirmStore);
 storesDI.Injectable('modalTimerStore')(ModalTimerStore);
 storesDI.Injectable('mappedRouteStore')(MappedRouteStore);
 storesDI.Injectable('directionsModeStore')(DirectionsModeStore);
-storesDI.Injectable('mapStore')(MapStore);
+storesDI.Injectable('mapStore')(
+  persistStore(new MapStore(), {
+    name: 'mapStore',
+    properties: ['zoomLevel', 'centerCoordinate'],
+  }),
+);
 storesDI.Injectable('routesStore')(RoutesStore);
 storesDI.Injectable('currentRouteStore')(CurrentRouteStore);
 storesDI.Injectable('activitiesStore')(ActivitiesStore);
