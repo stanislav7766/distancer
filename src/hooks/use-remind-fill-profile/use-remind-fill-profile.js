@@ -26,7 +26,7 @@ export const useRemindFillProfile = () => {
         onYes,
         onNo,
       });
-      onShowConfirm();
+      setTimeout(onShowConfirm, 1000);
     },
     [onHideConfirm, onShowConfirm, setInitConfirm],
   );
