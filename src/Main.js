@@ -15,15 +15,8 @@ import useHookSpinner from '~/hooks/use-spinner';
 import {observer} from 'mobx-react-lite';
 import {useAppState} from '~/stores/app-state';
 import useHookAppState from '~/hooks/use-app-state';
-import useListenSettings from '~/hooks/use-listen-settings';
-import useGpsPermissions from '~/hooks/use-gps-permissions';
-import {useCurrentUser} from '~/hooks/use-current-user';
 
 const Main = () => {
-  useListenSettings();
-  useGpsPermissions();
-  useCurrentUser();
-
   const pickerModal = usePicker();
   const confirmModal = useConfirm();
   const timerModal = useTimer();
