@@ -5,8 +5,10 @@ import {mapperCoordsArrToObj, mapperCoordsObjToArr} from '~/utils/coordinate-hel
 import {isNetworkAvailable} from '~/utils/network-helpers';
 import {getLastItem} from '~/utils/common-helpers/arr-helpers';
 import {getLocaleStore} from '~/stores/locale';
+import {getNotFinishedRoute} from '~/stores/not-finished-route';
 
 const {papyrusify} = getLocaleStore();
+const notFinishedRouteStore = getNotFinishedRoute();
 
 const getRoutesColRef = ({userId}) => firestore().collection('routes').doc('users').collection(userId);
 
@@ -106,4 +108,13 @@ export const deleteAllRoutes = ({userId}) =>
       });
 
     resolve(true);
+  });
+
+export const checkNotFinishedRoute = ({payload}) =>
+  new Promise(resolve => {
+    const {userId: id} = payload;
+    const {active, userId, route} = notFinishedRouteStore;
+
+    if (id !== userId || !active) return resolve({success: true, data: {exists: false}});
+    return resolve({success: true, data: {exists: true, route}});
   });

@@ -81,6 +81,7 @@ export const drawMode = {
     selectNeededPoint: 'Натисність на коодинату, котру бажаєте зсунути',
     dragPointNow: 'Можете перемістити координату',
     saved: 'Збережено',
+    notFinishedRoute: 'Знайдено незбережений \n маршрут',
   },
   button: {
     saveRoute: 'Зберегти',
@@ -102,6 +103,7 @@ export const liveMode = {
     saved: 'Збережено',
     finishActivityConfirm: 'Завершити тренування?',
     finishActivityFirst: 'Спочатку завершіть тренування',
+    notFinishedActivity: 'Знайдено незакінчене \n тренування',
   },
   designation: {
     kmPerH: 'км/ч',

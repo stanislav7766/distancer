@@ -12,6 +12,11 @@ export const styles = StyleSheet.create({
   textInputHeader: {marginTop: 10},
   inputConfirmContainer: {flex: 1, minHeight: 100},
   centerXY,
+  preview: {
+    width: WINDOW_WIDTH * 0.65,
+    height: (WINDOW_WIDTH * 0.65) / 3,
+  },
+  notFinishedHeader: {color: '#8d8d8d', textAlign: 'center', fontWeight: 'normal', fontSize: 20},
 });
 
 export const pickerSizes = {
@@ -29,8 +34,16 @@ export const Styles = themeStyle => {
     underlineBluredColor: themeStyle.textColorSecondary,
     placeholderColor: themeStyle.textColorSecondary,
   };
+  const styleItemActivity = {
+    backgroundColor: themeStyle.backgroundColorSecondary,
+    textColor: themeStyle.textColorSecondary,
+    width: WINDOW_WIDTH * 0.65,
+    height: 30,
+    fontSize: 12,
+    alignSelf: 'center',
+  };
 
-  return {inputStyle};
+  return {inputStyle, styleItemActivity};
 };
 
 export const btnStyles = {

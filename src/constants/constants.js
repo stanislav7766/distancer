@@ -133,6 +133,11 @@ export const DIRECTIONS_MODE = {
   DRIVING: 'driving',
 };
 
+export const ACTIONS_MODE = {
+  SAVE: 'save',
+  CONTINUE: 'continue',
+};
+
 export const DEFAULT_ROUTE = {
   distance: 0,
   id: '',

@@ -6,11 +6,13 @@ import {mapperCoordsArrToObj} from '~/utils/coordinate-helpers';
 import {getLastItem} from '~/utils/common-helpers/arr-helpers';
 import {filterActivitiesToTotalKeys} from '~/utils/activity-helpers/mapper';
 import {getTotalsPerKeys, substractTotalsPerKey, updateTotalsPerKey} from './totalsActions';
-import {activityToMonthTotals, mapActivityDocs} from '~/utils/activity-helpers';
+import {activityToMonthTotals, mapActivityDocs, mapTimeActivity} from '~/utils/activity-helpers';
 import {validateActivity} from '~/utils/validation/validation';
 import {getLocaleStore} from '~/stores/locale';
+import {getNotFinishedLive} from '~/stores/not-finished-live';
 
 const {papyrusify} = getLocaleStore();
+const notFinishedLiveStore = getNotFinishedLive();
 
 const getActivitiesColRef = ({userId, directionsMode}) =>
   firestore().collection('activities').doc(directionsMode).collection(userId);
@@ -108,7 +110,7 @@ export const saveActivity = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {
       const {activity, userId} = payload;
-      const {validated} = validateActivity(activity);
+      const {validated} = validateActivity(mapTimeActivity(activity));
       const {directionsMode, id, points1, ...rest} = validated;
 
       await Promise.all([
@@ -143,4 +145,13 @@ export const deleteAllActivities = ({userId}) =>
     });
     await Promise.all(promises);
     resolve(true);
+  });
+
+export const checkNotFinishedActivity = ({payload}) =>
+  new Promise(resolve => {
+    const {userId: id} = payload;
+    const {active, userId, activity} = notFinishedLiveStore;
+
+    if (id !== userId || !active) return resolve({success: true, data: {exists: false}});
+    return resolve({success: true, data: {exists: true, activity}});
   });

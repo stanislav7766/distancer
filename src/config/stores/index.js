@@ -21,7 +21,11 @@ import {storesDI} from '~/utils/store-di';
 import {LocaleStore} from '~/stores/locale';
 import {AppStateStore} from '~/stores/app-state';
 import {StopwatchStore} from '~/stores/stopwatch';
+import {ModalNotFinishedActivityStore} from '~/stores/modal-not-finished-activity';
 import {persistStore} from '~/utils/persist-helpers';
+import {NotFinishedLiveStore} from '~/stores/not-finished-live';
+import {NotFinishedRouteStore} from '~/stores/not-finished-route';
+import {ModalNotFinishedRouteStore} from '~/stores/modal-not-finished-route';
 
 storesDI.Injectable('stopwatchStore')(StopwatchStore);
 storesDI.Injectable('appStateStore')(AppStateStore);
@@ -75,8 +79,23 @@ storesDI.Injectable('mapStore')(
   }),
 );
 storesDI.Injectable('routesStore')(RoutesStore);
+storesDI.Injectable('notFinishedRouteStore')(
+  persistStore(new NotFinishedRouteStore(), {
+    name: 'notFinishedRouteStore',
+    properties: ['active', 'route', 'userId'],
+  }),
+);
 storesDI.Injectable('currentRouteStore')(CurrentRouteStore);
+storesDI.Injectable('modalNotFinishedRouteStore')(ModalNotFinishedRouteStore);
 storesDI.Injectable('activitiesStore')(ActivitiesStore);
+storesDI.Injectable('notFinishedLiveStore')(
+  persistStore(new NotFinishedLiveStore(), {
+    name: 'notFinishedLiveStore',
+    properties: ['active', 'activity', 'userId'],
+    delay: 2000,
+  }),
+);
+storesDI.Injectable('modalNotFinishedActivityStore')(ModalNotFinishedActivityStore);
 storesDI.Injectable('liveRouteStore')(LiveRouteStore);
 storesDI.Injectable('navigationStore')(NavigationStore);
 storesDI.Injectable('spinnerStore')(SpinnerStore);

@@ -1,5 +1,11 @@
-export {deleteRoute, getFirstRoutes, getNextRoutes, saveRoute} from './routeActions';
-export {deleteActivity, getFirstActivities, getNextActivities, saveActivity} from './activityActions';
+export {deleteRoute, getFirstRoutes, getNextRoutes, saveRoute, checkNotFinishedRoute} from './routeActions';
+export {
+  deleteActivity,
+  getFirstActivities,
+  getNextActivities,
+  saveActivity,
+  checkNotFinishedActivity,
+} from './activityActions';
 export {
   registerUser,
   loginUser,

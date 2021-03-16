@@ -53,6 +53,7 @@ export const drawMode = {
     selectNeededPoint: "Press on point that you'll drag",
     dragPointNow: 'Drag selected point now',
     saved: 'Saved',
+    notFinishedRoute: 'Detected not saved \n route',
   },
   button: {
     saveRoute: 'Save Route',
@@ -64,6 +65,7 @@ export const liveMode = {
     saved: 'Saved',
     finishActivityConfirm: 'Are you sure you want to finish this activity?',
     finishActivityFirst: 'Please finish activity',
+    notFinishedActivity: 'Detected not finished \n activity',
   },
   designation: {
     kmPerH: 'km/h',

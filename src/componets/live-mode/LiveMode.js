@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {Vibration} from 'react-native';
 import {Row, Column, btnStartStyles, btnPauseStyles, btnContinueStyles, mt10} from './styles';
 import {Btn} from '~/componets/btn';
@@ -45,6 +45,7 @@ const LiveMode = ({closeModal, openModal}) => {
     onPauseActivity,
     onContinueActivity,
     onFinishActivity,
+    setDefaultLiveRoute,
   } = useLiveRoute();
   const allowLocationUpdate = useRef(false);
   const lastCoordRef = useRef([]);
@@ -68,9 +69,10 @@ const LiveMode = ({closeModal, openModal}) => {
     setCurrentSpeed(speed);
     allowLocationUpdate.current && pushPoints([lnglat]);
   };
-  const clearLiveWithRoute = () => {
+  const clearLiveWithRoute = useCallback(() => {
     liveWithRoute && setLiveWithRoute(false);
-  };
+  }, [liveWithRoute, setLiveWithRoute]);
+
   const onVibro = () => {
     vibrateOnStart && Vibration.vibrate();
   };
@@ -87,6 +89,13 @@ const LiveMode = ({closeModal, openModal}) => {
   useEffect(() => {
     allowLocationUpdate.current = isGo;
   }, [isGo]);
+
+  useEffect(() => {
+    return () => {
+      onPressCancel();
+      setDefaultLiveRoute();
+    };
+  }, [onPressCancel, setDefaultLiveRoute]);
 
   useEffect(() => {
     isFilledArr(points1) && (lastCoordRef.current = getLastItem(points1));
@@ -140,9 +149,9 @@ const LiveMode = ({closeModal, openModal}) => {
   function onPressContinue() {
     onContinueActivity();
   }
-  const onPressCancel = () => {
+  const onPressCancel = useCallback(() => {
     clearLiveWithRoute();
-  };
+  }, [clearLiveWithRoute]);
   const onRequestStop = () => {
     setInitConfirm({
       text: papyrusify('liveMode.message.finishActivityConfirm'),

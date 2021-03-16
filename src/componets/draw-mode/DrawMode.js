@@ -17,7 +17,6 @@ import {getLeftArrow} from '~/assets/svg-icons/left-arrow';
 import {useLocationPosition} from '~/hooks/use-location-position';
 import {getDrag} from '~/assets/svg-icons/drag';
 import Toast from 'react-native-simple-toast';
-import {randomID} from '~/utils/random-id';
 import {Row, Column, Styles, btnSaveStyles, mt10, mx0} from './styles';
 import {ACCENT_RED, DIRECTIONS_MODE} from '~/constants/constants';
 import {saveRoute} from '~/actions';
@@ -28,7 +27,6 @@ import {useCurrentRoute} from '~/stores/current-route';
 import {useAppMode} from '~/stores/app-mode';
 import {observer} from 'mobx-react-lite';
 import {useAuth} from '~/stores/auth';
-import {getTimestamp} from '~/utils/time-helpers';
 import {getLocaleStore} from '~/stores/locale';
 
 const {papyrusify} = getLocaleStore();
@@ -40,7 +38,7 @@ const DrawMode = ({themeStyle}) => {
   const {cameraRef} = useMap();
   const {dragHints} = useRouteSettings();
   const {dragMode, setDragMode} = useAppMode();
-  const {clearPoints, popPoints, setDefaultRoute, currentRoute} = useCurrentRoute();
+  const {clearPoints, popPoints, setDefaultRoute, currentRoute, resume} = useCurrentRoute();
   const {directionsMode} = useDirectionsMode();
   const {moveCamera} = useLocationPosition(cameraRef);
   const {points, distance} = currentRoute;
@@ -63,7 +61,7 @@ const DrawMode = ({themeStyle}) => {
   };
 
   useOnIsDirectionsMode({mount: drawMode});
-  useOnDefaultRoute({mount: true, unmount: true});
+  useOnDefaultRoute({unmount: true, ...(resume ? {} : {mount: true})});
   useOnShowMapIcons({mount: true});
   useOnDragMode({mount: false, unmount: false});
   useOnDirectionsMode({mount: drawMode ? WALKING : '', unmount: WALKING});
@@ -99,7 +97,7 @@ const DrawMode = ({themeStyle}) => {
 
     const payload = {
       userId: profile.userId,
-      route: {...currentRoute, directionsMode, id: randomID(), timestamp: getTimestamp()},
+      route: {...currentRoute, directionsMode},
     };
     onSaveRoute(payload);
   };

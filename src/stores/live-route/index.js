@@ -1,8 +1,8 @@
 import {makeAutoObservable, observe} from 'mobx';
 import {DEFAULT_LIVE_ROUTE, LIVE_SPECS_DEFAULT, LIVE_TYPES} from '~/constants/constants';
 import {measureDistance} from '~/utils/route-helpers';
-import {calcPace, kmPerHourToPace, calcAvgSpeed, mapTimeActivity} from '~/utils/activity-helpers';
-import {isEqualJson} from '~/utils/validation/helpers';
+import {calcPace, kmPerHourToPace, calcAvgSpeed} from '~/utils/activity-helpers';
+import {isEqualJson, isEqualObjJson} from '~/utils/validation/helpers';
 import {storesDI} from '~/utils/store-di';
 import {randomID} from '~/utils/random-id';
 import {getTimestamp, yyyymmddNow} from '~/utils/time-helpers';
@@ -21,6 +21,8 @@ export class LiveRouteStore {
     this.appStateStore = storesDI.Inject('appStateStore');
     this.stopwatchStore = storesDI.Inject('stopwatchStore');
     this.directionsModeStore = storesDI.Inject('directionsModeStore');
+    this.authStore = storesDI.Inject('authStore');
+    this.activeLiveStore = storesDI.Inject('notFinishedLiveStore');
 
     observe(this.appStateStore, this._listenAppStateStore);
     observe(this.stopwatchStore, this._listenStopWatchStore);
@@ -37,9 +39,11 @@ export class LiveRouteStore {
   };
 
   onStartActivity = () => {
+    this.activeLiveStore.setActive({active: true, userId: this.authStore.profile.userId});
     this.stopwatchStore.startWatch();
     this.setStatus(GO);
-    this.setLiveRoute({id: randomID(), date: yyyymmddNow(), timestamp: getTimestamp()});
+    const {directionsMode} = this.directionsModeStore;
+    this.setLiveRoute({id: randomID(), date: yyyymmddNow(), timestamp: getTimestamp(), directionsMode});
   };
   onPauseActivity = () => {
     this.stopwatchStore.stopWatch();
@@ -56,10 +60,10 @@ export class LiveRouteStore {
     const {directionsMode} = this.directionsModeStore;
     const activity = {...this.liveRoute, movingTime, directionsMode};
 
-    this.stopwatchStore.resetWatch();
     this.setStatus(STOP);
     this.setDefaultLiveRoute();
-    return mapTimeActivity(activity);
+    this.activeLiveStore.setDefaultLive();
+    return activity;
   };
 
   setLiveRoute = liveRoute => {
@@ -114,8 +118,10 @@ export class LiveRouteStore {
   setDefaultLiveRoute = () => {
     this.setLiveRoute(DEFAULT_LIVE_ROUTE);
     this.setSpecs(DEFAULT_SPECS);
+    this.stopwatchStore.resetWatch();
   };
   _listenStore = change => {
+    this._isListenRoute(change) && this._listenRoute(change);
     this._isListenPoints(change) && this._listenPoints(change);
     this._isListenCurrentSpeed(change) && this._listenCurrentSpeed(change);
   };
@@ -127,6 +133,13 @@ export class LiveRouteStore {
   };
   _listenCurrentSpeed = ({newValue}) => {
     this.setCurrentPace(kmPerHourToPace(newValue?.currentSpeed));
+  };
+  _isListenRoute = ({name}) => name === 'liveRoute';
+
+  _listenRoute = ({newValue}) => {
+    this.activeLiveStore.active &&
+      !isEqualObjJson(newValue, DEFAULT_LIVE_ROUTE) &&
+      this.activeLiveStore.setNotFinishedLive({...newValue, movingTime: this.specs.movingTime});
   };
 
   _isListenPoints = ({name, oldValue, newValue}) =>
