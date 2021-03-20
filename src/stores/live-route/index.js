@@ -1,11 +1,11 @@
 import {makeAutoObservable, observe} from 'mobx';
-import {DEFAULT_LIVE_ROUTE, LIVE_SPECS_DEFAULT, LIVE_TYPES} from '~/constants/constants';
+import {APP_MODE, DEFAULT_LIVE_ROUTE, LIVE_SPECS_DEFAULT, LIVE_TYPES} from '~/constants/constants';
 import {measureDistance} from '~/utils/route-helpers';
 import {calcPace, kmPerHourToPace, calcAvgSpeed} from '~/utils/activity-helpers';
 import {isEqualJson, isEqualObjJson} from '~/utils/validation/helpers';
 import {storesDI} from '~/utils/store-di';
 import {randomID} from '~/utils/random-id';
-import {getTimestamp, yyyymmddNow} from '~/utils/time-helpers';
+import {getTimestamp, hhmmssToSec, yyyymmddNow} from '~/utils/time-helpers';
 
 const {STOP, GO, PAUSE} = LIVE_TYPES;
 
@@ -13,12 +13,12 @@ const DEFAULT_SPECS = {
   status: STOP,
   currentSpeed: LIVE_SPECS_DEFAULT.currentSpeed,
   currentPace: LIVE_SPECS_DEFAULT.currentPace,
-  movingTime: LIVE_SPECS_DEFAULT.time,
 };
 
 export class LiveRouteStore {
   constructor() {
     this.appStateStore = storesDI.Inject('appStateStore');
+    this.appModeStore = storesDI.Inject('appModeStore');
     this.stopwatchStore = storesDI.Inject('stopwatchStore');
     this.directionsModeStore = storesDI.Inject('directionsModeStore');
     this.authStore = storesDI.Inject('authStore');
@@ -33,9 +33,13 @@ export class LiveRouteStore {
   specs = DEFAULT_SPECS;
 
   watchPoints = false;
+  needResume = false;
 
   setSpecs = specs => {
     this.specs = {...this.specs, ...specs};
+  };
+  setNeedResume = needResume => {
+    this.needResume = needResume;
   };
 
   onStartActivity = () => {
@@ -53,12 +57,25 @@ export class LiveRouteStore {
     this.stopwatchStore.continueWatch();
     this.setStatus(GO);
   };
+
+  onResumeActivity = persistedActivity => {
+    const {movingTime, timestamp, directionsMode} = persistedActivity;
+
+    this.activeLiveStore.setActive({active: true, userId: this.authStore.profile.userId});
+    this.stopwatchStore.startWatch(hhmmssToSec(movingTime) * 1000, timestamp);
+
+    this.setLiveRoute(persistedActivity);
+    this.setStatus(GO);
+    this.setNeedResume(true);
+
+    this.appModeStore.setAppMode(APP_MODE.LIVE_MODE);
+    this.directionsModeStore.setDirectionsMode(directionsMode);
+  };
   onFinishActivity = () => {
     this.stopwatchStore.stopWatch();
-    const {movingTime} = this.specs;
 
     const {directionsMode} = this.directionsModeStore;
-    const activity = {...this.liveRoute, movingTime, directionsMode};
+    const activity = {...this.liveRoute, directionsMode};
 
     this.setStatus(STOP);
     this.setDefaultLiveRoute();
@@ -100,7 +117,7 @@ export class LiveRouteStore {
     this.setSpecs({currentPace});
   };
   setMovingTime = movingTime => {
-    this.specs.movingTime !== movingTime && this.setSpecs({movingTime});
+    this.liveRoute.movingTime !== movingTime && this.setLiveRoute({movingTime});
   };
   setTotalTime = totalTime => {
     this.liveRoute.totalTime !== totalTime && (this.liveRoute.totalTime = totalTime);
@@ -119,6 +136,7 @@ export class LiveRouteStore {
     this.setLiveRoute(DEFAULT_LIVE_ROUTE);
     this.setSpecs(DEFAULT_SPECS);
     this.stopwatchStore.resetWatch();
+    this.setNeedResume(false);
   };
   _listenStore = change => {
     this._isListenRoute(change) && this._listenRoute(change);
@@ -127,8 +145,8 @@ export class LiveRouteStore {
   };
   _listenPoints = ({newValue}) => {
     const distance = measureDistance(newValue?.points1);
-    const avgSpeed = calcAvgSpeed(distance, this.specs.movingTime);
-    const pace = calcPace(distance, this.specs.movingTime);
+    const avgSpeed = calcAvgSpeed(distance, this.liveRoute.movingTime);
+    const pace = calcPace(distance, this.liveRoute.movingTime);
     this.setLiveRoute({avgSpeed, pace, distance});
   };
   _listenCurrentSpeed = ({newValue}) => {
@@ -139,7 +157,7 @@ export class LiveRouteStore {
   _listenRoute = ({newValue}) => {
     this.activeLiveStore.active &&
       !isEqualObjJson(newValue, DEFAULT_LIVE_ROUTE) &&
-      this.activeLiveStore.setNotFinishedLive({...newValue, movingTime: this.specs.movingTime});
+      this.activeLiveStore.setNotFinishedLive({...newValue});
   };
 
   _isListenPoints = ({name, oldValue, newValue}) =>

@@ -39,6 +39,7 @@ const LiveMode = ({closeModal, openModal}) => {
   const {
     liveRoute,
     specs,
+    needResume,
     pushPoints,
     setCurrentSpeed,
     onStartActivity,
@@ -89,6 +90,10 @@ const LiveMode = ({closeModal, openModal}) => {
   useEffect(() => {
     allowLocationUpdate.current = isGo;
   }, [isGo]);
+
+  useEffect(() => {
+    needResume && startBgLocation();
+  }, [needResume, startBgLocation]);
 
   useEffect(() => {
     return () => {

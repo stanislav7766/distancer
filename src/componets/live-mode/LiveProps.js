@@ -11,8 +11,8 @@ const {papyrusify} = getLocaleStore();
 
 const LiveProps = () => {
   const {liveRoute, specs} = useLiveRoute();
-  const {pace, distance, avgSpeed} = liveRoute;
-  const {currentSpeed, currentPace, movingTime} = specs;
+  const {pace, distance, avgSpeed, movingTime} = liveRoute;
+  const {currentSpeed, currentPace} = specs;
 
   const [currentPropType, setCurrentPropType] = useState(null);
   const [livePropType, setLivePropType] = useState(null);

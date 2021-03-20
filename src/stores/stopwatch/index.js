@@ -104,8 +104,8 @@ export class StopwatchStore {
   _resetWatch = () => {
     this.setDefault();
   };
-  startWatch = (ms = 0) => {
-    this.setLauchMs();
+  startWatch = (ms = 0, launchMs = getTimestamp()) => {
+    this.setLauchMs(launchMs);
     this._startWatch(ms);
   };
 

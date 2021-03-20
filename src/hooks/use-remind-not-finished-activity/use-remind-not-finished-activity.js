@@ -1,6 +1,7 @@
 import {useCallback} from 'react';
 import {useMounted} from '../use-mounted';
 import {useModalNotFinishedActivity as useNotFinishedActivity} from '~/stores/modal-not-finished-activity';
+import {useLiveRoute} from '~/stores/live-route';
 import {useAuth} from '~/stores/auth';
 import Toast from 'react-native-simple-toast';
 import {getLocaleStore} from '~/stores/locale';
@@ -12,6 +13,7 @@ export const useRemindNotFinishedActivity = () => {
   const {authorized, profile} = useAuth();
   const {userId} = profile;
   const {setInit, onShowWindow} = useNotFinishedActivity();
+  const {onResumeActivity} = useLiveRoute();
 
   const onRequestWindow = useCallback(
     init => {
@@ -35,10 +37,11 @@ export const useRemindNotFinishedActivity = () => {
           activity: data.activity,
           userId,
           saveActivity,
+          resumeActivity: onResumeActivity,
         });
       })
       .catch(err => Toast.show(err));
-  }, [authorized, onRequestWindow, userId]);
+  }, [authorized, onRequestWindow, onResumeActivity, userId]);
 
   useMounted(onCheckNotFinishedActivity);
 

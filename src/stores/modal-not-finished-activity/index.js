@@ -8,6 +8,7 @@ const defaultInit = {
   activity: null,
   userId: null,
   saveActivity: () => {},
+  resumeActivity: () => {},
 };
 
 export class ModalNotFinishedActivityStore {
@@ -38,6 +39,10 @@ export class ModalNotFinishedActivityStore {
     this.onHideWindow();
   };
   onContinue = () => {
+    const {activity, resumeActivity} = this.init;
+
+    this.activeLiveStore.setDefaultLive();
+    resumeActivity(activity);
     this.onHideWindow();
   };
   onDelete = () => {
