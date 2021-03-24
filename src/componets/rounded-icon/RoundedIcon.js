@@ -1,5 +1,6 @@
 import React, {useRef, useEffect} from 'react';
 import {Animated} from 'react-native';
+import {isExist} from '~/utils/validation/helpers';
 import {Container, styles, Press, ELEVATION} from './styles';
 
 const runSpring = (anim, params, cb) => {
@@ -47,8 +48,7 @@ const RoundedIcon = ({IconComponent, style, onPress, onLongPress}) => {
           activeOpacity={1}
           onPress={onPress}
           onLongPress={onLongPress}
-          onPressIn={onPressIn}
-          onPressOut={onPressOut}
+          {...(isExist(onPress) ? {onPressIn, onPressOut} : {})}
         >
           {IconComponent}
         </Press>

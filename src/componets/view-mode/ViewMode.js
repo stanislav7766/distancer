@@ -79,9 +79,9 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
           <Row key={i} {...mt20}>
             <Item
               style={styleItem}
-              onPress={() => el.text !== papyrusify('viewMode.message.cityNotFound') && onPressItem(el)}
               IconComponent={IconMarker}
               text={el.text}
+              {...(el.text !== papyrusify('viewMode.message.cityNotFound') ? {onPress: () => onPressItem(el)} : {})}
             />
           </Row>
         ))}

@@ -1,5 +1,6 @@
 import React, {useRef, useEffect} from 'react';
 import {Animated} from 'react-native';
+import {isExist} from '~/utils/validation/helpers';
 import {Column, TextStyled, Row, Container, styles, Press, ELEVATION} from './styles';
 
 const runSpring = (anim, params, cb) => {
@@ -13,7 +14,7 @@ const runAnimation = (anim, params, cb) => {
   });
 };
 
-const Item = ({text, style, onPress, IconComponent}) => {
+const Item = ({text, style, onPress, IconComponent, borderStyle, onLongPress}) => {
   const {width, height, fontSize, textColor, backgroundColor, elevation, alignSelf} = style;
   const [flexIcon, flexText] = [style.flexIcon || 0.1, 1 - (style.flexIcon || 0.1)];
 
@@ -41,9 +42,20 @@ const Item = ({text, style, onPress, IconComponent}) => {
   return (
     <Container width={width} height={height}>
       <Animated.View
-        style={[styles.button, {elevation: elevationAnim.current}, {backgroundColor, height}, {transform: [{scale}]}]}
+        style={[
+          styles.button,
+          {elevation: elevationAnim.current},
+          {backgroundColor, height},
+          {transform: [{scale}]},
+          borderStyle,
+        ]}
       >
-        <Press activeOpacity={1} onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut}>
+        <Press
+          activeOpacity={1}
+          onPress={onPress}
+          onLongPress={onLongPress}
+          {...(isExist(onPress) ? {onPressIn, onPressOut} : {})}
+        >
           <Row>
             {IconComponent && (
               <Column alignItems="flex-start" flex={flexIcon}>
