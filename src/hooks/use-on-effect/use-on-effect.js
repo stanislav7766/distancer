@@ -6,6 +6,7 @@ const validFromPreset = (preset, {r, v}) =>
     value: r !== v,
     json: !isEqualJson(r, v),
     'filled-arr': isFilledArr(r),
+    'without-valid': true,
   }[preset]);
 
 export const useOnEffect = ({needMount, needUnmount, mount, unmount, value, onMount, onUnmount, preset = 'value'}) => {

@@ -9,3 +9,4 @@ export {useOnDefaultActivity} from './effectors/use-on-default-activity';
 export {useOnWatchRoutePoints} from './effectors/use-on-watch-route-points';
 export {useOnWatchLivePoints} from './effectors/use-on-watch-live-points';
 export {useOnShowMapIcons} from './effectors/use-on-show-map-icons';
+export {useOnDefaultMultipleSelect} from './effectors/use-on-default-multiple-select';
