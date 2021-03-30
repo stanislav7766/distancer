@@ -77,10 +77,11 @@ export const removeItemFromGroups = (groups, id) =>
     if (itemInd < 0) return [...accum, group];
     if (group.items.length === 1) return accum;
 
+    const activity = group.items[itemInd];
     const filteredItems = filterByIndex(group.items, itemInd);
 
     group.items = filteredItems;
-    group.monthTotals = calcFromMonth(filteredItems);
+    group.monthTotals = substractMonthTotals(group.monthTotals, calcFromMonth([activity]));
     return [...accum, group];
   }, []);
 
