@@ -26,6 +26,7 @@ import {persistStore} from '~/utils/persist-helpers';
 import {NotFinishedLiveStore} from '~/stores/not-finished-live';
 import {NotFinishedRouteStore} from '~/stores/not-finished-route';
 import {ModalNotFinishedRouteStore} from '~/stores/modal-not-finished-route';
+import {MultipleSelectBarStore} from '~/stores/multiple-select-bar';
 
 storesDI.Injectable('stopwatchStore')(StopwatchStore);
 storesDI.Injectable('appStateStore')(AppStateStore);
@@ -99,3 +100,4 @@ storesDI.Injectable('modalNotFinishedActivityStore')(ModalNotFinishedActivitySto
 storesDI.Injectable('liveRouteStore')(LiveRouteStore);
 storesDI.Injectable('navigationStore')(NavigationStore);
 storesDI.Injectable('spinnerStore')(SpinnerStore);
+storesDI.Injectable('multipleSelectBarStore')(MultipleSelectBarStore);

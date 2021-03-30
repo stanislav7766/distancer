@@ -17,6 +17,7 @@ import {useAppMode} from '~/stores/app-mode';
 import {useMap} from '~/stores/map';
 import {useCurrentRoute} from '~/stores/current-route';
 import {useDirectionsMode} from '~/stores/directions-mode';
+import {MultipleSelectBar} from '../multiple-select-bar';
 
 const {height} = Dimensions.get('window');
 const {DRAW_MODE, LIVE_MODE} = APP_MODE;
@@ -56,6 +57,7 @@ const Map = () => {
   };
 
   const Directions = <DirectionsBar themeStyle={themeStyle} />;
+  const MultipleSelect = <MultipleSelectBar themeStyle={themeStyle} />;
   const Icons = showMapIcons && (
     <>
       <RoundedIcon
@@ -88,6 +90,7 @@ const Map = () => {
       {MapView}
       {Icons}
       {Directions}
+      {MultipleSelect}
     </View>
   );
 };

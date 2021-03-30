@@ -63,6 +63,34 @@ export const deleteActivity = ({payload}) =>
     }
   });
 
+export const deleteMultipleActivities = ({payload}) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const isConnected = await isNetworkAvailable();
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
+
+      const {activities, userId} = payload;
+      if (!isFilledArr(activities))
+        return resolve({success: false, reason: papyrusify('savedMode.message.selectedActivitiesEmpty')});
+
+      for await (const activity of activities) {
+        const {id, directionsMode} = activity;
+        await getActivitiesColRef({userId, directionsMode}).doc(id).update({
+          points1: firestore.FieldValue.delete(),
+        });
+        await Promise.all([
+          getActivitiesColRef({userId, directionsMode}).doc(id).delete(),
+          _substractTotals({activity, userId, directionsMode, type: 'key'}),
+          _substractTotals({activity, userId, directionsMode, type: 'general'}),
+        ]);
+      }
+
+      resolve({success: true});
+    } catch (err) {
+      reject(err);
+    }
+  });
+
 export const getFirstActivities = ({payload}) =>
   new Promise(async (resolve, reject) => {
     try {

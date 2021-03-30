@@ -1,4 +1,4 @@
-import {calcFromMonth} from './index';
+import {calcFromMonth, substractMonthTotals} from './index';
 import {randomID} from '~/utils/random-id';
 import {dateToYearMonth, findGroupIndex, isExistGroup} from './helps';
 import {isExist, isFilledArr, isFilledObj} from '../validation/helpers';
@@ -81,6 +81,23 @@ export const removeItemFromGroups = (groups, id) =>
 
     group.items = filteredItems;
     group.monthTotals = calcFromMonth(filteredItems);
+    return [...accum, group];
+  }, []);
+
+export const removeItemsFromGroups = (groups, removableItems) =>
+  groups.reduce((accum, group) => {
+    const {items} = group;
+    const filteredItems = items.filter(({id}) => !isExistObjByKey(removableItems, 'id', id));
+
+    if (items.length === filteredItems.length) return [...accum, group];
+
+    if (group.items.length === 1) return accum;
+
+    group.items = filteredItems;
+
+    const removableTotals = calcFromMonth(removableItems);
+    group.monthTotals = substractMonthTotals(group.monthTotals, removableTotals);
+
     return [...accum, group];
   }, []);
 

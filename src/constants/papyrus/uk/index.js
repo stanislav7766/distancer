@@ -62,6 +62,10 @@ export const savedMode = {
     routesListEnded: 'Досягнуто кінця списку маршрутів',
     activitiesListEmpty: 'Список тренувань порожній',
     activitiesListEnded: 'Досягнуто кінця списку тренувань',
+    selectedActivitiesEmpty: 'Список обраних тренувань порожній',
+    selectedRoutesEmpty: 'Список обраних маршрутів порожній',
+    deleteSelectedActivitiesConfirm: 'Ви впевнені, що бажаєте видалити обрані тренування?',
+    deleteSelectedRoutesConfirm: 'Ви впевнені, що бажаєте видалити обрані маршрути?',
   },
   activityDetail: {
     distance: 'Дистанція',

@@ -2,9 +2,9 @@ import React, {useEffect, useCallback, useMemo} from 'react';
 import {VirtualList} from '~/componets/virtualized-list';
 import Toast from 'react-native-simple-toast';
 import {DIRECTIONS_MODE} from '~/constants/constants';
-import {useOnDirectionsMode, useOnIsDirectionsMode} from '~/hooks/use-on-effect';
+import {useOnDefaultMultipleSelect, useOnDirectionsMode, useOnIsDirectionsMode} from '~/hooks/use-on-effect';
 import {useCancelablePromise} from '~/hooks/use-cancelable-promise';
-import {getFirstActivities, getNextActivities} from '~/actions';
+import {deleteMultipleActivities, getFirstActivities, getNextActivities} from '~/actions';
 import {ActivityGroup} from '~/componets/activity-group';
 import {observer} from 'mobx-react-lite';
 import {useAuth} from '~/stores/auth';
@@ -17,13 +17,16 @@ import {useMakeRef} from '~/hooks/use-make-ref';
 import {countInitialGroupsToRender} from '~/utils/activity-helpers';
 import {useSpinner} from '~/stores/spinner';
 import {getLocaleStore} from '~/stores/locale';
+import {getMultipleSelectBar, useMultipleSelectBar} from '~/stores/multiple-select-bar';
 
 const {papyrusify} = getLocaleStore();
+const multipleSelectStore = getMultipleSelectBar();
 const {WALKING} = DIRECTIONS_MODE;
 
 const SavedActivities = ({themeStyle, goToRoute}) => {
   const [mounted, setMounted] = useManagedMounted(false);
   const {startLoading, isLoading, stopLoading, startMoreLoading, isMoreLoading, stopMoreLoading} = useSpinner();
+  const {showBar} = useMultipleSelectBar();
 
   const makeCancelable = useCancelablePromise();
 
@@ -42,6 +45,7 @@ const SavedActivities = ({themeStyle, goToRoute}) => {
     setNextKey,
     nextKey,
     concatActivities,
+    removeByIds,
   } = useActivities();
 
   const nextKeyRef = useMakeRef(nextKey);
@@ -121,6 +125,7 @@ const SavedActivities = ({themeStyle, goToRoute}) => {
 
   useOnIsDirectionsMode({mount: true});
   useOnDirectionsMode({mount: WALKING});
+  useOnDefaultMultipleSelect({mount: true, unmount: true});
 
   const onRefreshAgain = useRunAfterInteractions(
     useCallback(() => {
@@ -141,6 +146,41 @@ const SavedActivities = ({themeStyle, goToRoute}) => {
     goToRoute();
   };
 
+  const onDeleteMultiple = () => {
+    if (isLoadingRef.current || isMoreLoadingRef.current) return;
+    startLoading({show: true});
+
+    const payload = {activities: multipleSelectStore.selected, userId: profile.userId};
+    makeCancelable(deleteMultipleActivities({payload}), () => {
+      stopLoading();
+    })
+      .then(res => {
+        const {success, reason} = res;
+        if (!success) {
+          Toast.show(reason);
+          return;
+        }
+        removeByIds(multipleSelectStore.selected);
+        multipleSelectStore.onCancel();
+        Toast.show(papyrusify('savedMode.message.deleted'));
+      })
+      .catch(_ => {
+        Toast.show(papyrusify('common.message.errorOccurred'));
+      })
+      .finally(_ => {
+        stopLoading();
+      });
+  };
+
+  const onActivateSelect = item => {
+    multipleSelectStore.setInit({
+      deleteMultiple: onDeleteMultiple,
+      deleteHeaderText: papyrusify('savedMode.message.deleteSelectedActivitiesConfirm'),
+    });
+    multipleSelectStore.onShowBar();
+    multipleSelectStore.addSelected(item);
+  };
+
   const renderGroup = ({item}) => {
     const {year, month, items, monthTotals} = item;
 
@@ -152,6 +192,8 @@ const SavedActivities = ({themeStyle, goToRoute}) => {
       onPresItem: onPressActivityItem,
       onNext: onNextActivities,
       designation: papyrusify('common.designation'),
+      activeSelect: showBar,
+      onActivateSelect,
     };
     return <ActivityGroup {...groupProps} />;
   };

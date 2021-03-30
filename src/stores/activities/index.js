@@ -1,7 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import {DEFAULT_ACTIVITIES} from '~/constants/constants';
 import {filterByIndex, findIndexByKey, uniquifyByKey} from '~/utils/common-helpers/arr-helpers';
-import {groupsMerger, mapper, removeItemFromGroups} from '~/utils/activity-helpers/mapper';
+import {groupsMerger, mapper, removeItemFromGroups, removeItemsFromGroups} from '~/utils/activity-helpers/mapper';
 import {storesDI} from '~/utils/store-di';
 
 export class ActivitiesStore {
@@ -28,6 +28,11 @@ export class ActivitiesStore {
     this._removeByIdActivity(id);
     this._removeByIdGrouppedActivity(id);
   };
+  removeByIds = items => {
+    const ids = items.map(({id}) => id);
+    this._removeByIdsActivities(ids);
+    this._removeByIdsGrouppedActivity(items);
+  };
   _checkNextKey = index => {
     const {timestamp} = this.activities[index];
     if (timestamp !== this.nextKey) return;
@@ -49,8 +54,14 @@ export class ActivitiesStore {
     this._checkNextKey(index);
     this.activities = filterByIndex(this.activities, index);
   };
+  _removeByIdsActivities = ids => {
+    for (const id of ids) this._removeByIdActivity(id);
+  };
   _removeByIdGrouppedActivity = id => {
     this.grouppedActivities = removeItemFromGroups(this.grouppedActivities, id);
+  };
+  _removeByIdsGrouppedActivity = items => {
+    this.grouppedActivities = removeItemsFromGroups(this.grouppedActivities, items);
   };
   setDefaultActivities = () => {
     this.activities = DEFAULT_ACTIVITIES;

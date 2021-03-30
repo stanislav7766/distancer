@@ -25,6 +25,10 @@ export class RoutesStore {
     if (index < 0) return;
     this.routes = filterByIndex(this.routes, index);
   };
+  removeByIds = items => {
+    const ids = items.map(({id}) => id);
+    this.routes = this.routes.filter(route => !ids.includes(route.id));
+  };
   setDefaultRoutes = () => {
     this.routes = DEFAULT_ROUTES;
   };

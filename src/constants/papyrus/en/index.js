@@ -108,6 +108,10 @@ export const savedMode = {
     routesListEnded: 'Routes list is ended',
     activitiesListEmpty: 'Activities list is ended',
     activitiesListEnded: 'Activities list is empty',
+    selectedActivitiesEmpty: 'Selected activities list is empty',
+    selectedRoutesEmpty: 'Selected routes list is empty',
+    deleteSelectedActivitiesConfirm: 'Are you sure you want to delete selected activities?',
+    deleteSelectedRoutesConfirm: 'Are you sure you want to delete selected routes?',
   },
   activityDetail: {
     distance: 'Distance',

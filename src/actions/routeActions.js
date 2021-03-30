@@ -29,6 +29,29 @@ export const deleteRoute = ({payload}) =>
     }
   });
 
+export const deleteMultipleRoutes = ({payload}) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const isConnected = await isNetworkAvailable();
+      if (!isConnected) return resolve({success: false, reason: papyrusify('common.message.errorNetworkFailed')});
+
+      const {routes, userId} = payload;
+      if (!isFilledArr(routes))
+        return resolve({success: false, reason: papyrusify('savedMode.message.selectedRoutesEmpty')});
+
+      for await (const {id} of routes) {
+        await getRoutesColRef({userId}).doc(id).update({
+          points: firestore.FieldValue.delete(),
+        });
+        await getRoutesColRef({userId}).doc(id).delete();
+      }
+
+      resolve({success: true});
+    } catch (err) {
+      reject(err);
+    }
+  });
+
 const _mapRouteDocs = docs =>
   docs.map(doc => {
     const {points, ...rest} = doc.data();

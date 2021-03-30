@@ -138,6 +138,12 @@ export const ACTIONS_MODE = {
   CONTINUE: 'continue',
 };
 
+export const MULTIPLE_SELECT_MODE = {
+  CANCEL: 'cancel',
+  DELETE: 'delete',
+  MENU: 'menu',
+};
+
 export const DEFAULT_ROUTE = {
   distance: 0,
   id: '',
