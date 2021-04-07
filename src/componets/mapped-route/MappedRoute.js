@@ -7,7 +7,6 @@ import {useLocationPosition} from '~/hooks/use-location-position';
 import {useMappedRoute} from '~/stores/mapped-route';
 import {useRouteSettings} from '~/stores/route-settings';
 import {useAppMode} from '~/stores/app-mode';
-import {useMap} from '~/stores/map';
 import {useCurrentRoute} from '~/stores/current-route';
 import Toast from 'react-native-simple-toast';
 import {isEmpty, isFilledArr} from '~/utils/validation/helpers';
@@ -20,9 +19,8 @@ const {papyrusify} = getLocaleStore();
 
 const MappedRoute = () => {
   const [dragCoord, setDragCoord] = useState(null);
-  const {cameraRef} = useMap();
   const dragCoordIndexRef = useRef(-1);
-  const {moveCamera} = useLocationPosition(cameraRef);
+  const {moveCamera} = useLocationPosition();
   const {dragHints} = useRouteSettings();
   const {mappedCoords, setCoords, getCoordIndexById} = useMappedRoute();
   const {setPoints, currentRoute} = useCurrentRoute();

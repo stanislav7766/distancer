@@ -29,8 +29,8 @@ const Route = ({themeStyle, goToMain}) => {
   const {setDefaultRoutes, removeById} = useRoutes();
 
   const {setAppMode, setLiveWithRoute} = useAppMode();
-  const {zoomLevel, cameraRef} = useMap();
-  const {moveCamera} = useLocationPosition(cameraRef);
+  const {zoomLevel} = useMap();
+  const {moveCamera} = useLocationPosition();
   const {profile} = useAuth();
   const {liveIconDims} = Styles(themeStyle);
 

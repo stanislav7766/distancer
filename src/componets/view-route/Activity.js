@@ -23,8 +23,8 @@ const Activity = ({themeStyle, goToMain}) => {
   const {liveRoute} = useLiveRoute();
   const {removeById} = useActivities();
   const {profile} = useAuth();
-  const {zoomLevel, cameraRef} = useMap();
-  const {moveCamera} = useLocationPosition(cameraRef);
+  const {zoomLevel} = useMap();
+  const {moveCamera} = useLocationPosition();
   const {distance, pace, avgSpeed, totalTime, movingTime, points1, directionsMode, id: activityId} = liveRoute;
 
   const {setInit, onShowConfirm, onHideConfirm} = useConfirm();

@@ -22,7 +22,6 @@ import {ACCENT_RED, DIRECTIONS_MODE} from '~/constants/constants';
 import {saveRoute} from '~/actions';
 import {isFilledArr} from '~/utils/validation/helpers';
 import {useDirectionsMode} from '~/stores/directions-mode';
-import {useMap} from '~/stores/map';
 import {useCurrentRoute} from '~/stores/current-route';
 import {useAppMode} from '~/stores/app-mode';
 import {observer} from 'mobx-react-lite';
@@ -35,12 +34,11 @@ const {WALKING} = DIRECTIONS_MODE;
 
 const DrawMode = ({themeStyle}) => {
   const [SwitchDrawMode, drawMode] = useSwitchDrawMode();
-  const {cameraRef} = useMap();
   const {dragHints} = useRouteSettings();
   const {dragMode, setDragMode} = useAppMode();
   const {clearPoints, popPoints, setDefaultRoute, currentRoute, resume} = useCurrentRoute();
   const {directionsMode} = useDirectionsMode();
-  const {moveCamera} = useLocationPosition(cameraRef);
+  const {moveCamera} = useLocationPosition();
   const {points, distance} = currentRoute;
   const {profile} = useAuth();
 

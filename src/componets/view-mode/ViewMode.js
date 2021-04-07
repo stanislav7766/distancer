@@ -19,8 +19,8 @@ import {getLocaleStore} from '~/stores/locale';
 const {papyrusify} = getLocaleStore();
 
 const ViewMode = ({themeStyle, closeModal, openModal}) => {
-  const {cameraRef, zoomLevel, setShowMapIcons} = useMap();
-  const {moveToCurrPosition, moveCamera} = useLocationPosition(cameraRef);
+  const {zoomLevel, setShowMapIcons} = useMap();
+  const {moveToCurrPosition, moveCamera} = useLocationPosition();
   const [places, setPlaces] = useState([]);
   const [expanded, setExpanded] = useState(false);
 

@@ -32,8 +32,8 @@ const Map = () => {
     currentRoute: {points},
   } = useCurrentRoute();
   const {isDirectionsMode, directionsMode} = useDirectionsMode();
-  const {setCameraRef, setMapRef, zoomLevel, centerCoordinate, cameraRef, showMapIcons} = useMap();
-  const {moveToCurrPosition} = useLocationPosition(cameraRef);
+  const {setCameraRef, setMapRef, zoomLevel, centerCoordinate, showMapIcons} = useMap();
+  const {moveToCurrPosition} = useLocationPosition();
 
   const [onPressInDrawMode] = usePressDrawMode({
     dragMode,

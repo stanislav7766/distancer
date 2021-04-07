@@ -2,21 +2,24 @@ import {useCallback} from 'react';
 import Geolocation from 'react-native-geolocation-service';
 import Toast from 'react-native-simple-toast';
 import {getLocaleStore} from '~/stores/locale';
+import {useMap} from '~/stores/map';
 
 const {papyrusify} = getLocaleStore();
 
-export const useLocationPosition = cameraRef => {
+export const useLocationPosition = () => {
+  const mapStore = useMap();
+
   const moveCamera = useCallback(
     ({zoomLevel, centerCoordinate}) => {
-      if (!cameraRef) return;
+      if (!mapStore.cameraRef) return;
 
-      cameraRef.setCamera({
+      mapStore.cameraRef.setCamera({
         centerCoordinate,
         zoomLevel,
         animationDuration: 2500,
       });
     },
-    [cameraRef],
+    [mapStore.cameraRef],
   );
   const onPositionUpdate = useCallback(
     ({longitude, latitude}, zoomLevel) => {
