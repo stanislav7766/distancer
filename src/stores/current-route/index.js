@@ -1,5 +1,5 @@
 import {makeAutoObservable, observe} from 'mobx';
-import {DEFAULT_ROUTE} from '~/constants/constants';
+import {APP_MODE, DEFAULT_ROUTE} from '~/constants/constants';
 import {measureDistance} from '~/utils/route-helpers';
 import {isEqualJson, isEqualObjJson, isFilledArr} from '~/utils/validation/helpers';
 import {storesDI} from '~/utils/store-di';
@@ -10,6 +10,7 @@ export class CurrentRouteStore {
   constructor() {
     this.activeRouteStore = storesDI.Inject('notFinishedRouteStore');
     this.authStore = storesDI.Inject('authStore');
+    this.appModeStore = storesDI.Inject('appModeStore');
     this.directionsModeStore = storesDI.Inject('directionsModeStore');
     makeAutoObservable(this);
     observe(this, this._listenStore);
@@ -20,6 +21,12 @@ export class CurrentRouteStore {
 
   setResume = resume => {
     this.resume = resume;
+  };
+
+  enableEditMode = () => {
+    this.setResume(isFilledArr(this.currentRoute.points));
+    this.activeRouteStore.setActive({active: true, userId: this.authStore.profile.userId});
+    this.appModeStore.setAppMode(APP_MODE.DRAW_MODE);
   };
 
   setCurrentRoute = currentRoute => {

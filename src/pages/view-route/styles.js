@@ -21,5 +21,12 @@ export const Styles = themeStyle => {
     backgroundColor: themeStyle.backgroundColorSecondary,
   };
 
-  return {styleCancelIcon};
+  const styleEditIcon = {
+    right: 10,
+    bottom: WINDOW_HEIGHT * 0.35,
+    width: 50,
+    height: 50,
+    backgroundColor: themeStyle.backgroundColorSecondary,
+  };
+  return {styleCancelIcon, styleEditIcon};
 };
