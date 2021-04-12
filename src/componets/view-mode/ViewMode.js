@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Keyboard} from 'react-native';
 import {useLocationPosition} from '~/hooks/use-location-position';
 import {RoundedIcon} from '~/componets/rounded-icon';
@@ -15,6 +15,7 @@ import {Row, Column, Styles, mt20, mt10} from './styles';
 import {observer} from 'mobx-react-lite';
 import Toast from 'react-native-simple-toast';
 import {getLocaleStore} from '~/stores/locale';
+import {debounce} from '~/utils/common-helpers/fun-helpers';
 
 const {papyrusify} = getLocaleStore();
 
@@ -61,7 +62,19 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
     onCloseModal();
     moveToCurrPosition(zoomLevel);
   };
-  const onChangeText = text => setCity(old => ({...old, name: text}));
+  const onChangeText = text => {
+    setCity(old => ({...old, name: text}));
+    debouncedSave(text);
+  };
+
+  const onDebounce = async query => {
+    try {
+      const [res, err] = await FetchCities(query);
+      setPlaces(err === '' ? res : [{text: papyrusify('viewMode.message.cityNotFound')}]);
+    } catch (error) {
+      Toast.show(papyrusify('common.message.errorOccurred'));
+    }
+  };
 
   const onSubmitEditing = async () => {
     try {
@@ -71,6 +84,8 @@ const ViewMode = ({themeStyle, closeModal, openModal}) => {
       Toast.show(papyrusify('common.message.errorOccurred'));
     }
   };
+
+  const debouncedSave = useCallback(debounce(onDebounce, 1000), []);
 
   const InputVariants = (
     <>
